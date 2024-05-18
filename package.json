@@ -66,7 +66,7 @@
   ],
   "dependencies": {
     "@homebridge/plugin-ui-utils": "^1.0.3",
-    "rainbird": "^1.0.1-beta.5",
+    "rainbird": "^1.0.1-beta.6",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
