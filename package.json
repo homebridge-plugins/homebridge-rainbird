@@ -78,7 +78,7 @@
     "globals": "^15.3.0",
     "homebridge": "^1.8.2",
     "homebridge-config-ui-x": "4.56.2",
-    "nodemon": "^3.1.0",
+    "nodemon": "^3.1.1",
     "npm-check-updates": "^16.14.20",
     "rimraf": "^5.0.7",
     "ts-node": "^10.9.2",
