@@ -2,11 +2,10 @@
  *
  * DeviceBase.ts: homebridge-rainbird.
  */
-import { API, HAP, Logging, PlatformAccessory } from 'homebridge';
-import { RainBirdService } from 'rainbird';
-
-import { RainbirdPlatform } from '../platform.js';
-import { DevicesConfig, RainbirdPlatformConfig } from '../settings.js';
+import type { RainBirdService } from 'rainbird';
+import type { RainbirdPlatform } from '../platform.js';
+import type { API, HAP, Logging, PlatformAccessory } from 'homebridge';
+import type { RainbirdPlatformConfig, DevicesConfig } from '../settings.js';
 
 export abstract class DeviceBase {
   public readonly api: API;

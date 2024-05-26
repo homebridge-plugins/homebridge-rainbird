@@ -2,14 +2,14 @@
  *
  * IrrigationSystem.ts: homebridge-rainbird.
  */
-import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
-import { RainBirdService } from 'rainbird';
+import { DeviceBase } from './DeviceBase.js';
 import { Subject, fromEvent, interval } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
 
-import { DeviceBase } from './DeviceBase.js';
-import { DevicesConfig } from '../settings.js';
-import { RainbirdPlatform } from '../platform.js';
+import type { RainBirdService } from 'rainbird';
+import type { DevicesConfig } from '../settings.js';
+import type { RainbirdPlatform } from '../platform.js';
+import type { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 
 /**
  * Platform Accessory

@@ -2,13 +2,13 @@
  *
  * ContactSensor.ts: homebridge-rainbird.
  */
-import { Service, CharacteristicValue, PlatformAccessory } from 'homebridge';
-import { RainBirdService } from 'rainbird';
 import { fromEvent } from 'rxjs';
-
 import { DeviceBase } from './DeviceBase.js';
-import { DevicesConfig } from '../settings.js';
-import { RainbirdPlatform } from '../platform.js';
+
+import type { RainBirdService } from 'rainbird';
+import type { DevicesConfig } from '../settings.js';
+import type { RainbirdPlatform } from '../platform.js';
+import type { Service, CharacteristicValue, PlatformAccessory } from 'homebridge';
 
 /**
  * Platform Accessory
