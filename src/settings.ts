@@ -2,7 +2,7 @@
  *
  * settings.ts: homebridge-rainbird.
  */
-import { IPAddress, PlatformConfig } from 'homebridge';
+import type { IPAddress, PlatformConfig } from 'homebridge';
 /**
  * This is the name of the platform that users will use to register the plugin in the Homebridge config.json
  */
@@ -15,7 +15,7 @@ export const PLUGIN_NAME = 'homebridge-rainbird';
 
 //Config
 export interface RainbirdPlatformConfig extends PlatformConfig {
-  devices?: Array<DevicesConfig>;
+  devices?: DevicesConfig[];
   options?: options | Record<string, never>;
 }
 

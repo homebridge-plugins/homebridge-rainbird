@@ -2,18 +2,19 @@
  *
  * platform.ts: homebridge-rainbird.
  */
-import { API, DynamicPlatformPlugin, PlatformAccessory, Logging, HAP } from 'homebridge';
-import { RainBirdService } from 'rainbird';
 import { readFileSync } from 'fs';
-
+import { RainBirdService } from 'rainbird';
 import { ZoneValve } from './devices/ZoneValve.js';
 import { LeakSensor } from './devices/LeakSensor.js';
+import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js';
 import { ProgramSwitch } from './devices/ProgramSwitch.js';
 import { ContactSensor } from './devices/ContactSensor.js';
 import { IrrigationSystem } from './devices/IrrigationSystem.js';
 import { StopIrrigationSwitch } from './devices/StopIrrigationSwitch.js';
 import { DelayIrrigationSwitch } from './devices/DelayIrrigationSwitch.js';
-import { PLATFORM_NAME, PLUGIN_NAME, RainbirdPlatformConfig, DevicesConfig } from './settings.js';
+
+import type { RainbirdPlatformConfig, DevicesConfig } from './settings.js';
+import type { API, DynamicPlatformPlugin, PlatformAccessory, Logging, HAP } from 'homebridge';
 
 /**
  * HomebridgePlatform
@@ -708,42 +709,56 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
    * If device level logging is turned on, log to log.warn
    * Otherwise send debug logs to log.debug
    */
-  infoLog(...log: any[]): void {
-    if (this.enablingPlatfromLogging()) {
+  async infoLog(...log: any[]): Promise<void> {
+    if (await this.enablingPlatformLogging()) {
       this.log.info(String(...log));
     }
   }
 
-  warnLog(...log: any[]): void {
-    if (this.enablingPlatfromLogging()) {
+  async successLog(...log: any[]): Promise<void> {
+    if (await this.enablingPlatformLogging()) {
+      this.log.success(String(...log));
+    }
+  }
+
+  async debugSuccessLog(...log: any[]): Promise<void> {
+    if (await this.enablingPlatformLogging()) {
+      if (this.platformLogging?.includes('debug')) {
+        this.log.success('[DEBUG]', String(...log));
+      }
+    }
+  }
+
+  async warnLog(...log: any[]): Promise<void> {
+    if (await this.enablingPlatformLogging()) {
       this.log.warn(String(...log));
     }
   }
 
-  debugWarnLog(...log: any[]): void {
-    if (this.enablingPlatfromLogging()) {
+  async debugWarnLog(...log: any[]): Promise<void> {
+    if (await this.enablingPlatformLogging()) {
       if (this.platformLogging?.includes('debug')) {
         this.log.warn('[DEBUG]', String(...log));
       }
     }
   }
 
-  errorLog(...log: any[]): void {
-    if (this.enablingPlatfromLogging()) {
+  async errorLog(...log: any[]): Promise<void> {
+    if (await this.enablingPlatformLogging()) {
       this.log.error(String(...log));
     }
   }
 
-  debugErrorLog(...log: any[]): void {
-    if (this.enablingPlatfromLogging()) {
+  async debugErrorLog(...log: any[]): Promise<void> {
+    if (await this.enablingPlatformLogging()) {
       if (this.platformLogging?.includes('debug')) {
         this.log.error('[DEBUG]', String(...log));
       }
     }
   }
 
-  debugLog(...log: any[]): void {
-    if (this.enablingPlatfromLogging()) {
+  async debugLog(...log: any[]): Promise<void> {
+    if (await this.enablingPlatformLogging()) {
       if (this.platformLogging === 'debugMode') {
         this.log.debug(String(...log));
       } else if (this.platformLogging === 'debug') {
@@ -752,7 +767,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  enablingPlatfromLogging(): boolean {
+  async enablingPlatformLogging(): Promise<boolean> {
     return this.platformLogging?.includes('debug') || this.platformLogging === 'standard';
   }
 }

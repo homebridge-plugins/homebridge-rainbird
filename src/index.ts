@@ -2,10 +2,10 @@
  *
  * index.ts: homebridge-rainbird.
  */
-import { API } from 'homebridge';
-
 import { RainbirdPlatform } from './platform.js';
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js';
+
+import type { API } from 'homebridge';
 
 // Register our platform with homebridge.
 export default (api: API): void => {
