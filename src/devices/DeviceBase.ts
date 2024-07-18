@@ -102,48 +102,48 @@ export abstract class DeviceBase {
    */
   async infoLog(...log: any[]): Promise<void> {
     if (await this.enablingDeviceLogging()) {
-      this.log.info(`${this.device.ipaddress}: ${this.accessory.displayName}`, String(...log));
+      this.log.info(`${this.accessory.displayName}`, String(...log));
     }
   }
 
   async successLog(...log: any[]): Promise<void> {
     if (await this.enablingDeviceLogging()) {
-      this.log.success(`${this.device.ipaddress}: ${this.accessory.displayName}`, String(...log));
+      this.log.success(`${this.accessory.displayName}`, String(...log));
     }
   }
 
   async debugSuccessLog(...log: any[]): Promise<void> {
     if (await this.enablingDeviceLogging()) {
-      if (this.deviceLogging?.includes('debug')) {
-        this.log.success(`[DEBUG] ${this.device.ipaddress}: ${this.accessory.displayName}`, String(...log));
+      if (await this.loggingIsDebug()) {
+        this.log.success(`[DEBUG] ${this.accessory.displayName}`, String(...log));
       }
     }
   }
 
   async warnLog(...log: any[]): Promise<void> {
     if (await this.enablingDeviceLogging()) {
-      this.log.warn(`${this.device.ipaddress}: ${this.accessory.displayName}`, String(...log));
+      this.log.warn(`${this.accessory.displayName}`, String(...log));
     }
   }
 
   async debugWarnLog(...log: any[]): Promise<void> {
     if (await this.enablingDeviceLogging()) {
-      if (this.deviceLogging?.includes('debug')) {
-        this.log.warn(`[DEBUG] ${this.device.ipaddress}: ${this.accessory.displayName}`, String(...log));
+      if (await this.loggingIsDebug()) {
+        this.log.warn(`[DEBUG] ${this.accessory.displayName}`, String(...log));
       }
     }
   }
 
   async errorLog(...log: any[]): Promise<void> {
     if (await this.enablingDeviceLogging()) {
-      this.log.error(`${this.device.ipaddress}: ${this.accessory.displayName}`, String(...log));
+      this.log.error(`${this.accessory.displayName}`, String(...log));
     }
   }
 
   async debugErrorLog(...log: any[]): Promise<void> {
     if (await this.enablingDeviceLogging()) {
-      if (this.deviceLogging?.includes('debug')) {
-        this.log.error(`[DEBUG] ${this.device.ipaddress}: ${this.accessory.displayName}`, String(...log));
+      if (await this.loggingIsDebug()) {
+        this.log.error(`[DEBUG] ${this.accessory.displayName}`, String(...log));
       }
     }
   }
@@ -151,14 +151,18 @@ export abstract class DeviceBase {
   async debugLog(...log: any[]): Promise<void> {
     if (await this.enablingDeviceLogging()) {
       if (this.deviceLogging === 'debug') {
-        this.log.info(`[DEBUG] ${this.device.ipaddress}: ${this.accessory.displayName}`, String(...log));
-      } else {
-        this.log.debug(`${this.device.ipaddress}: ${this.accessory.displayName}`, String(...log));
+        this.log.info(`[DEBUG] ${this.accessory.displayName}`, String(...log));
+      } else if (this.deviceLogging === 'debugMode') {
+        this.log.debug(`${this.accessory.displayName}`, String(...log));
       }
     }
   }
 
+  async loggingIsDebug(): Promise<boolean> {
+    return this.deviceLogging === 'debugMode' || this.deviceLogging === 'debug';
+  }
+
   async enablingDeviceLogging(): Promise<boolean> {
-    return this.deviceLogging.includes('debug') || this.deviceLogging === 'standard';
+    return this.deviceLogging === 'debugMode' || this.deviceLogging === 'debug' || this.deviceLogging === 'standard';
   }
 }
