@@ -3,12 +3,12 @@
  * platform.ts: homebridge-rainbird.
  */
 import { readFileSync } from 'fs';
-import { RainBirdService } from 'rainbird';
 import { ZoneValve } from './devices/ZoneValve.js';
 import { LeakSensor } from './devices/LeakSensor.js';
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js';
 import { ProgramSwitch } from './devices/ProgramSwitch.js';
 import { ContactSensor } from './devices/ContactSensor.js';
+import { RainBirdService, LogLevel, EventType } from 'rainbird';
 import { IrrigationSystem } from './devices/IrrigationSystem.js';
 import { StopIrrigationSwitch } from './devices/StopIrrigationSwitch.js';
 import { DelayIrrigationSwitch } from './devices/DelayIrrigationSwitch.js';
@@ -165,7 +165,23 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         showRequestResponse: device.showRequestResponse!,
         syncTime: device.syncTime!,
       });
-      const metaData = await rainbird!.init();
+      rainbird.on(EventType.LOG, (level: LogLevel, message: string) => {
+        switch(level) {
+          case LogLevel.INFO:
+            this.log.info(message);
+            break;
+          case LogLevel.WARN:
+            this.log.warn(message);
+            break;
+          case LogLevel.ERROR:
+            this.log.error(message);
+            break;
+          case LogLevel.DEBUG:
+            this.log.debug(message);
+            break;
+        }
+      });
+      const metaData = await rainbird.init();
       this.debugLog(JSON.stringify(metaData));
 
       // Display device details
