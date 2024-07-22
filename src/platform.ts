@@ -165,24 +165,22 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         showRequestResponse: device.showRequestResponse!,
         syncTime: device.syncTime!,
       });
-      if (device.showRequestResponse) {
-        rainbird.on(EventType.LOG, (level: LogLevel, message: string) => {
-          switch(level) {
-            case LogLevel.INFO:
-              this.log.info(message);
-              break;
-            case LogLevel.WARN:
-              this.log.warn(message);
-              break;
-            case LogLevel.ERROR:
-              this.log.error(message);
-              break;
-            case LogLevel.DEBUG:
-              this.log.debug(message);
-              break;
-          }
-        });
-      }
+      rainbird.on(EventType.LOG, (level: LogLevel, message: string) => {
+        switch(level) {
+          case LogLevel.INFO:
+            this.infoLog(message);
+            break;
+          case LogLevel.WARN:
+            this.warnLog(message);
+            break;
+          case LogLevel.ERROR:
+            this.errorLog(message);
+            break;
+          case LogLevel.DEBUG:
+            this.debugLog(message);
+            break;
+        }
+      });
       const metaData = await rainbird.init();
       this.debugLog(JSON.stringify(metaData));
 
