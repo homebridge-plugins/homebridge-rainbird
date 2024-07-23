@@ -37,6 +37,9 @@ export abstract class DeviceBase {
     accessory
       .getService(this.hap.Service.AccessoryInformation)!
       .setCharacteristic(this.hap.Characteristic.Manufacturer, 'RainBird')
+      .setCharacteristic(this.hap.Characteristic.AppMatchingIdentifier, 'id1060727082')
+      .setCharacteristic(this.hap.Characteristic.Name, accessory.displayName)
+      .setCharacteristic(this.hap.Characteristic.ConfiguredName, accessory.displayName)
       .setCharacteristic(this.hap.Characteristic.Model, accessory.context.model ?? rainbird!.model)
       .setCharacteristic(this.hap.Characteristic.SerialNumber, accessory.context.deviceID ?? rainbird!.serialNumber)
       .setCharacteristic(this.hap.Characteristic.FirmwareRevision, accessory.context.FirmwareRevision ?? rainbird!.version)

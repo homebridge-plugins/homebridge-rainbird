@@ -42,8 +42,7 @@ export class ZoneValve extends DeviceBase {
     }
 
     // Zone Valve Service
-    const name = `Zone ${accessory.context.zoneId}`;
-    this.debugLog(`Load Valve Service for ${name}`);
+    this.debugLog(`Load Valve Service for ${accessory.displayName}`);
     this.zoneValve = {
       service: this.accessory.getService(this.hap.Service.Valve) ?? this.accessory.addService(this.hap.Service.Valve),
       Active: this.hap.Characteristic.Active.INACTIVE,
@@ -55,7 +54,7 @@ export class ZoneValve extends DeviceBase {
       .setCharacteristic(this.hap.Characteristic.Active, this.zoneValve.Active)
       .setCharacteristic(this.hap.Characteristic.InUse, this.zoneValve.InUse)
       .setCharacteristic(this.hap.Characteristic.ValveType, this.hap.Characteristic.ValveType.IRRIGATION)
-      .setCharacteristic(this.hap.Characteristic.Name, name)
+      .setCharacteristic(this.hap.Characteristic.Name, accessory.displayName)
       .setCharacteristic(this.hap.Characteristic.RemainingDuration, 0)
       .setCharacteristic(this.hap.Characteristic.SetDuration, irrigationContext.duration[this.zoneId])
       .setCharacteristic(this.hap.Characteristic.StatusFault, this.hap.Characteristic.StatusFault.NO_FAULT);

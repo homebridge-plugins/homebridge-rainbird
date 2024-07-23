@@ -25,15 +25,16 @@ export class ProgramSwitch extends DeviceBase {
     super(platform, accessory, device, rainbird);
 
     // Program Switch Service
-    const name = `Program ${accessory.context.programId}`;
-    this.debugLog(`Load Switch Service for ${name}`);
+    this.debugLog(`Load Switch Service for ${accessory.displayName}`);
     this.programSwitch = {
       service: this.accessory.getService(this.hap.Service.Switch) ?? this.accessory.addService(this.hap.Service.Switch),
       state: false,
     };
 
     // Add Contact Sensor's Characteristics
-    this.programSwitch.service.setCharacteristic(this.hap.Characteristic.On, false).setCharacteristic(this.hap.Characteristic.Name, name);
+    this.programSwitch.service
+      .setCharacteristic(this.hap.Characteristic.On, false)
+      .setCharacteristic(this.hap.Characteristic.Name, accessory.displayName);
 
     this.programSwitch.service
       .getCharacteristic(this.hap.Characteristic.On)

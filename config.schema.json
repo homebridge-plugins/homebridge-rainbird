@@ -21,6 +21,11 @@
           "title": "Devices",
           "type": "object",
           "properties": {
+            "configDeviceName": {
+              "title": "Device Name",
+              "type": "string",
+              "placeholder": "RainBird Controller"
+            },
             "ipaddress": {
               "title": "IP Address",
               "description": "The device's Static IP address. Recommended to set this device's IP with a Static IP.",
@@ -143,7 +148,7 @@
               }
             },
             "minValueRemainingDuration": {
-              "title": "Min Value",
+              "title": "Min Value for Ramaining Duration",
               "type": "number",
               "placeholder": 0,
               "required": false,
@@ -152,7 +157,7 @@
               }
             },
             "maxValueRemainingDuration": {
-              "title": "Max Value",
+              "title": "Max Value for Ramaining Duration",
               "type": "number",
               "placeholder": 3600,
               "required": false,
@@ -281,53 +286,36 @@
       "items": [
         {
           "key": "devices",
-          "notitle": true,
-          "type": "array",
-          "orderable": false,
-          "buttonText": "Add Device",
+          "notitle": false,
+          "type": "tabarray",
+          "title": "{{ value.configDeviceName || value.ipaddress || 'New Device' }}",
+          "expandable": true,
+          "expanded": false,
+          "draggable": true,
+          "orderable": true,
           "items": [
-            {
-              "type": "div",
-              "displayFlex": true,
-              "flex-direction": "column",
-              "items": [
-                "devices[].ipaddress",
-                "devices[].password",
-                {
-                  "type": "fieldset",
-                  "title": "Device Settings",
-                  "expandable": true,
-                  "expanded": true,
-                  "items": [
-                    "devices[].external",
-                    "devices[].showRainSensor",
-                    "devices[].showValveSensor",
-                    "devices[].showProgramASwitch",
-                    "devices[].showProgramBSwitch",
-                    "devices[].showProgramCSwitch",
-                    "devices[].showProgramDSwitch",
-                    "devices[].showStopIrrigationSwitch",
-                    "devices[].showZoneValve",
-                    "devices[].includeZones",
-                    "devices[].showDelayIrrigationSwitch",
-                    "devices[].irrigationDelay",
-                    {
-                      "type": "fieldset",
-                      "title": "Remaining Duration Override",
-                      "expandable": true,
-                      "expanded": false,
-                      "items": ["devices[].minValueRemainingDuration", "devices[].maxValueRemainingDuration"]
-                    },
-                    "devices[].syncTime",
-                    "devices[].showRequestResponse",
-                    "devices[].firmware",
-                    "devices[].refreshRate",
-                    "devices[].logging",
-                    "devices[].delete"
-                  ]
-                }
-              ]
-            }
+            "devices[].configDeviceName",
+            "devices[].ipaddress",
+            "devices[].external",
+            "devices[].showRainSensor",
+            "devices[].showValveSensor",
+            "devices[].showProgramASwitch",
+            "devices[].showProgramBSwitch",
+            "devices[].showProgramCSwitch",
+            "devices[].showProgramDSwitch",
+            "devices[].showStopIrrigationSwitch",
+            "devices[].showZoneValve",
+            "devices[].includeZones",
+            "devices[].showDelayIrrigationSwitch",
+            "devices[].irrigationDelay",
+            "devices[].minValueRemainingDuration",
+            "devices[].maxValueRemainingDuration",
+            "devices[].syncTime",
+            "devices[].showRequestResponse",
+            "devices[].firmware",
+            "devices[].refreshRate",
+            "devices[].logging",
+            "devices[].delete"
           ]
         }
       ]

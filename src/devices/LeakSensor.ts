@@ -26,8 +26,6 @@ export class LeakSensor extends DeviceBase {
   ) {
     super(platform, accessory, device, rainbird);
 
-    const model = 'WR2';
-
     // Leak Sensor Service
     this.debugLog('Configure Leak Sensor Service');
     this.leakSensor = {
@@ -38,7 +36,7 @@ export class LeakSensor extends DeviceBase {
     // Add Leak Sensor's Characteristics
     this.leakSensor.service
       .setCharacteristic(this.hap.Characteristic.LeakDetected, this.hap.Characteristic.LeakDetected.LEAK_NOT_DETECTED)
-      .setCharacteristic(this.hap.Characteristic.Name, `${model} Leak Sensor`)
+      .setCharacteristic(this.hap.Characteristic.Name, accessory.displayName)
       .setCharacteristic(this.hap.Characteristic.StatusFault, this.hap.Characteristic.StatusFault.NO_FAULT);
 
     this.leakSensor.service.getCharacteristic(this.hap.Characteristic.LeakDetected).onGet(() => {

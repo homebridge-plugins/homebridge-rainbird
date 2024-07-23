@@ -25,8 +25,7 @@ export class StopIrrigationSwitch extends DeviceBase {
     super(platform, accessory, device, rainbird);
 
     // Stop Irrigation Switch Service
-    const name = 'Stop Irrigation';
-    this.debugLog(`Load Switch Service for ${name}`);
+    this.debugLog(`Load Switch Service for ${accessory.displayName}`);
     this.stopIrrigationSwitch = {
       service: this.accessory.getService(this.hap.Service.Switch) ?? this.accessory.addService(this.hap.Service.Switch),
       state: false,
@@ -35,7 +34,7 @@ export class StopIrrigationSwitch extends DeviceBase {
     // Add Switch's Characteristics
     this.stopIrrigationSwitch.service
       .setCharacteristic(this.hap.Characteristic.On, false)
-      .setCharacteristic(this.hap.Characteristic.Name, name);
+      .setCharacteristic(this.hap.Characteristic.Name, accessory.displayName);
 
     this.stopIrrigationSwitch.service
       .getCharacteristic(this.hap.Characteristic.On)

@@ -31,8 +31,7 @@ export class ContactSensor extends DeviceBase {
     super(platform, accessory, device, rainbird);
 
     // Contact Sensor Service
-    const name = `Zone ${accessory.context.zoneId}`;
-    this.debugLog(`Load Contact Sensor Service for ${name}`);
+    this.debugLog(`Load Contact Sensor Service for ${accessory.displayName}`);
     this.contactSensor = {
       service: this.accessory.getService(this.hap.Service.ContactSensor) ?? this.accessory.addService(this.hap.Service.ContactSensor),
       state: this.hap.Characteristic.ContactSensorState.CONTACT_DETECTED,
@@ -41,7 +40,7 @@ export class ContactSensor extends DeviceBase {
     // Add Contact Sensor's Characteristics
     this.contactSensor.service
       .setCharacteristic(this.hap.Characteristic.ContactSensorState, this.hap.Characteristic.ContactSensorState.CONTACT_DETECTED)
-      .setCharacteristic(this.hap.Characteristic.Name, name)
+      .setCharacteristic(this.hap.Characteristic.Name, accessory.displayName)
       .setCharacteristic(this.hap.Characteristic.StatusFault, this.hap.Characteristic.StatusFault.NO_FAULT);
 
     this.contactSensor.service.getCharacteristic(this.hap.Characteristic.ContactSensorState).onGet(() => {

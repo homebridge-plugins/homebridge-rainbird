@@ -20,6 +20,7 @@ export interface RainbirdPlatformConfig extends PlatformConfig {
 }
 
 export type DevicesConfig = {
+  configDeviceName?: string;
   ipaddress?: IPAddress;
   password?: string;
   showRainSensor?: boolean;

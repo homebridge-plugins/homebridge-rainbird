@@ -166,29 +166,23 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         syncTime: device.syncTime!,
       });
       rainbird.on(EventType.LOG, (level: LogLevel, message: string) => {
-        switch(level) {
-          case LogLevel.INFO:
-            this.infoLog(message);
-            break;
-          case LogLevel.WARN:
-            this.warnLog(message);
-            break;
-          case LogLevel.ERROR:
-            this.errorLog(message);
-            break;
-          case LogLevel.DEBUG:
-            this.debugLog(message);
-            break;
+        const logMethods = {
+          [LogLevel.INFO]: this.infoLog,
+          [LogLevel.WARN]: this.warnLog,
+          [LogLevel.ERROR]: this.errorLog,
+          [LogLevel.DEBUG]: this.debugLog,
+        };
+        const logMethod = logMethods[level];
+        if (logMethod) {
+          logMethod.call(this, message);
         }
       });
       const metaData = await rainbird.init();
       this.debugLog(JSON.stringify(metaData));
 
       // Display device details
-      this.infoLog(
-        `Model: ${metaData.model}, [Version: ${metaData.version}, Serial Number: ${metaData.serialNumber},` +
-          ` Zones: ${JSON.stringify(metaData.zones)}]`,
-      );
+      this.infoLog(`Model: ${metaData.model}, [Version: ${metaData.version}, Serial Number: ${metaData.serialNumber},`
+        + ` Zones: ${JSON.stringify(metaData.zones)}]`);
       const irrigationAccessory = this.createIrrigationSystem(device, rainbird);
       this.createLeakSensor(device, rainbird);
       for (const zoneId of metaData.zones) {
@@ -229,7 +223,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = rainbird!.model;
+        existingAccessory.displayName = device.configDeviceName ?? rainbird!.model;
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = rainbird!.model;
@@ -252,6 +246,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
+      accessory.displayName = device.configDeviceName ?? rainbird!.model;
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = rainbird!.model;
@@ -285,7 +280,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = model;
+        existingAccessory.displayName = device.configDeviceName ? `${device.configDeviceName} Leak Sensor` : `${model} Leak Sensor`;
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = model;
@@ -307,6 +302,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
+      accessory.displayName = device.configDeviceName ? `${device.configDeviceName} Leak Sensor` : model;
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = model;
@@ -358,6 +354,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
+        existingAccessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = model;
@@ -380,6 +377,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
+      accessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = model;
@@ -413,6 +411,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   async createContactSensor(device: DevicesConfig, rainbird: RainBirdService, zoneId: number): Promise<void> {
     const model = `${rainbird!.model}-${zoneId}`;
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`);
+    const name = `Zone ${zoneId}`;
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
@@ -423,7 +422,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = model;
+        existingAccessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = model;
@@ -446,6 +445,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
+      accessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = model;
@@ -479,6 +479,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   async createProgramSwitch(device: DevicesConfig, rainbird: RainBirdService, programId: string): Promise<void> {
     const model = `${rainbird!.model}-pgm-${programId}`;
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`);
+    const name = `Program ${programId}`;
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
@@ -490,7 +491,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = model;
+        existingAccessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = model;
@@ -513,6 +514,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
+      accessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = model;
@@ -537,6 +539,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   async createStopIrrigationSwitch(device: DevicesConfig, rainbird: RainBirdService): Promise<void> {
     const model = `${rainbird!.model}-stop`;
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`);
+    const name = 'Stop Irrigation';
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
@@ -547,7 +550,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = model;
+        existingAccessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = model;
@@ -569,6 +572,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
+      accessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = model;
@@ -592,6 +596,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   async createDelayIrrigationSwitch(device: DevicesConfig, rainbird: RainBirdService): Promise<void> {
     const model = `${rainbird!.model}-delay`;
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`);
+    const name = 'Delay Irrigation';
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
@@ -602,7 +607,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = model;
+        existingAccessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = model;
@@ -624,6 +629,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
+      accessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = model;
