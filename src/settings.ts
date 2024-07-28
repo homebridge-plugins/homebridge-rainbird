@@ -16,7 +16,7 @@ export const PLUGIN_NAME = 'homebridge-rainbird';
 //Config
 export interface RainbirdPlatformConfig extends PlatformConfig {
   devices?: DevicesConfig[];
-  options?: options | Record<string, never>;
+  options?: options;
 }
 
 export type DevicesConfig = {
@@ -41,12 +41,15 @@ export type DevicesConfig = {
   external: boolean;
   firmware?: number;
   refreshRate?: number;
+  updateRate?: number;
+  pushRate?: number;
   logging?: string;
   delete?: boolean;
 };
 
 export type options = {
   refreshRate?: number;
+  updateRate?: number;
   pushRate?: number;
   hide_device?: string[];
   logging?: string;
