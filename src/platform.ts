@@ -223,7 +223,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = device.configDeviceName ?? rainbird!.model;
+        existingAccessory.displayName = device.configDeviceName
+          ? await this.validateAndCleanDisplayName(device.configDeviceName, 'configDeviceName', device.configDeviceName)
+          : await this.validateAndCleanDisplayName(rainbird.model, 'model', rainbird.model);
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = rainbird!.model;
@@ -246,7 +248,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
-      accessory.displayName = device.configDeviceName ?? rainbird!.model;
+      accessory.displayName = device.configDeviceName
+        ? await this.validateAndCleanDisplayName(device.configDeviceName, 'configDeviceName', device.configDeviceName)
+        : await this.validateAndCleanDisplayName(rainbird.model, 'model', rainbird.model);
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = rainbird!.model;
@@ -269,6 +273,8 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
   private async createLeakSensor(device: DevicesConfig, rainbird: RainBirdService): Promise<void> {
     const model = 'WR2';
+    const leakSensorModel = `${model} Leak Sensor`;
+    const leakSensorConfigName = device.configDeviceName ? `${device.configDeviceName} Leak Sensor` : undefined;
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`);
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
@@ -280,7 +286,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = device.configDeviceName ? `${device.configDeviceName} Leak Sensor` : `${model} Leak Sensor`;
+        existingAccessory.displayName = leakSensorConfigName
+          ? await this.validateAndCleanDisplayName(leakSensorConfigName, 'configDeviceName Leak Sensor', leakSensorConfigName)
+          : await this.validateAndCleanDisplayName(leakSensorModel, leakSensorModel, leakSensorModel);
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = model;
@@ -302,7 +310,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
-      accessory.displayName = device.configDeviceName ? `${device.configDeviceName} Leak Sensor` : model;
+      accessory.displayName = leakSensorConfigName
+        ? await this.validateAndCleanDisplayName(leakSensorConfigName, 'configDeviceName Leak Sensor', leakSensorConfigName)
+        : await this.validateAndCleanDisplayName(leakSensorModel, leakSensorModel, leakSensorModel);
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = model;
@@ -322,20 +332,15 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  async FirmwareRevision(rainbird: RainBirdService, device: DevicesConfig): Promise<any> {
-    let firmware: any;
-    if (device.firmware) {
-      firmware = device.firmware;
-    } else {
-      firmware = rainbird!.version;
-    }
-    return firmware;
+  async FirmwareRevision(rainbird: RainBirdService, device: DevicesConfig): Promise<string> {
+    return String(device.firmware ?? rainbird.version ?? this.version);
   }
 
   async createZoneValve(device: DevicesConfig, rainbird: RainBirdService, zoneId: number): Promise<void> {
     const model = `${rainbird!.model}-valve-${zoneId}`;
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`);
     const name = `Zone ${zoneId}`;
+    const valveConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : undefined;
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
@@ -354,7 +359,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
+        existingAccessory.displayName = valveConfigName
+          ? await this.validateAndCleanDisplayName(valveConfigName, 'configDeviceName ${name}', `${device.configDeviceName} ${name}`)
+          : await this.validateAndCleanDisplayName(name, '${name} name', name);
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = model;
@@ -377,7 +384,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
-      accessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
+      accessory.displayName = valveConfigName
+        ? await this.validateAndCleanDisplayName(valveConfigName, 'configDeviceName ${name}', `${device.configDeviceName} ${name}`)
+        : await this.validateAndCleanDisplayName(name, '${name} name', name);
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = model;
@@ -412,6 +421,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const model = `${rainbird!.model}-${zoneId}`;
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`);
     const name = `Zone ${zoneId}`;
+    const contactSensorConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : undefined;
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
@@ -422,7 +432,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
+        existingAccessory.displayName = contactSensorConfigName
+          ? await this.validateAndCleanDisplayName(contactSensorConfigName, 'configDeviceName ${name}', contactSensorConfigName)
+          : await this.validateAndCleanDisplayName(name, '${name} name', name);
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = model;
@@ -445,7 +457,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
-      accessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
+      accessory.displayName = contactSensorConfigName
+        ? await this.validateAndCleanDisplayName(contactSensorConfigName, 'configDeviceName ${name}', contactSensorConfigName)
+        : await this.validateAndCleanDisplayName(name, '${name} name', name);
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = model;
@@ -480,6 +494,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const model = `${rainbird!.model}-pgm-${programId}`;
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`);
     const name = `Program ${programId}`;
+    const programSwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : undefined;
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
@@ -491,7 +506,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
+        existingAccessory.displayName = programSwitchConfigName
+          ? await this.validateAndCleanDisplayName(programSwitchConfigName, 'configDeviceName ${name}', programSwitchConfigName)
+          : await this.validateAndCleanDisplayName(name, '${name} name', name);
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = model;
@@ -514,7 +531,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
-      accessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
+      accessory.displayName = programSwitchConfigName
+        ? await this.validateAndCleanDisplayName(programSwitchConfigName, 'configDeviceName ${name}', programSwitchConfigName)
+        : await this.validateAndCleanDisplayName(name, '${name} name', name);
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = model;
@@ -540,6 +559,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const model = `${rainbird!.model}-stop`;
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`);
     const name = 'Stop Irrigation';
+    const stopSwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : undefined;
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
@@ -550,7 +570,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
+        existingAccessory.displayName = stopSwitchConfigName
+          ? await this.validateAndCleanDisplayName(stopSwitchConfigName, 'configDeviceName ${name}', stopSwitchConfigName)
+          : await this.validateAndCleanDisplayName(name, '${name} name', name);
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = model;
@@ -572,7 +594,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
-      accessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
+      accessory.displayName = stopSwitchConfigName
+        ? await this.validateAndCleanDisplayName(stopSwitchConfigName, 'configDeviceName ${name}', stopSwitchConfigName)
+        : await this.validateAndCleanDisplayName(name, '${name} name', name);
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = model;
@@ -597,6 +621,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const model = `${rainbird!.model}-delay`;
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`);
     const name = 'Delay Irrigation';
+    const delaySwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : undefined;
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
@@ -607,7 +632,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`);
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        existingAccessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
+        existingAccessory.displayName = delaySwitchConfigName
+          ? await this.validateAndCleanDisplayName(delaySwitchConfigName, 'configDeviceName ${name}', delaySwitchConfigName)
+          : await this.validateAndCleanDisplayName(name, '${name} name', name);
         existingAccessory.context.device = device;
         existingAccessory.context.deviceID = rainbird!.serialNumber;
         existingAccessory.context.model = model;
@@ -629,7 +656,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
-      accessory.displayName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name;
+      accessory.displayName = delaySwitchConfigName
+        ? await this.validateAndCleanDisplayName(delaySwitchConfigName, 'configDeviceName ${name}', delaySwitchConfigName)
+        : await this.validateAndCleanDisplayName(name, '${name} name', name);
       accessory.context.device = device;
       accessory.context.deviceID = rainbird!.serialNumber;
       accessory.context.model = model;
@@ -725,6 +754,49 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     );
     this.debugLog(`Plugin Version: ${json.version}`);
     this.version = json.version;
+  }
+
+  /**
+   * Validate and clean a string value for a Name Characteristic.
+   * @param displayName - The display name of the accessory.
+   * @param name - The name of the characteristic.
+   * @param value - The value to be validated and cleaned.
+   * @returns The cleaned string value.
+  */
+  async validateAndCleanDisplayName(displayName: string, name: string, value: string): Promise<string> {
+    if (this.config.options?.allowInvalidCharacters) {
+      return value;
+    } else {
+      const validPattern = new RegExp(/^[\p{L}\p{N}][\p{L}\p{N} ']*[\p{L}\p{N}]$/u);
+      const invalidCharsPattern = /[^\p{L}\p{N} ']/gu;
+      const invalidStartEndPattern = /^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu;
+
+      if (typeof value === 'string' && !validPattern.test(value)) {
+        this.warnLog(`WARNING: The accessory '${displayName}' has an invalid '${name}' characteristic ('${value}'). Please use only alphanumeric,`
+          + ' space, and apostrophe characters. Ensure it starts and ends with an alphabetic or numeric character, and avoid emojis. This may'
+          + ' prevent the accessory from being added in the Home App or cause unresponsiveness.');
+
+        // Remove invalid characters
+        if (invalidCharsPattern.test(value)) {
+          const before = value;
+          this.warnLog(`Removing invalid characters from '${name}' characteristic, if you feel this is incorrect,`
+            + ' please enable \'allowInvalidCharacter\' in the config to allow all characters');
+          value = value.replace(invalidCharsPattern, '');
+          this.warnLog(`${name} Before: '${before}' After: '${value}'`);
+        }
+
+        // Ensure it starts and ends with an alphanumeric character
+        if (invalidStartEndPattern.test(value)) {
+          const before = value;
+          this.warnLog(`Removing invalid starting or ending characters from '${name}' characteristic, if you feel this is incorrect,`
+            + ' please enable \'allowInvalidCharacter\' in the config to allow all characters');
+          value = value.replace(invalidStartEndPattern, '');
+          this.warnLog(`${name} Before: '${before}' After: '${value}'`);
+        }
+      }
+
+      return value;
+    }
   }
 
   /**

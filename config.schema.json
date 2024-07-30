@@ -272,6 +272,11 @@
                 "enum": ["debug"]
               }
             ]
+          },
+          "allowInvalidCharacters": {
+            "title": "Allow Invalid Characters",
+            "type": "boolean",
+            "description": "If true, invalid characters will be allowed in the device name."
           }
         }
       }
@@ -342,7 +347,8 @@
           "key": "options.pushRate",
           "notitle": true
         },
-        "options.logging"
+        "options.logging",
+        "options.allowInvalidCharacters"
       ]
     }
   ]

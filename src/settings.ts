@@ -48,6 +48,7 @@ export type DevicesConfig = {
 };
 
 export type options = {
+  allowInvalidCharacters?: boolean;
   refreshRate?: number;
   updateRate?: number;
   pushRate?: number;
