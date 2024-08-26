@@ -101,11 +101,14 @@ export class IrrigationSystem extends DeviceBase {
         return this.irrigation.service.getCharacteristic(this.hap.Characteristic.StatusFault).value;
       });
 
+    const minValueRemainingDuration = device.minValueRemainingDuration ?? 0;
+    const maxValueRemainingDuration = (device.maxValueRemainingDuration ?? 3600) * rainbird!.zones.length;
     this.irrigation.service
       .getCharacteristic(this.hap.Characteristic.RemainingDuration)
       .setProps({
         minValue: device.minValueRemainingDuration,
         maxValue: device.maxValueRemainingDuration! * rainbird!.zones.length,
+        validValueRanges: [minValueRemainingDuration, maxValueRemainingDuration],
       })
       .onGet(() => {
         this.rainbird!.refreshStatus();
