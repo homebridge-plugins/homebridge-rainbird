@@ -104,7 +104,7 @@ export class IrrigationSystem extends DeviceBase {
     const minValueRemainingDuration = device.minValueRemainingDuration ?? 0;
     const maxValueRemainingDuration = (device.maxValueRemainingDuration ?? 3600) * rainbird!.zones.length;
     if (maxValueRemainingDuration > 4294967295) {
-      this.warnLog('\x1b[3mmaxValueRemainingDuration cannot be above 4294967295. Setting to 4294967295.\x1b[0m');
+      this.warnLog('maxValueRemainingDuration cannot be above \x1b[1m\x1b[3m4294967295\x1b[0m, Setting to \x1b[1m\x1b[3m4294967295\x1b[0m.');
     }
     this.irrigation.service
       .getCharacteristic(this.hap.Characteristic.RemainingDuration)
