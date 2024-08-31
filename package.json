@@ -2,7 +2,7 @@
   "name": "homebridge-rainbird",
   "displayName": "Rainbird",
   "type": "module",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "The Rainbird plugin allows you to access your Rainbird device(s) from HomeKit.",
   "author": {
     "name": "donavanbecker",
@@ -69,7 +69,7 @@
   },
   "dependencies": {
     "@homebridge/plugin-ui-utils": "^1.0.3",
-    "rainbird": "^1.1.0-beta.5",
+    "rainbird": "^1.1.0",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
