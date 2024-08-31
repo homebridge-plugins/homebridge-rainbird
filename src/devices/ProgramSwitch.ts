@@ -2,19 +2,21 @@
  *
  * ProgramSwitch.ts: homebridge-rainbird.
  */
-import { fromEvent } from 'rxjs';
-import { DeviceBase } from './DeviceBase.js';
+import type { CharacteristicValue, PlatformAccessory, Service } from 'homebridge'
+import type { RainBirdService } from 'rainbird'
 
-import type { RainBirdService } from 'rainbird';
-import type { DevicesConfig } from '../settings.js';
-import type { RainbirdPlatform } from '../platform.js';
-import type { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
+import type { RainbirdPlatform } from '../platform.js'
+import type { DevicesConfig } from '../settings.js'
+
+import { fromEvent } from 'rxjs'
+
+import { DeviceBase } from './DeviceBase.js'
 
 export class ProgramSwitch extends DeviceBase {
   private programSwitch!: {
-    service: Service;
-    state: CharacteristicValue;
-  };
+    service: Service
+    state: CharacteristicValue
+  }
 
   constructor(
     readonly platform: RainbirdPlatform,
@@ -22,47 +24,48 @@ export class ProgramSwitch extends DeviceBase {
     device: DevicesConfig,
     rainbird: RainBirdService,
   ) {
-    super(platform, accessory, device, rainbird);
+    super(platform, accessory, device, rainbird)
 
     // Program Switch Service
-    const name = `Program ${accessory.context.programId}`;
-    this.debugLog(`Load Switch Service for ${name}`);
+    this.debugLog(`Load Switch Service for ${accessory.displayName}`)
     this.programSwitch = {
       service: this.accessory.getService(this.hap.Service.Switch) ?? this.accessory.addService(this.hap.Service.Switch),
       state: false,
-    };
+    }
 
     // Add Contact Sensor's Characteristics
-    this.programSwitch.service.setCharacteristic(this.hap.Characteristic.On, false).setCharacteristic(this.hap.Characteristic.Name, name);
+    this.programSwitch.service
+      .setCharacteristic(this.hap.Characteristic.On, false)
+      .setCharacteristic(this.hap.Characteristic.Name, accessory.displayName)
 
     this.programSwitch.service
       .getCharacteristic(this.hap.Characteristic.On)
       .onGet(() => {
-        this.rainbird!.refreshStatus();
-        return this.programSwitch.state;
+        this.rainbird!.refreshStatus()
+        return this.programSwitch.state
       })
-      .onSet(this.setOn.bind(this));
+      .onSet(this.setOn.bind(this))
 
     // Initial Device Parse
-    this.parseStatus();
-    this.updateHomeKitCharacteristics();
+    this.parseStatus()
+    this.updateHomeKitCharacteristics()
 
     // Device Parse when status event emitted
     fromEvent(rainbird!, 'status').subscribe({
       next: () => {
-        this.parseStatus();
-        this.updateHomeKitCharacteristics();
+        this.parseStatus()
+        this.updateHomeKitCharacteristics()
       },
-    });
+    })
   }
 
   private async setOn(value: CharacteristicValue) {
-    this.debugLog(`${this.constructor.name}: ${this.accessory.displayName}, Set On: ${value}`);
-    this.programSwitch.state = value;
+    this.debugLog(`${this.constructor.name}: ${this.accessory.displayName}, Set On: ${value}`)
+    this.programSwitch.state = value
     if (value) {
-      await this.rainbird!.startProgram(this.accessory.context.programId);
+      await this.rainbird!.startProgram(this.accessory.context.programId)
     } else {
-      await this.rainbird!.stopIrrigation();
+      await this.rainbird!.stopIrrigation()
     }
   }
 
@@ -70,15 +73,15 @@ export class ProgramSwitch extends DeviceBase {
    * Parse the device status from the RainbirdClient
    */
   parseStatus() {
-    const isRunning = this.rainbird!.isProgramRunning(this.accessory.context.programId);
+    const isRunning = this.rainbird!.isProgramRunning(this.accessory.context.programId)
     if (isRunning !== undefined) {
-      this.programSwitch.state = isRunning;
+      this.programSwitch.state = isRunning
     } else {
       if (this.programSwitch.state && !this.rainbird!.isInUse()) {
-        this.programSwitch.state = false;
+        this.programSwitch.state = false
       }
     }
-    this.debugLog(`${this.constructor.name}: ${this.accessory.displayName} On: ${this.programSwitch.state}`);
+    this.debugLog(`${this.constructor.name}: ${this.accessory.displayName} On: ${this.programSwitch.state}`)
   }
 
   /**
@@ -86,10 +89,10 @@ export class ProgramSwitch extends DeviceBase {
    */
   updateHomeKitCharacteristics() {
     if (this.programSwitch.state === undefined) {
-      this.debugLog(`${this.constructor.name}: ${this.accessory.displayName} On: ${this.programSwitch.state}`);
+      this.debugLog(`${this.constructor.name}: ${this.accessory.displayName} On: ${this.programSwitch.state}`)
     } else {
-      this.programSwitch.service.updateCharacteristic(this.hap.Characteristic.On, this.programSwitch.state);
-      this.debugLog(`${this.constructor.name}: ${this.accessory.displayName} updateCharacteristic On: ${this.programSwitch.state}`);
+      this.programSwitch.service.updateCharacteristic(this.hap.Characteristic.On, this.programSwitch.state)
+      this.debugLog(`${this.constructor.name}: ${this.accessory.displayName} updateCharacteristic On: ${this.programSwitch.state}`)
     }
   }
 }

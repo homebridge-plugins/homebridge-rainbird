@@ -1,14 +1,14 @@
 {
-  "displayName": "Rainbird",
   "name": "homebridge-rainbird",
-  "version": "2.0.3",
+  "displayName": "Rainbird",
+  "type": "module",
+  "version": "2.1.0",
   "description": "The Rainbird plugin allows you to access your Rainbird device(s) from HomeKit.",
-  "homepage": "https://github.com/donavanbecker/homebridge-rainbird#readme",
   "author": {
-      "name": "donavanbecker",
-      "url": "https://github.com/donavanbecker"
+    "name": "donavanbecker",
+    "url": "https://github.com/donavanbecker"
   },
-  "contributors":[
+  "contributors": [
     {
       "name": "donavanbecker",
       "url": "https://github.com/donavanbecker"
@@ -18,32 +18,7 @@
       "url": "https://github.com/mantorok1"
     }
   ],
-  "type": "module",
   "license": "ISC",
-  "icon": "https://raw.githubusercontent.com/donavanbecker/homebridge-rainbird/beta-1.11.3/branding/icon.png",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/donavanbecker/homebridge-rainbird.git"
-  },
-  "bugs": {
-    "url": "https://github.com/donavanbecker/homebridge-rainbird/issues"
-  },
-  "engines": {
-    "homebridge": "^1.8.2",
-    "node": "^18 || ^20 || ^22"
-  },
-  "main": "dist/index.js",
-  "scripts": {
-    "check": "npm install && npm outdated",
-    "update": "ncu -u && npm update && npm install",
-    "lint": "eslint src/**/*.ts",
-    "watch": "npm run build && npm run plugin-ui && npm link && nodemon",
-    "plugin-ui": "rsync ./src/homebridge-ui/public/index.html ./dist/homebridge-ui/public/",
-    "build": "rimraf ./dist && tsc",
-    "prepublishOnly": "npm run lint && npm run build && npm run plugin-ui ",
-    "postpublish": "npm run clean",
-    "clean": "rimraf ./dist"
-  },
   "funding": [
     {
       "type": "Paypal - donavanbecker",
@@ -58,32 +33,68 @@
       "url": "https://paypal.me/Mantorok1"
     }
   ],
+  "homepage": "https://github.com/donavanbecker/homebridge-rainbird#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/donavanbecker/homebridge-rainbird.git"
+  },
+  "bugs": {
+    "url": "https://github.com/donavanbecker/homebridge-rainbird/issues"
+  },
   "keywords": [
     "homebridge-plugin",
     "irrigation",
     "valve",
     "rainbird"
   ],
+  "main": "dist/index.js",
+  "icon": "https://raw.githubusercontent.com/donavanbecker/homebridge-rainbird/beta-1.11.3/branding/icon.png",
+  "engines": {
+    "homebridge": "^1.8.4 || ^2.0.0 || ^2.0.0-beta.11 || ^2.0.0-alpha.10",
+    "node": "^18 || ^20 || ^22"
+  },
+  "scripts": {
+    "check": "npm install && npm outdated",
+    "update": "ncu -u && npm update && npm install",
+    "lint": "eslint src/**/*.ts",
+    "watch": "npm run build && npm run plugin-ui && npm link && nodemon",
+    "plugin-ui": "rsync ./src/homebridge-ui/public/index.html ./dist/homebridge-ui/public/",
+    "build": "npm run clean && tsc && npm run plugin-ui",
+    "prepublishOnly": "npm run lint && npm run build && npm run plugin-ui ",
+    "postpublish": "npm run clean",
+    "clean": "shx rm -rf ./dist",
+    "test": "npm run lint",
+    "docs": "typedoc",
+    "lint-docs": "typedoc --emit none --treatWarningsAsErrors"
+  },
   "dependencies": {
     "@homebridge/plugin-ui-utils": "^1.0.3",
-    "rainbird": "^1.0.1",
+    "rainbird": "^1.1.0",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.3.0",
-    "@stylistic/eslint-plugin": "^2.1.0",
-    "@types/eslint__js": "^8.42.3",
-    "@types/node": "^20.12.12",
-    "eslint": "^9.3.0",
-    "globals": "^15.3.0",
-    "homebridge": "^1.8.2",
-    "homebridge-config-ui-x": "4.56.2",
-    "nodemon": "^3.1.1",
-    "npm-check-updates": "^16.14.20",
-    "rimraf": "^5.0.7",
+    "@antfu/eslint-config": "^3.0.0",
+    "@types/aes-js": "^3.1.4",
+    "@types/debug": "^4.1.12",
+    "@types/fs-extra": "^11.0.4",
+    "@types/jest": "^29.5.12",
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^22.5.1",
+    "@types/semver": "^7.5.8",
+    "@types/source-map-support": "^0.5.10",
+    "@vitest/coverage-v8": "^2.0.5",
+    "eslint": "^9.9.1",
+    "eslint-plugin-format": "^0.1.2",
+    "homebridge": "^1.8.4",
+    "homebridge-config-ui-x": "4.57.1",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.4",
+    "npm-check-updates": "^17.1.0",
+    "shx": "^0.3.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5",
+    "typedoc": "^0.26.6",
+    "typescript": "^5.5.4",
     "typescript-axios-wb": "^1.0.3",
-    "typescript-eslint": "^8.0.0-alpha.14"
+    "vitest": "^2.0.5"
   }
 }

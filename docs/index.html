@@ -1,0 +1,53 @@
+<!DOCTYPE html><html class="default" lang="en"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>homebridge-rainbird</title><meta name="description" content="Documentation for homebridge-rainbird"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><use href="assets/icons.svg#icon-search"></use></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div><div class="field"><div id="tsd-toolbar-links"></div></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">homebridge-rainbird</a></div><div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h2>homebridge-rainbird</h2></div><div class="tsd-panel tsd-typography"><span align="center">
+<p><a href="https://github.com/homebridge/verified/blob/master/verified-plugins.json"><img alt="homebridge-verified" src="https://raw.githubusercontent.com/donavanbecker/homebridge-rainbird/latest/branding/Homebridge_x_Rainbird.svg?sanitize=true" width="500px"></a></p>
+<a id="md:homebridge-rainbird" class="tsd-anchor"></a><h1 class="tsd-anchor-link">Homebridge Rainbird<a href="#md:homebridge-rainbird" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1><p><a href="https://www.npmjs.com/package/homebridge-rainbird"><img title="npm version" src="https://badgen.net/npm/v/homebridge-rainbird?icon=npm&label" ></a>
+<a href="https://www.npmjs.com/package/homebridge-rainbird"><img title="npm downloads" src="https://badgen.net/npm/dt/homebridge-rainbird?label=downloads" ></a>
+<a href="https://discord.gg/8fpZA4S"><img title="discord-rainbird" src="https://badgen.net/discord/online-members/8fpZA4S?icon=discord&label=discord" ></a></p>
+<p><a href="https://paypal.me/donavanbecker"><img title="donavanbecker" src="https://badgen.net/badge/donavanbecker/paypal/yellow" ></a>
+<a href="https://paypal.me/Mantorok1"><img title="mantorok1" src="https://badgen.net/badge/mantorok1/paypal/yellow" ></a></p>
+<p>The Homebridge <a href="https://rainbird.com">RainBird</a> 
+plugin allows you to access your RainBird Controller from HomeKit with
+  <a href="https://homebridge.io">Homebridge</a>. 
+</p>
+</span>
+<a id="md:installation" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Installation<a href="#md:installation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ol>
+<li>Search for &quot;Rainbird&quot; on the plugin screen of <a href="https://github.com/oznu/homebridge-config-ui-x">Homebridge Config UI X</a>.</li>
+<li>Click <strong>Install</strong>.</li>
+</ol>
+<a id="md:configuration" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Configuration<a href="#md:configuration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ol>
+<li>Set a Static IP Address to your <a href="https://www.rainbird.com">RainBird</a> Controller - <a href="https://www.howtogeek.com/184310/ask-htg-should-i-be-setting-static-ip-addresses-on-my-router/">How to Set Static IP Address</a>.</li>
+<li>Input Static IP Address and Password for <a href="https://www.rainbird.com">RainBird</a> Controller into Plugin UI Settings and restart Homebridge.
+<ul>
+<li>If you choose to create child bridge with this plugin, do it at this time.</li>
+<li>Password is the password you used to setup the rainbird controller.</li>
+</ul>
+</li>
+</ol>
+<a id="md:collaborators" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Collaborators<a href="#md:collaborators" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li>Main developer of the RaindBird API:
+<ul>
+<li><a href="https://github.com/mantorok1">mantorok1</a></li>
+</ul>
+</li>
+</ul>
+<a id="md:compatiable-controllers" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Compatiable Controllers<a href="#md:compatiable-controllers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>Any controller that supports the <a href="https://www.rainbird.com/products/lnk-wifi-module">RainBird LNK WiFi Module</a> should be compatible. This includes:</p>
+<ul>
+<li>ESP-Me</li>
+<li>ESP-TM2</li>
+<li>ESP-RZXe</li>
+<li>ESP-ME3</li>
+</ul>
+<a id="md:known-limitations" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Known Limitations<a href="#md:known-limitations" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li>The Home app will default all sprinkler zone names to the Irrigation System's name which means it's not obvious which zone is which. The first one in the list may not necessarily be Zone 1. You'll need to use trial and error to figure out the zone and rename them appropriately.</li>
+<li>Using the RainBird app while the plugin is running can cause connectivity issues.</li>
+<li>The RainBird LNK WiFi Module may not support &quot;Band Steering&quot; and WiFi Channel 13. Try not using these on your router if you are having connectivity issues.</li>
+<li>Some models do not yet have support for displaying the time remaining. If its not working for your model please log a GitHub issue and we will try to add it with your help.</li>
+</ul>
+<a id="md:libraries" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Libraries<a href="#md:libraries" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li><a href="https://github.com/donavanbecker/rainbird">RainBird</a>
+<ul>
+<li>Library used to comunicate with Rainbird Controllers.</li>
+</ul>
+</li>
+</ul>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="assets/icons.svg#icon-chevronDown"></use></svg>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="assets/icons.svg#icon-chevronDown"></use></svg>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#md:homebridge-rainbird"><span>Homebridge <wbr/>Rainbird</span></a><ul><li><a href="#md:installation"><span>Installation</span></a></li><li><a href="#md:configuration"><span>Configuration</span></a></li><li><a href="#md:collaborators"><span>Collaborators</span></a></li><li><a href="#md:compatiable-controllers"><span>Compatiable <wbr/>Controllers</span></a></li><li><a href="#md:known-limitations"><span>Known <wbr/>Limitations</span></a></li><li><a href="#md:libraries"><span>Libraries</span></a></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="modules.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="assets/icons.svg#icon-1"></use></svg><span>homebridge-rainbird</span></a><ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base="."><li>Loading...</li></ul></nav></div></div></div><footer></footer><div class="overlay"></div></body></html>
