@@ -1,112 +1,128 @@
 <p class="text-center">
-   <img
-      src="https://raw.githubusercontent.com/donavanbecker/homebridge-rainbird/latest/branding/Homebridge_x_Rainbird.svg"
-      alt="homebridge-rainbird logo" style="width: 60%;" />
+    <img src="https://raw.githubusercontent.com/donavanbecker/homebridge-rainbird/latest/branding/Homebridge_x_Rainbird.svg" alt="homebridge-rainbird logo" style="width: 60%;">
 </p>
 <div id="pageIntro" style="display: none;">
-   <p class="lead text-center">Thank you for installing <strong>homebridge-rainbird</strong></p>
-   <div class="text-center">
-      <button type="button" class="btn btn-primary" id="introLink">Continue &rarr;</button>
-   </div>
+    <p class="lead text-center">Thank you for installing
+        <strong>homebridge-rainbird</strong>
+    </p>
+    <div class="text-center">
+        <button type="button" class="btn btn-primary" id="introLink">Continue &rarr;</button>
+    </div>
 </div>
-<div id="menuWrapper" class="btn-group w-100 mb-0" role="group" aria-label="UI Menu" style="display: none;">
-   <button type="button" class="btn btn-primary" id="menuSettings">
-      Settings
-   </button>
-   <button type="button" class="btn btn-primary" id="menuDevices">
-      Devices
-   </button>
-   <button type="button" class="btn btn-primary mr-0" id="menuHome">
-      Support
-   </button>
+<div
+    id="menuWrapper"
+    class="btn-group w-100 mb-0"
+    role="group"
+    aria-label="UI Menu"
+    style="display: none;"
+>
+    <button type="button" class="btn btn-primary" id="menuSettings">
+        Settings
+    </button>
+    <button type="button" class="btn btn-primary" id="menuDevices">
+        Devices
+    </button>
+    <button type="button" class="btn btn-primary mr-0" id="menuHome">
+        Support
+    </button>
 </div>
-<div id="disabledBanner" class="alert alert-secondary mb-0 mt-3" role="alert" style="display: none;">
-   Plugin is currently disabled
-   <button id="disabledEnable" type="button" class="btn btn-link p-0 m-0 float-right">
-      Enable
-   </button>
+<div
+    id="disabledBanner"
+    class="alert alert-secondary mb-0 mt-3"
+    role="alert"
+    style="display: none;"
+>
+    Plugin is currently disabled
+    <button id="disabledEnable" type="button" class="btn btn-link p-0 m-0 float-right">
+        Enable
+    </button>
 </div>
 <div id="pageDevices" class="mt-4" style="display: none;">
-   <div id="deviceInfo">
-      <form>
-         <div class="form-group">
-            <select class="form-control" id="deviceSelect"></select>
-         </div>
-      </form>
-      <table class="table w-100" id="deviceTable" style="display: none;">
-         <thead>
-            <tr class="table-active">
-               <th scope="col" style="width: 40%;">Device Name</th>
-               <th scope="col" style="width: 60%;" id="displayName"></th>
-            </tr>
-         </thead>
-         <tbody>
-            <tr>
-               <th scope="row">Device ID</th>
-               <td id="deviceID"></td>
-            </tr>
-            <tr>
-               <th scope="row">Model</th>
-               <td id="model"></td>
-            </tr>
-            <tr>
-               <th scope="row">Firmware Version</th>
-               <td id="FirmwareRevision"></td>
-            </tr>
-         </tbody>
-      </table>
-      <p class="text-center">External Accessories Will Not Display Here.</p>
-   </div>
+    <div id="deviceInfo">
+        <form>
+            <div class="form-group">
+                <select class="form-control" id="deviceSelect"></select>
+            </div>
+        </form>
+        <table class="table w-100" id="deviceTable" style="display: none;">
+            <thead>
+                <tr class="table-active">
+                    <th scope="col" style="width: 40%;">Device Name</th>
+                    <th scope="col" style="width: 60%;" id="displayName"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Device ID</th>
+                    <td id="deviceID"></td>
+                </tr>
+                <tr>
+                    <th scope="row">Model</th>
+                    <td id="model"></td>
+                </tr>
+                <tr>
+                    <th scope="row">Firmware Version</th>
+                    <td id="FirmwareRevision"></td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="text-center">External Accessories Will Not Display Here.</p>
+    </div>
 </div>
 <div id="pageSupport" class="mt-4" style="display: none;">
-   <p class="text-center lead">Thank you for using <strong>homebridge-rainbird</strong></p>
-   <p class="text-center">The links below will take you to our GitHub wiki</p>
-   <h5>Setup</h5>
-   <ul>
-      <li>
-         <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki" target="_blank">Wiki Home</a>
-      </li>
-      <li>
-         <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Configuration"
-            target="_blank">Configuration</a>
-      </li>
-      <li>
-         <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Beta-Version" target="_blank">Beta
-            Version</a>
-      </li>
-      <li>
-         <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Node-Version" target="_blank">Node
-            Version</a>
-      </li>
-      <li>
-         <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Uninstallation"
-            target="_blank">Uninstallation</a>
-      </li>
-   </ul>
-   <h5>Help/About</h5>
-   <ul>
-      <li>
-         <a href="https://github.com/donavanbecker/homebridge-rainbird/issues/new/choose" target="_blank">Support
-            Request</a>
-      </li>
-      <li>
-         <a href="https://github.com/donavanbecker/homebridge-rainbird/blob/latest/CHANGELOG.md"
-            target="_blank">Changelog</a>
-      </li>
-      <li>
-         <a href="https://github.com/sponsors/donavanbecker" target="_blank">About Me</a>
-      </li>
-   </ul>
-   <h5>Disclaimer</h5>
-   <ul>
-      <li>
-         I am in no way affiliated with RainBird and this plugin is a personal project that I maintain in
+    <p class="text-center lead">Thank you for using
+        <strong>homebridge-rainbird</strong>
+    </p>
+    <p class="text-center">The links below will take you to our GitHub wiki</p>
+    <h5>Setup</h5>
+    <ul>
+        <li>
+            <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki" target="_blank">Wiki Home</a>
+        </li>
+        <li>
+            <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Configuration" target="_blank">Configuration</a>
+        </li>
+        <li>
+            <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Beta-Version" target="_blank">
+                Beta
+            Version
+            </a>
+        </li>
+        <li>
+            <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Node-Version" target="_blank">
+                Node
+            Version
+            </a>
+        </li>
+        <li>
+            <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Uninstallation" target="_blank">Uninstallation</a>
+        </li>
+    </ul>
+    <h5>Help/About</h5>
+    <ul>
+        <li>
+            <a href="https://github.com/donavanbecker/homebridge-rainbird/issues/new/choose" target="_blank">
+                Support
+            Request
+            </a>
+        </li>
+        <li>
+            <a href="https://github.com/donavanbecker/homebridge-rainbird/blob/latest/CHANGELOG.md" target="_blank">Changelog</a>
+        </li>
+        <li>
+            <a href="https://github.com/sponsors/donavanbecker" target="_blank">About Me</a>
+        </li>
+    </ul>
+    <h5>Disclaimer</h5>
+    <ul>
+        <li>
+            I am in no way affiliated with RainBird and this plugin is a personal project that I maintain in
          my free time.
-      </li>
-      <li>
-         Use this plugin entirely at your own risk - please see licence for more information.
-      </li>
-   </ul>
+        </li>
+        <li>
+            Use this plugin entirely at your own risk - please see licence for more information.
+        </li>
+    </ul>
 </div>
 <script>
    ; (async () => {
