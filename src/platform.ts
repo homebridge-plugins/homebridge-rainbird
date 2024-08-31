@@ -184,8 +184,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       this.debugLog(JSON.stringify(metaData))
 
       // Display device details
-      this.infoLog(`Model: ${metaData.model}, [Version: ${metaData.version}, Serial Number: ${metaData.serialNumber},`
-      + ` Zones: ${JSON.stringify(metaData.zones)}]`)
+      this.infoLog(`Model: ${metaData.model}, [Version: ${metaData.version}, Serial Number: ${metaData.serialNumber}, Zones: ${JSON.stringify(metaData.zones)}]`)
       const irrigationAccessory = this.createIrrigationSystem(device, rainbird)
       this.createLeakSensor(device, rainbird)
       for (const zoneId of metaData.zones) {
@@ -236,7 +235,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.api.updatePlatformAccessories([existingAccessory])
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        const irrigationSystem = new IrrigationSystem(this, existingAccessory, device, rainbird)
+        new IrrigationSystem(this, existingAccessory, device, rainbird)
         this.debugLog(`Irrigation System uuid: ${device.ipaddress}-${rainbird!.model}-${rainbird!.serialNumber}, (${existingAccessory.UUID})`)
         return existingAccessory
       } else {
@@ -363,8 +362,8 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         existingAccessory.displayName = valveConfigName
-          ? await this.validateAndCleanDisplayName(valveConfigName, 'configDeviceName ${name}', `${device.configDeviceName} ${name}`)
-          : await this.validateAndCleanDisplayName(name, '${name} name', name)
+          ? await this.validateAndCleanDisplayName(valveConfigName, `configDeviceName ${name}`, `${device.configDeviceName} ${name}`)
+          : await this.validateAndCleanDisplayName(name, `${name} name`, name)
         existingAccessory.context.device = device
         existingAccessory.context.deviceID = rainbird!.serialNumber
         existingAccessory.context.model = model
@@ -388,8 +387,8 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
       accessory.displayName = valveConfigName
-        ? await this.validateAndCleanDisplayName(valveConfigName, 'configDeviceName ${name}', `${device.configDeviceName} ${name}`)
-        : await this.validateAndCleanDisplayName(name, '${name} name', name)
+        ? await this.validateAndCleanDisplayName(valveConfigName, `configDeviceName ${name}`, `${device.configDeviceName} ${name}`)
+        : await this.validateAndCleanDisplayName(name, `${name} name`, name)
       accessory.context.device = device
       accessory.context.deviceID = rainbird!.serialNumber
       accessory.context.model = model
@@ -436,8 +435,8 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         existingAccessory.displayName = contactSensorConfigName
-          ? await this.validateAndCleanDisplayName(contactSensorConfigName, 'configDeviceName ${name}', contactSensorConfigName)
-          : await this.validateAndCleanDisplayName(name, '${name} name', name)
+          ? await this.validateAndCleanDisplayName(contactSensorConfigName, `configDeviceName ${name}`, contactSensorConfigName)
+          : await this.validateAndCleanDisplayName(name, `${name} name`, name)
         existingAccessory.context.device = device
         existingAccessory.context.deviceID = rainbird!.serialNumber
         existingAccessory.context.model = model
@@ -461,8 +460,8 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
       accessory.displayName = contactSensorConfigName
-        ? await this.validateAndCleanDisplayName(contactSensorConfigName, 'configDeviceName ${name}', contactSensorConfigName)
-        : await this.validateAndCleanDisplayName(name, '${name} name', name)
+        ? await this.validateAndCleanDisplayName(contactSensorConfigName, `configDeviceName ${name}`, contactSensorConfigName)
+        : await this.validateAndCleanDisplayName(name, `${name} name`, name)
       accessory.context.device = device
       accessory.context.deviceID = rainbird!.serialNumber
       accessory.context.model = model
@@ -510,8 +509,8 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         existingAccessory.displayName = programSwitchConfigName
-          ? await this.validateAndCleanDisplayName(programSwitchConfigName, 'configDeviceName ${name}', programSwitchConfigName)
-          : await this.validateAndCleanDisplayName(name, '${name} name', name)
+          ? await this.validateAndCleanDisplayName(programSwitchConfigName, `configDeviceName ${name}`, programSwitchConfigName)
+          : await this.validateAndCleanDisplayName(name, `${name} name`, name)
         existingAccessory.context.device = device
         existingAccessory.context.deviceID = rainbird!.serialNumber
         existingAccessory.context.model = model
@@ -535,8 +534,8 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
       accessory.displayName = programSwitchConfigName
-        ? await this.validateAndCleanDisplayName(programSwitchConfigName, 'configDeviceName ${name}', programSwitchConfigName)
-        : await this.validateAndCleanDisplayName(name, '${name} name', name)
+        ? await this.validateAndCleanDisplayName(programSwitchConfigName, `configDeviceName ${name}`, programSwitchConfigName)
+        : await this.validateAndCleanDisplayName(name, `${name} name`, name)
       accessory.context.device = device
       accessory.context.deviceID = rainbird!.serialNumber
       accessory.context.model = model
@@ -574,8 +573,8 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         existingAccessory.displayName = stopSwitchConfigName
-          ? await this.validateAndCleanDisplayName(stopSwitchConfigName, 'configDeviceName ${name}', stopSwitchConfigName)
-          : await this.validateAndCleanDisplayName(name, '${name} name', name)
+          ? await this.validateAndCleanDisplayName(stopSwitchConfigName, `configDeviceName ${name}`, stopSwitchConfigName)
+          : await this.validateAndCleanDisplayName(name, `${name} name`, name)
         existingAccessory.context.device = device
         existingAccessory.context.deviceID = rainbird!.serialNumber
         existingAccessory.context.model = model
@@ -598,8 +597,8 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
       accessory.displayName = stopSwitchConfigName
-        ? await this.validateAndCleanDisplayName(stopSwitchConfigName, 'configDeviceName ${name}', stopSwitchConfigName)
-        : await this.validateAndCleanDisplayName(name, '${name} name', name)
+        ? await this.validateAndCleanDisplayName(stopSwitchConfigName, `configDeviceName ${name}`, stopSwitchConfigName)
+        : await this.validateAndCleanDisplayName(name, `${name} name`, name)
       accessory.context.device = device
       accessory.context.deviceID = rainbird!.serialNumber
       accessory.context.model = model
@@ -636,8 +635,8 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         existingAccessory.displayName = delaySwitchConfigName
-          ? await this.validateAndCleanDisplayName(delaySwitchConfigName, 'configDeviceName ${name}', delaySwitchConfigName)
-          : await this.validateAndCleanDisplayName(name, '${name} name', name)
+          ? await this.validateAndCleanDisplayName(delaySwitchConfigName, `configDeviceName ${name}`, delaySwitchConfigName)
+          : await this.validateAndCleanDisplayName(name, `${name} name`, name)
         existingAccessory.context.device = device
         existingAccessory.context.deviceID = rainbird!.serialNumber
         existingAccessory.context.model = model
@@ -660,8 +659,8 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
       accessory.displayName = delaySwitchConfigName
-        ? await this.validateAndCleanDisplayName(delaySwitchConfigName, 'configDeviceName ${name}', delaySwitchConfigName)
-        : await this.validateAndCleanDisplayName(name, '${name} name', name)
+        ? await this.validateAndCleanDisplayName(delaySwitchConfigName, `configDeviceName ${name}`, delaySwitchConfigName)
+        : await this.validateAndCleanDisplayName(name, `${name} name`, name)
       accessory.context.device = device
       accessory.context.deviceID = rainbird!.serialNumber
       accessory.context.model = model
@@ -775,15 +774,12 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       const invalidStartEndPattern = /^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu
 
       if (typeof value === 'string' && !validPattern.test(value)) {
-        this.warnLog(`WARNING: The accessory '${displayName}' has an invalid '${name}' characteristic ('${value}'). Please use only alphanumeric,`
-        + ' space, and apostrophe characters. Ensure it starts and ends with an alphabetic or numeric character, and avoid emojis. This may'
-        + ' prevent the accessory from being added in the Home App or cause unresponsiveness.')
+        this.warnLog(`WARNING: The accessory '${displayName}' has an invalid '${name}' characteristic ('${value}'). Please use only alphanumeric, space, and apostrophe characters. Ensure it starts and ends with an alphabetic or numeric character, and avoid emojis. This may prevent the accessory from being added in the Home App or cause unresponsiveness.`)
 
         // Remove invalid characters
         if (invalidCharsPattern.test(value)) {
           const before = value
-          this.warnLog(`Removing invalid characters from '${name}' characteristic, if you feel this is incorrect,`
-          + ' please enable \'allowInvalidCharacter\' in the config to allow all characters')
+          this.warnLog(`Removing invalid characters from '${name}' characteristic, if you feel this is incorrect,  please enable \'allowInvalidCharacter\' in the config to allow all characters`)
           value = value.replace(invalidCharsPattern, '')
           this.warnLog(`${name} Before: '${before}' After: '${value}'`)
         }
@@ -791,8 +787,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         // Ensure it starts and ends with an alphanumeric character
         if (invalidStartEndPattern.test(value)) {
           const before = value
-          this.warnLog(`Removing invalid starting or ending characters from '${name}' characteristic, if you feel this is incorrect,`
-          + ' please enable \'allowInvalidCharacter\' in the config to allow all characters')
+          this.warnLog(`Removing invalid starting or ending characters from '${name}' characteristic, if you feel this is incorrect, please enable \'allowInvalidCharacter\' in the config to allow all characters`)
           value = value.replace(invalidStartEndPattern, '')
           this.warnLog(`${name} Before: '${before}' After: '${value}'`)
         }

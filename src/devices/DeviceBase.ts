@@ -70,8 +70,7 @@ export abstract class DeviceBase {
     this.devicePushRate = device.pushRate ?? this.config.options?.pushRate ?? 1
     accessory.context.devicePushRate = this.devicePushRate
     const pushRate = device.pushRate ? 'Device Config' : this.config.options?.pushRate ? 'Platform Config' : 'Default'
-    await this.debugLog(`Using ${refreshRate} refreshRate: ${this.deviceRefreshRate}, ${updateRate} updateRate: ${this.deviceUpdateRate},`
-    + ` ${pushRate} pushRate: ${this.devicePushRate}`)
+    await this.debugLog(`Using ${refreshRate} refreshRate: ${this.deviceRefreshRate}, ${updateRate} updateRate: ${this.deviceUpdateRate}, ${pushRate} pushRate: ${this.devicePushRate}`)
   }
 
   async getDeviceConfigSettings(accessory: PlatformAccessory, device: DevicesConfig): Promise<void> {

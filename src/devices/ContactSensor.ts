@@ -79,12 +79,10 @@ export class ContactSensor extends DeviceBase {
   async updateHomeKitCharacteristics() {
     // Valves
     if (this.contactSensor.state === undefined) {
-      await this.debugLog(`${this.constructor.name} ${this.accessory.displayName} ContactSensorState: ${this.contactSensor.state}, `
-      + `${this.accessory.context.zoneId}`)
+      await this.debugLog(`${this.constructor.name} ${this.accessory.displayName} ContactSensorState: ${this.contactSensor.state}, ${this.accessory.context.zoneId}`)
     } else {
       this.contactSensor.service.updateCharacteristic(this.hap.Characteristic.ContactSensorState, this.contactSensor.state)
-      await this.debugLog(`${this.constructor.name} ${this.accessory.displayName} ContactSensorState: ${this.contactSensor.state}, `
-      + `${this.accessory.context.zoneId}`)
+      await this.debugLog(`${this.constructor.name} ${this.accessory.displayName} ContactSensorState: ${this.contactSensor.state}, ${this.accessory.context.zoneId}`)
     }
   }
 }

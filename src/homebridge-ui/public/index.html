@@ -1,5 +1,6 @@
 <p class="text-center">
-    <img src="https://raw.githubusercontent.com/donavanbecker/homebridge-rainbird/latest/branding/Homebridge_x_Rainbird.svg" alt="homebridge-rainbird logo" style="width: 60%;">
+    <img src="https://raw.githubusercontent.com/donavanbecker/homebridge-rainbird/latest/branding/Homebridge_x_Rainbird.svg"
+        alt="homebridge-rainbird logo" style="width: 60%;">
 </p>
 <div id="pageIntro" style="display: none;">
     <p class="lead text-center">Thank you for installing
@@ -9,13 +10,7 @@
         <button type="button" class="btn btn-primary" id="introLink">Continue &rarr;</button>
     </div>
 </div>
-<div
-    id="menuWrapper"
-    class="btn-group w-100 mb-0"
-    role="group"
-    aria-label="UI Menu"
-    style="display: none;"
->
+<div id="menuWrapper" class="btn-group w-100 mb-0" role="group" aria-label="UI Menu" style="display: none;">
     <button type="button" class="btn btn-primary" id="menuSettings">
         Settings
     </button>
@@ -26,12 +21,7 @@
         Support
     </button>
 </div>
-<div
-    id="disabledBanner"
-    class="alert alert-secondary mb-0 mt-3"
-    role="alert"
-    style="display: none;"
->
+<div id="disabledBanner" class="alert alert-secondary mb-0 mt-3" role="alert" style="display: none;">
     Plugin is currently disabled
     <button id="disabledEnable" type="button" class="btn btn-link p-0 m-0 float-right">
         Enable
@@ -80,22 +70,24 @@
             <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki" target="_blank">Wiki Home</a>
         </li>
         <li>
-            <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Configuration" target="_blank">Configuration</a>
+            <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Configuration"
+                target="_blank">Configuration</a>
         </li>
         <li>
             <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Beta-Version" target="_blank">
                 Beta
-            Version
+                Version
             </a>
         </li>
         <li>
             <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Node-Version" target="_blank">
                 Node
-            Version
+                Version
             </a>
         </li>
         <li>
-            <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Uninstallation" target="_blank">Uninstallation</a>
+            <a href="https://github.com/donavanbecker/homebridge-rainbird/wiki/Uninstallation"
+                target="_blank">Uninstallation</a>
         </li>
     </ul>
     <h5>Help/About</h5>
@@ -103,11 +95,12 @@
         <li>
             <a href="https://github.com/donavanbecker/homebridge-rainbird/issues/new/choose" target="_blank">
                 Support
-            Request
+                Request
             </a>
         </li>
         <li>
-            <a href="https://github.com/donavanbecker/homebridge-rainbird/blob/latest/CHANGELOG.md" target="_blank">Changelog</a>
+            <a href="https://github.com/donavanbecker/homebridge-rainbird/blob/latest/CHANGELOG.md"
+                target="_blank">Changelog</a>
         </li>
         <li>
             <a href="https://github.com/sponsors/donavanbecker" target="_blank">About Me</a>
@@ -117,7 +110,7 @@
     <ul>
         <li>
             I am in no way affiliated with RainBird and this plugin is a personal project that I maintain in
-         my free time.
+            my free time.
         </li>
         <li>
             Use this plugin entirely at your own risk - please see licence for more information.
@@ -125,119 +118,119 @@
     </ul>
 </div>
 <script>
-   ; (async () => {
-      try {
-         const currentConfig = await homebridge.getPluginConfig()
-         showIntro = () => {
-            introLink.addEventListener('click', () => {
-               homebridge.showSpinner()
-               document.getElementById('pageIntro').style.display = 'none'
-               document.getElementById('menuWrapper').style.display = 'inline-flex'
-               showSettings()
-               homebridge.hideSpinner()
-            })
-            document.getElementById('menuWrapper').style.display = 'none'
-            document.getElementById('pageIntro').style.display = 'block'
-         }
-         showDevices = async () => {
-            homebridge.showSpinner()
-            homebridge.hideSchemaForm()
-            document.getElementById('menuHome').classList.remove('btn-elegant')
-            document.getElementById('menuHome').classList.add('btn-primary')
-            document.getElementById('menuDevices').classList.add('btn-elegant')
-            document.getElementById('menuDevices').classList.remove('btn-primary')
-            document.getElementById('menuSettings').classList.remove('btn-elegant')
-            document.getElementById('menuSettings').classList.add('btn-primary')
-            document.getElementById('pageSupport').style.display = 'none'
-            document.getElementById('pageDevices').style.display = 'block'
-            const cachedAccessories =
-               typeof homebridge.getCachedAccessories === 'function'
-                  ? await homebridge.getCachedAccessories()
-                  : await homebridge.request('/getCachedAccessories')
-            if (cachedAccessories.length > 0) {
-               cachedAccessories.sort((a, b) => {
-                  return a.displayName.toLowerCase() > b.displayName.toLowerCase()
-                     ? 1
-                     : b.displayName.toLowerCase() > a.displayName.toLowerCase()
-                        ? -1
-                        : 0
-               })
+    ; (async () => {
+        try {
+            const currentConfig = await homebridge.getPluginConfig()
+            showIntro = () => {
+                introLink.addEventListener('click', () => {
+                    homebridge.showSpinner()
+                    document.getElementById('pageIntro').style.display = 'none'
+                    document.getElementById('menuWrapper').style.display = 'inline-flex'
+                    showSettings()
+                    homebridge.hideSpinner()
+                })
+                document.getElementById('menuWrapper').style.display = 'none'
+                document.getElementById('pageIntro').style.display = 'block'
             }
-            const deviceSelect = document.getElementById('deviceSelect')
-            deviceSelect.innerHTML = ''
-            cachedAccessories.forEach(a => {
-               const option = document.createElement('option')
-               option.text = a.displayName
-               option.value = a.UUID
-               deviceSelect.add(option)
-            })
-            showDeviceInfo = async UUID => {
-               homebridge.showSpinner()
-               const thisAcc = cachedAccessories.find(x => x.UUID === UUID)
-               const context = thisAcc.context
-               document.getElementById('displayName').innerHTML = thisAcc.displayName
-               document.getElementById('deviceID').innerHTML = context.deviceID
-               document.getElementById('model').innerHTML = context.model
-               document.getElementById('FirmwareRevision').innerHTML = context.FirmwareRevision || 'N/A'
-               document.getElementById('deviceTable').style.display = 'inline-table'
-               homebridge.hideSpinner()
+            showDevices = async () => {
+                homebridge.showSpinner()
+                homebridge.hideSchemaForm()
+                document.getElementById('menuHome').classList.remove('btn-elegant')
+                document.getElementById('menuHome').classList.add('btn-primary')
+                document.getElementById('menuDevices').classList.add('btn-elegant')
+                document.getElementById('menuDevices').classList.remove('btn-primary')
+                document.getElementById('menuSettings').classList.remove('btn-elegant')
+                document.getElementById('menuSettings').classList.add('btn-primary')
+                document.getElementById('pageSupport').style.display = 'none'
+                document.getElementById('pageDevices').style.display = 'block'
+                const cachedAccessories =
+                    typeof homebridge.getCachedAccessories === 'function'
+                        ? await homebridge.getCachedAccessories()
+                        : await homebridge.request('/getCachedAccessories')
+                if (cachedAccessories.length > 0) {
+                    cachedAccessories.sort((a, b) => {
+                        return a.displayName.toLowerCase() > b.displayName.toLowerCase()
+                            ? 1
+                            : b.displayName.toLowerCase() > a.displayName.toLowerCase()
+                                ? -1
+                                : 0
+                    })
+                }
+                const deviceSelect = document.getElementById('deviceSelect')
+                deviceSelect.innerHTML = ''
+                cachedAccessories.forEach(a => {
+                    const option = document.createElement('option')
+                    option.text = a.displayName
+                    option.value = a.UUID
+                    deviceSelect.add(option)
+                })
+                showDeviceInfo = async UUID => {
+                    homebridge.showSpinner()
+                    const thisAcc = cachedAccessories.find(x => x.UUID === UUID)
+                    const context = thisAcc.context
+                    document.getElementById('displayName').innerHTML = thisAcc.displayName
+                    document.getElementById('deviceID').innerHTML = context.deviceID
+                    document.getElementById('model').innerHTML = context.model
+                    document.getElementById('FirmwareRevision').innerHTML = context.FirmwareRevision || 'N/A'
+                    document.getElementById('deviceTable').style.display = 'inline-table'
+                    homebridge.hideSpinner()
+                }
+                deviceSelect.addEventListener('change', event => showDeviceInfo(event.target.value))
+                if (cachedAccessories.length > 0) {
+                    showDeviceInfo(cachedAccessories[0].UUID)
+                } else {
+                    const option = document.createElement('option')
+                    option.text = 'No Devices'
+                    deviceSelect.add(option)
+                    deviceSelect.disabled = true
+                }
+                homebridge.hideSpinner()
             }
-            deviceSelect.addEventListener('change', event => showDeviceInfo(event.target.value))
-            if (cachedAccessories.length > 0) {
-               showDeviceInfo(cachedAccessories[0].UUID)
+            showSupport = () => {
+                homebridge.showSpinner()
+                homebridge.hideSchemaForm()
+                document.getElementById('menuHome').classList.add('btn-elegant')
+                document.getElementById('menuHome').classList.remove('btn-primary')
+                document.getElementById('menuDevices').classList.remove('btn-elegant')
+                document.getElementById('menuDevices').classList.add('btn-primary')
+                document.getElementById('menuSettings').classList.remove('btn-elegant')
+                document.getElementById('menuSettings').classList.add('btn-primary')
+                document.getElementById('pageSupport').style.display = 'block'
+                document.getElementById('pageDevices').style.display = 'none'
+                homebridge.hideSpinner()
+            }
+            showSettings = () => {
+                homebridge.showSpinner()
+                document.getElementById('menuHome').classList.remove('btn-elegant')
+                document.getElementById('menuHome').classList.add('btn-primary')
+                document.getElementById('menuDevices').classList.remove('btn-elegant')
+                document.getElementById('menuDevices').classList.add('btn-primary')
+                document.getElementById('menuSettings').classList.add('btn-elegant')
+                document.getElementById('menuSettings').classList.remove('btn-primary')
+                document.getElementById('pageSupport').style.display = 'none'
+                document.getElementById('pageDevices').style.display = 'none'
+                homebridge.showSchemaForm()
+                homebridge.hideSpinner()
+            }
+            showDisabledBanner = () => {
+                document.getElementById('disabledBanner').style.display = 'block'
+            }
+            menuHome.addEventListener('click', () => showSupport())
+            menuDevices.addEventListener('click', () => showDevices())
+            menuSettings.addEventListener('click', () => showSettings())
+            disabledEnable.addEventListener('click', () => enablePlugin())
+            if (currentConfig.length) {
+                document.getElementById('menuWrapper').style.display = 'inline-flex'
+                showSettings()
             } else {
-               const option = document.createElement('option')
-               option.text = 'No Devices'
-               deviceSelect.add(option)
-               deviceSelect.disabled = true
+                currentConfig.push({ name: 'RainBird' })
+                await homebridge.updatePluginConfig(currentConfig)
+                showIntro()
             }
+        } catch (err) {
+            homebridge.toast.error(err.message, 'Error')
+        } finally {
             homebridge.hideSpinner()
-         }
-         showSupport = () => {
-            homebridge.showSpinner()
-            homebridge.hideSchemaForm()
-            document.getElementById('menuHome').classList.add('btn-elegant')
-            document.getElementById('menuHome').classList.remove('btn-primary')
-            document.getElementById('menuDevices').classList.remove('btn-elegant')
-            document.getElementById('menuDevices').classList.add('btn-primary')
-            document.getElementById('menuSettings').classList.remove('btn-elegant')
-            document.getElementById('menuSettings').classList.add('btn-primary')
-            document.getElementById('pageSupport').style.display = 'block'
-            document.getElementById('pageDevices').style.display = 'none'
-            homebridge.hideSpinner()
-         }
-         showSettings = () => {
-            homebridge.showSpinner()
-            document.getElementById('menuHome').classList.remove('btn-elegant')
-            document.getElementById('menuHome').classList.add('btn-primary')
-            document.getElementById('menuDevices').classList.remove('btn-elegant')
-            document.getElementById('menuDevices').classList.add('btn-primary')
-            document.getElementById('menuSettings').classList.add('btn-elegant')
-            document.getElementById('menuSettings').classList.remove('btn-primary')
-            document.getElementById('pageSupport').style.display = 'none'
-            document.getElementById('pageDevices').style.display = 'none'
-            homebridge.showSchemaForm()
-            homebridge.hideSpinner()
-         }
-         showDisabledBanner = () => {
-            document.getElementById('disabledBanner').style.display = 'block'
-         }
-         menuHome.addEventListener('click', () => showSupport())
-         menuDevices.addEventListener('click', () => showDevices())
-         menuSettings.addEventListener('click', () => showSettings())
-         disabledEnable.addEventListener('click', () => enablePlugin())
-         if (currentConfig.length) {
-            document.getElementById('menuWrapper').style.display = 'inline-flex'
-            showSettings()
-         } else {
-            currentConfig.push({ name: 'RainBird' })
-            await homebridge.updatePluginConfig(currentConfig)
-            showIntro()
-         }
-      } catch (err) {
-         homebridge.toast.error(err.message, 'Error')
-      } finally {
-         homebridge.hideSpinner()
-      }
-   })()
+        }
+    })()
 </script>
