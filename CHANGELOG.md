@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [2.1.1](https://github.com/donavanbecker/homebridge-rainbird/releases/tag/v2.1.1) (2024-09-13)
+
+### What's Changed
+- Fixed an issue with password field not displaying in UI.
+- Housekeeping and updated dependencies.
+
+**Full Changelog**: https://github.com/donavanbecker/homebridge-rainbird/compare/v2.1.0...v2.1.1
+
 ## [2.1.0](https://github.com/donavanbecker/homebridge-rainbird/releases/tag/v2.1.0) (2024-08-31)
 
 ### What's Changed

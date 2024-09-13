@@ -301,6 +301,7 @@
           "items": [
             "devices[].configDeviceName",
             "devices[].ipaddress",
+            "devices[].password",
             "devices[].external",
             "devices[].showRainSensor",
             "devices[].showValveSensor",

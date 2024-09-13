@@ -141,7 +141,8 @@ export class IrrigationSystem extends DeviceBase {
       // Add Valve Service's Characteristics
       this.valves
         .get(zone)!
-        .service.setCharacteristic(this.hap.Characteristic.Name, name)
+        .service
+        .setCharacteristic(this.hap.Characteristic.Name, name)
         .setCharacteristic(this.hap.Characteristic.Active, this.valves.get(zone)!.Active)
         .setCharacteristic(this.hap.Characteristic.InUse, this.valves.get(zone)!.InUse)
         .setCharacteristic(this.hap.Characteristic.ValveType, this.hap.Characteristic.ValveType.IRRIGATION)
@@ -158,7 +159,8 @@ export class IrrigationSystem extends DeviceBase {
 
       this.valves
         .get(zone)!
-        .service.getCharacteristic(this.hap.Characteristic.Active)
+        .service
+        .getCharacteristic(this.hap.Characteristic.Active)
         .onGet(() => {
           this.rainbird!.refreshStatus()
           return this.valves.get(zone)!.Active
@@ -167,7 +169,8 @@ export class IrrigationSystem extends DeviceBase {
 
       this.valves
         .get(zone)!
-        .service.getCharacteristic(this.hap.Characteristic.InUse)
+        .service
+        .getCharacteristic(this.hap.Characteristic.InUse)
         .onGet(() => {
           this.rainbird!.refreshStatus()
           return this.valves.get(zone)!.InUse
@@ -175,7 +178,8 @@ export class IrrigationSystem extends DeviceBase {
 
       this.valves
         .get(zone)!
-        .service.getCharacteristic(this.hap.Characteristic.IsConfigured)
+        .service
+        .getCharacteristic(this.hap.Characteristic.IsConfigured)
         .onGet(() => {
           return this.valves.get(zone)!.service.getCharacteristic(this.hap.Characteristic.IsConfigured).value
         })
@@ -183,21 +187,24 @@ export class IrrigationSystem extends DeviceBase {
 
       this.valves
         .get(zone)!
-        .service.getCharacteristic(this.hap.Characteristic.StatusFault)
+        .service
+        .getCharacteristic(this.hap.Characteristic.StatusFault)
         .onGet(() => {
           return this.valves.get(zone)!.service.getCharacteristic(this.hap.Characteristic.StatusFault).value
         })
 
       this.valves
         .get(zone)!
-        .service.getCharacteristic(this.hap.Characteristic.ValveType)
+        .service
+        .getCharacteristic(this.hap.Characteristic.ValveType)
         .onGet(() => {
           return this.valves.get(zone)!.service.getCharacteristic(this.hap.Characteristic.ValveType).value
         })
 
       this.valves
         .get(zone)!
-        .service.getCharacteristic(this.hap.Characteristic.SetDuration)
+        .service
+        .getCharacteristic(this.hap.Characteristic.SetDuration)
         .onGet(() => {
           return Number(this.accessory.context.duration[zone])
         })
@@ -205,7 +212,8 @@ export class IrrigationSystem extends DeviceBase {
 
       this.valves
         .get(zone)!
-        .service.getCharacteristic(this.hap.Characteristic.RemainingDuration)
+        .service
+        .getCharacteristic(this.hap.Characteristic.RemainingDuration)
         .setProps({
           minValue: device.minValueRemainingDuration,
           maxValue: device.maxValueRemainingDuration,
