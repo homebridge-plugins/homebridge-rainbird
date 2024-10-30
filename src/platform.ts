@@ -9,7 +9,7 @@ import type { DevicesConfig, RainbirdPlatformConfig } from './settings.js'
 import { readFileSync } from 'node:fs'
 import process from 'node:process'
 
-import { EventType, LogLevel, RainBirdService } from 'rainbird'
+import { LogLevel, RainBirdService } from 'rainbird'
 
 import { ContactSensor } from './devices/ContactSensor.js'
 import { DelayIrrigationSwitch } from './devices/DelayIrrigationSwitch.js'
@@ -168,16 +168,20 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         showRequestResponse: device.showRequestResponse!,
         syncTime: device.syncTime!,
       })
-      rainbird.on(EventType.LOG, (level: LogLevel, message: string) => {
-        const logMethods = {
-          [LogLevel.INFO]: this.infoLog,
-          [LogLevel.WARN]: this.warnLog,
-          [LogLevel.ERROR]: this.errorLog,
-          [LogLevel.DEBUG]: this.debugLog,
-        }
-        const logMethod = logMethods[level]
-        if (logMethod) {
-          logMethod.call(this, message)
+      // Listen for log events
+      rainbird.on('log', (log) => {
+        switch (log.level) {
+          case LogLevel.ERROR:
+            this.errorLog(log.message)
+            break
+          case LogLevel.WARN:
+            this.warnLog(log.message)
+            break
+          case LogLevel.DEBUG:
+            this.debugLog(log.message)
+            break
+          default:
+            this.infoLog(log.message)
         }
       })
       const metaData = await rainbird.init()
@@ -747,15 +751,19 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  async getVersion() {
-    const json = JSON.parse(
-      readFileSync(
-        new URL('../package.json', import.meta.url),
-        'utf-8',
-      ),
-    )
-    this.debugLog(`Plugin Version: ${json.version}`)
-    this.version = json.version
+  /**
+   * Asynchronously retrieves the version of the plugin from the package.json file.
+   *
+   * This method reads the package.json file located in the parent directory,
+   * parses its content to extract the version, and logs the version using the debug logger.
+   * The extracted version is then assigned to the `version` property of the class.
+   *
+   * @returns {Promise<void>} A promise that resolves when the version has been retrieved and logged.
+   */
+  async getVersion(): Promise<void> {
+    const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8'))
+    this.debugLog(`Plugin Version: ${version}`)
+    this.version = version
   }
 
   /**

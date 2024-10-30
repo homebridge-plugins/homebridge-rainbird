@@ -3,8 +3,6 @@ name: Node-CI Beta
 on:
   push:
     branches: [beta-*.*.*, beta]
-  release:
-    types: [prereleased]
   workflow_dispatch:
 
 jobs:
@@ -21,7 +19,7 @@ jobs:
   publish:
     needs: lint
 
-    if: ${{ github.repository == 'donavanbecker/homebridge-rainbird' }}
+    if: ${{ github.repository == 'homebridge-plugins/homebridge-rainbird' }}
 
     uses: donavanbecker/.github/.github/workflows/npm-publish.yml@latest
     with:
@@ -32,13 +30,26 @@ jobs:
     secrets:
       npm_auth_token: ${{ secrets.npm_token }}
 
-  github-releases-to-discord:
+  pre-release:
     needs: publish
-
-    if: ${{ github.repository == 'donavanbecker/homebridge-rainbird' && github.event.release.prerelease == true }}
-
-    uses: OpenWonderLabs/.github/.github/workflows/discord-webhooks.yml@latest
+    if: ${{ github.repository == 'homebridge-plugins/homebridge-rainbird' }}
+    uses: homebridge/.github/.github/workflows/pre-release.yml@latest
     with:
-      footer_title: "RainBird"
+      npm_version: ${{ needs.publish.outputs.NPM_VERSION }}
+      body: |
+        **Beta Release**
+        **Version**: v${{ needs.publish.outputs.NPM_VERSION }}
+        [How To Test Beta Releases](https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Beta-Version)
+
+  github-releases-to-discord:
+    name: Discord Webhooks
+    needs: [build_and_test,publish]
+    if: ${{ github.repository == 'homebridge-plugins/homebridge-rainbird' }}
+    uses: homebridge/.github/.github/workflows/discord-webhooks.yml@latest
+    with:
+      title: "RainBird Beta Release"
+      description: |
+        Version `v${{ needs.publish.outputs.NPM_VERSION }}`
+      url: "https://github.com/homebridge-plugins/homebridge-rainbird/releases/tag/v${{ needs.publish.outputs.NPM_VERSION }}"
     secrets:
-      DISCORD_WEBHOOK_URL_BETA: ${{ secrets.DISCORD_WEBHOOK_URL_BETA }}
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL_BETA || secrets.DISCORD_WEBHOOK_URL_LATEST }}

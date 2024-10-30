@@ -4,5 +4,5 @@ contact_links:
     url: https://discord.gg/peABghgtaV
     about: Please ask and answer questions here.
   - name: Homebridge-Rainbrid - Pull Requests
-    url: https://github.com/donavanbecker/homebridge-rainbird/pulls
+    url: https://github.com/homebridge-plugins/homebridge-rainbird/pulls
     about: Please report security vulnerabilities here.
