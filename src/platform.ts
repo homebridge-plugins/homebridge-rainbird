@@ -7,7 +7,7 @@ import type { API, DynamicPlatformPlugin, HAP, Logging, PlatformAccessory } from
 import type { DevicesConfig, RainbirdPlatformConfig } from './settings.js'
 
 import { readFileSync } from 'node:fs'
-import process from 'node:process'
+import { argv } from 'node:process'
 
 import { LogLevel, RainBirdService } from 'rainbird'
 
@@ -728,7 +728,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   }
 
   async platformLogs() {
-    this.debugMode = process.argv.includes('-D') || process.argv.includes('--debug')
+    this.debugMode = argv.includes('-D') || argv.includes('--debug')
     this.platformLogging = this.config.options?.logging ?? 'standard'
     if (this.config.options?.logging === 'debug' || this.config.options?.logging === 'standard' || this.config.options?.logging === 'none') {
       this.platformLogging = this.config.options.logging
