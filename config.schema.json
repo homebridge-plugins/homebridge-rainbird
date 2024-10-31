@@ -24,7 +24,7 @@
             "configDeviceName": {
               "title": "Device Name",
               "type": "string",
-              "pattern": "^[\\p{L}\\p{N}]+([\\p{L}\\p{N} ']*[\\p{L}\\p{N}])?$",
+              "pattern": "^[a-zA-Z0-9]+([a-zA-Z0-9 ]*[a-zA-Z0-9]+)?$",
               "placeholder": "RainBird Controller"
             },
             "ipaddress": {
