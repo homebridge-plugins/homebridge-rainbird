@@ -32,10 +32,11 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   protected readonly hap: HAP
   public config!: RainbirdPlatformConfig
 
-  public sensorData = []
-
-  platformConfig!: RainbirdPlatformConfig['options']
+  platformConfig!: RainbirdPlatformConfig
   platformLogging!: RainbirdPlatformConfig['logging']
+  platformRefreshRate!: RainbirdPlatformConfig['refreshRate']
+  platformPushRate!: RainbirdPlatformConfig['pushRate']
+  platformUpdateRate!: RainbirdPlatformConfig['updateRate']
   debugMode!: boolean
   version!: string
 
@@ -55,20 +56,25 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     // Plugin options into our config variables.
     this.config = {
-      platform: 'RainbirdPlatform',
+      platform: 'Rainbird',
       name: config.name,
       devices: config.devices,
       options: config.options,
     }
-    this.platformConfigOptions()
-    this.platformLogs()
+
+    // Plugin Configuration
+    this.getPlatformConfigSettings()
+    this.getPlatformRateSettings()
+    this.getPlatformLogSettings()
     this.getVersion()
+
+    // Finish initializing the platform
     this.debugLog(`Finished initializing platform: ${config.name}`);
 
     // verify the config
     (async () => {
       try {
-        await this.verifyConfig()
+        this.verifyConfig()
         this.debugLog('Config OK')
       } catch (e: any) {
         this.errorLog(`Verify Config, Error Message: ${e.message}, Submit Bugs Here: https://bit.ly/homebridge-rainbird-bug-report`)
@@ -705,50 +711,42 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     this.warnLog(`Removing existing accessory from cache: ${existingAccessory.displayName}`)
   }
 
-  async platformConfigOptions() {
-    const platformConfig: RainbirdPlatformConfig['options'] = {}
+  async getPlatformConfigSettings() {
     if (this.config.options) {
-      if (this.config.options.logging) {
-        platformConfig.logging = this.config.options.logging
+      const platformConfig: RainbirdPlatformConfig = {
+        platform: 'Rainbird',
       }
-      if (this.config.options.refreshRate) {
-        platformConfig.refreshRate = this.config.options.refreshRate
-      }
-      if (this.config.options.pushRate) {
-        platformConfig.pushRate = this.config.options.pushRate
-      }
-      if (this.config.options?.hide_device) {
-        platformConfig.hide_device = this.config.options.hide_device
-      }
+      platformConfig.logging = this.config.options.logging ? this.config.options.logging : undefined
+      platformConfig.refreshRate = this.config.options.refreshRate ? this.config.options.refreshRate : undefined
+      platformConfig.updateRate = this.config.options.updateRate ? this.config.options.updateRate : undefined
+      platformConfig.pushRate = this.config.options.pushRate ? this.config.options.pushRate : undefined
       if (Object.entries(platformConfig).length !== 0) {
-        this.debugLog(`Platform Config: ${JSON.stringify(platformConfig)}`)
+        await this.debugLog(`Platform Config: ${JSON.stringify(platformConfig)}`)
       }
       this.platformConfig = platformConfig
     }
   }
 
-  async platformLogs() {
-    this.debugMode = argv.includes('-D') || argv.includes('--debug')
-    this.platformLogging = this.config.options?.logging ?? 'standard'
-    if (this.config.options?.logging === 'debug' || this.config.options?.logging === 'standard' || this.config.options?.logging === 'none') {
-      this.platformLogging = this.config.options.logging
-      if (await this.loggingIsDebug()) {
-        this.debugWarnLog(`Using Config Logging: ${this.platformLogging}`)
-      }
-    } else if (this.debugMode) {
-      this.platformLogging = 'debugMode'
-      if (await this.loggingIsDebug()) {
-        this.debugWarnLog(`Using ${this.platformLogging} Logging`)
-      }
-    } else {
-      this.platformLogging = 'standard'
-      if (await this.loggingIsDebug()) {
-        this.debugWarnLog(`Using ${this.platformLogging} Logging`)
-      }
-    }
-    if (this.debugMode) {
-      this.platformLogging = 'debugMode'
-    }
+  async getPlatformRateSettings() {
+    this.platformRefreshRate = this.config.options?.refreshRate ? this.config.options.refreshRate : 0
+    const refreshRate = this.config.options?.refreshRate ? 'Using Platform Config refreshRate' : 'refreshRate Disabled by Default'
+    await this.debugLog(`${refreshRate}: ${this.platformRefreshRate}`)
+    this.platformUpdateRate = this.config.options?.updateRate ? this.config.options.updateRate : 1
+    const updateRate = this.config.options?.updateRate ? 'Using Platform Config updateRate' : 'Using Default updateRate'
+    await this.debugLog(`${updateRate}: ${this.platformUpdateRate}`)
+    this.platformPushRate = this.config.options?.pushRate ? this.config.options.pushRate : 1
+    const pushRate = this.config.options?.pushRate ? 'Using Platform Config pushRate' : 'Using Default pushRate'
+    await this.debugLog(`${pushRate}: ${this.platformPushRate}`)
+  }
+
+  async getPlatformLogSettings() {
+    this.debugMode = argv.includes('-D') ?? argv.includes('--debug')
+    this.platformLogging = (this.config.options?.logging === 'debug' || this.config.options?.logging === 'standard'
+      || this.config.options?.logging === 'none')
+      ? this.config.options.logging
+      : this.debugMode ? 'debugMode' : 'standard'
+    const logging = this.config.options?.logging ? 'Platform Config' : this.debugMode ? 'debugMode' : 'Default'
+    await this.debugLog(`Using ${logging} Logging: ${this.platformLogging}`)
   }
 
   /**
@@ -859,10 +857,10 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
   async debugLog(...log: any[]): Promise<void> {
     if (await this.enablingPlatformLogging()) {
-      if (this.platformLogging === 'debug') {
-        this.log.info('[DEBUG]', String(...log))
-      } else if (this.platformLogging === 'debugMode') {
+      if (this.platformLogging === 'debugMode') {
         this.log.debug(String(...log))
+      } else if (this.platformLogging === 'debug') {
+        this.log.info('[DEBUG]', String(...log))
       }
     }
   }

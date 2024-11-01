@@ -23,6 +23,7 @@ export interface DevicesConfig {
   configDeviceName?: string
   ipaddress?: IPAddress
   password?: string
+  hide_device?: boolean
   showRainSensor?: boolean
   showValveSensor?: boolean
   showProgramASwitch?: boolean
@@ -52,6 +53,5 @@ export interface options {
   refreshRate?: number
   updateRate?: number
   pushRate?: number
-  hide_device?: string[]
   logging?: string
 }
