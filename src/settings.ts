@@ -45,7 +45,6 @@ export interface DevicesConfig {
   updateRate?: number
   pushRate?: number
   logging?: string
-  delete?: boolean
 }
 
 export interface options {

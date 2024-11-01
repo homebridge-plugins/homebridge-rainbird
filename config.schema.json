@@ -203,7 +203,7 @@
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
               }
             },
-            "delete": {
+            "hide_device": {
               "title": "Delete Device",
               "type": "boolean",
               "description": "DO NOT USE, UNLESS YOU WANT TO DELETE THIS DEVICE FROM CACHE.",
@@ -304,6 +304,7 @@
             "devices[].configDeviceName",
             "devices[].ipaddress",
             "devices[].password",
+            "devices[].hide_device",
             "devices[].external",
             "devices[].showRainSensor",
             "devices[].showValveSensor",
@@ -322,8 +323,7 @@
             "devices[].showRequestResponse",
             "devices[].firmware",
             "devices[].refreshRate",
-            "devices[].logging",
-            "devices[].delete"
+            "devices[].logging"
           ]
         }
       ]

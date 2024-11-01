@@ -231,7 +231,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!device.delete) {
+      if (!device.hide_device) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
@@ -251,7 +251,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.delete) {
+    } else if (!device.hide_device) {
       // the accessory does not yet exist, so we need to create it
       this.infoLog(`Adding new accessory: ${rainbird!.model}`)
 
@@ -294,7 +294,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!device.delete && device.showRainSensor) {
+      if (!device.hide_device && device.showRainSensor) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
@@ -313,7 +313,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.delete && device.showRainSensor) {
+    } else if (!device.hide_device && device.showRainSensor) {
       // the accessory does not yet exist, so we need to create it
       this.infoLog(`Adding new accessory: ${model}`)
 
@@ -361,7 +361,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const irrigationAccessory = this.accessories.find(accessory => accessory.UUID === irrigationUuid)
 
     const includeZones = device.includeZones!.split(',').map(Number)
-    const registerZoneValve = !device.delete
+    const registerZoneValve = !device.hide_device
       && device.showZoneValve
       && (includeZones.includes(0) || includeZones.includes(zoneId))
 
@@ -440,7 +440,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!device.delete && device.showValveSensor) {
+      if (!device.hide_device && device.showValveSensor) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
@@ -460,7 +460,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.delete && device.showValveSensor) {
+    } else if (!device.hide_device && device.showValveSensor) {
       // the accessory does not yet exist, so we need to create it
       this.infoLog(`Adding new accessory: ${model}`)
 
@@ -514,7 +514,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!device.delete && showProgramSwitch) {
+      if (!device.hide_device && showProgramSwitch) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
@@ -534,7 +534,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.delete && showProgramSwitch) {
+    } else if (!device.hide_device && showProgramSwitch) {
       // the accessory does not yet exist, so we need to create it
       this.infoLog(`Adding new accessory: ${model}`)
 
@@ -578,7 +578,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!device.delete && device.showStopIrrigationSwitch) {
+      if (!device.hide_device && device.showStopIrrigationSwitch) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
@@ -597,7 +597,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.delete && device.showStopIrrigationSwitch) {
+    } else if (!device.hide_device && device.showStopIrrigationSwitch) {
       // the accessory does not yet exist, so we need to create it
       this.infoLog(`Adding new accessory: ${model}`)
 
@@ -640,7 +640,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!device.delete && device.showDelayIrrigationSwitch) {
+      if (!device.hide_device && device.showDelayIrrigationSwitch) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
@@ -659,7 +659,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.delete && device.showDelayIrrigationSwitch) {
+    } else if (!device.hide_device && device.showDelayIrrigationSwitch) {
       // the accessory does not yet exist, so we need to create it
       this.infoLog(`Adding new accessory: ${model}`)
 
