@@ -5,7 +5,7 @@
   "customUi": true,
   "customUiPath": "./dist/homebridge-ui",
   "headerDisplay": "The Homebridge [RainBird](https://rainbird.com) plugin allows you to access your RainBird Controller from HomeKit with [Homebridge](https://homebridge.io).",
-  "footerDisplay": "Your RainBird account has been linked. Please raise any issues on our [project page](https://github.com/donavanbecker/homebridge-rainbird/issues).\n\nIf you would like to have other features added to this plugin fill out [Feature Request Form](https://github.com/donavanbecker/homebridge-rainbird/issues/new?assignees=&labels=&template=feature_request.md).",
+  "footerDisplay": "Your RainBird account has been linked. Please raise any issues on our [project page](https://github.com/homebridge-plugins/homebridge-rainbird/issues).\n\nIf you would like to have other features added to this plugin fill out [Feature Request Form](https://github.com/homebridge-plugins/homebridge-rainbird/issues/new?assignees=&labels=&template=feature_request.md).",
   "schema": {
     "type": "object",
     "properties": {
@@ -24,6 +24,7 @@
             "configDeviceName": {
               "title": "Device Name",
               "type": "string",
+              "pattern": "^[a-zA-Z0-9]+([a-zA-Z0-9 ]*[a-zA-Z0-9]+)?$",
               "placeholder": "RainBird Controller"
             },
             "ipaddress": {
@@ -31,6 +32,7 @@
               "description": "The device's Static IP address. Recommended to set this device's IP with a Static IP.",
               "type": "string",
               "format": "ipv4",
+              "pattern": "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$",
               "placeholder": "192.168.1.1",
               "required": true
             },
@@ -201,7 +203,7 @@
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
               }
             },
-            "delete": {
+            "hide_device": {
               "title": "Delete Device",
               "type": "boolean",
               "description": "DO NOT USE, UNLESS YOU WANT TO DELETE THIS DEVICE FROM CACHE.",
@@ -302,6 +304,7 @@
             "devices[].configDeviceName",
             "devices[].ipaddress",
             "devices[].password",
+            "devices[].hide_device",
             "devices[].external",
             "devices[].showRainSensor",
             "devices[].showValveSensor",
@@ -320,8 +323,7 @@
             "devices[].showRequestResponse",
             "devices[].firmware",
             "devices[].refreshRate",
-            "devices[].logging",
-            "devices[].delete"
+            "devices[].logging"
           ]
         }
       ]

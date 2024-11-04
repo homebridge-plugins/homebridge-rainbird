@@ -51,25 +51,25 @@ export abstract class DeviceBase {
   }
 
   async getDeviceLogSettings(accessory: PlatformAccessory, device: DevicesConfig): Promise<void> {
-    this.deviceLogging = this.platform.debugMode ? 'debugMode' : device.logging ?? this.config.logging ?? 'standard'
-    const logging = this.platform.debugMode ? 'Debug Mode' : device.logging ? 'Device Config' : this.config.logging ? 'Platform Config' : 'Default'
+    this.deviceLogging = this.platform.debugMode ? 'debugMode' : device.logging ?? this.platform.platformLogging ?? 'standard'
+    const logging = this.platform.debugMode ? 'Debug Mode' : device.logging ? 'Device Config' : this.platform.platformLogging ? 'Platform Config' : 'Default'
     accessory.context.deviceLogging = this.deviceLogging
     await this.debugLog(`Using ${logging} Logging: ${this.deviceLogging}`)
   }
 
   async getDeviceRateSettings(accessory: PlatformAccessory, device: DevicesConfig): Promise<void> {
     // refreshRate
-    this.deviceRefreshRate = device.refreshRate ?? this.config.options?.refreshRate ?? 1800
+    this.deviceRefreshRate = device.refreshRate ?? this.platform.platformRefreshRate ?? 1800
     accessory.context.deviceRefreshRate = this.deviceRefreshRate
-    const refreshRate = device.refreshRate ? 'Device Config' : this.config.options?.refreshRate ? 'Platform Config' : 'Default'
+    const refreshRate = device.refreshRate ? 'Device Config' : this.platform.platformRefreshRate ? 'Platform Config' : 'Default'
     // updateRate
-    this.deviceUpdateRate = device.updateRate ?? this.config.options?.updateRate ?? 5
+    this.deviceUpdateRate = device.updateRate ?? this.platform.platformUpdateRate ?? 5
     accessory.context.deviceUpdateRate = this.deviceUpdateRate
-    const updateRate = device.updateRate ? 'Device Config' : this.config.options?.updateRate ? 'Platform Config' : 'Default'
+    const updateRate = device.updateRate ? 'Device Config' : this.platform.platformUpdateRate ? 'Platform Config' : 'Default'
     // pushRate
-    this.devicePushRate = device.pushRate ?? this.config.options?.pushRate ?? 1
+    this.devicePushRate = device.pushRate ?? this.platform.platformPushRate ?? 1
     accessory.context.devicePushRate = this.devicePushRate
-    const pushRate = device.pushRate ? 'Device Config' : this.config.options?.pushRate ? 'Platform Config' : 'Default'
+    const pushRate = device.pushRate ? 'Device Config' : this.platform.platformPushRate ? 'Platform Config' : 'Default'
     await this.debugLog(`Using ${refreshRate} refreshRate: ${this.deviceRefreshRate}, ${updateRate} updateRate: ${this.deviceUpdateRate}, ${pushRate} pushRate: ${this.devicePushRate}`)
   }
 

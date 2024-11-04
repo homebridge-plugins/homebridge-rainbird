@@ -7,9 +7,9 @@ import type { API, DynamicPlatformPlugin, HAP, Logging, PlatformAccessory } from
 import type { DevicesConfig, RainbirdPlatformConfig } from './settings.js'
 
 import { readFileSync } from 'node:fs'
-import process from 'node:process'
+import { argv } from 'node:process'
 
-import { EventType, LogLevel, RainBirdService } from 'rainbird'
+import { LogLevel, RainBirdService } from 'rainbird'
 
 import { ContactSensor } from './devices/ContactSensor.js'
 import { DelayIrrigationSwitch } from './devices/DelayIrrigationSwitch.js'
@@ -32,10 +32,11 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   protected readonly hap: HAP
   public config!: RainbirdPlatformConfig
 
-  public sensorData = []
-
-  platformConfig!: RainbirdPlatformConfig['options']
+  platformConfig!: RainbirdPlatformConfig
   platformLogging!: RainbirdPlatformConfig['logging']
+  platformRefreshRate!: RainbirdPlatformConfig['refreshRate']
+  platformPushRate!: RainbirdPlatformConfig['pushRate']
+  platformUpdateRate!: RainbirdPlatformConfig['updateRate']
   debugMode!: boolean
   version!: string
 
@@ -55,20 +56,25 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     // Plugin options into our config variables.
     this.config = {
-      platform: 'RainbirdPlatform',
+      platform: 'Rainbird',
       name: config.name,
       devices: config.devices,
       options: config.options,
     }
-    this.platformConfigOptions()
-    this.platformLogs()
+
+    // Plugin Configuration
+    this.getPlatformLogSettings()
+    this.getPlatformRateSettings()
+    this.getPlatformConfigSettings()
     this.getVersion()
+
+    // Finish initializing the platform
     this.debugLog(`Finished initializing platform: ${config.name}`);
 
     // verify the config
     (async () => {
       try {
-        await this.verifyConfig()
+        this.verifyConfig()
         this.debugLog('Config OK')
       } catch (e: any) {
         this.errorLog(`Verify Config, Error Message: ${e.message}, Submit Bugs Here: https://bit.ly/homebridge-rainbird-bug-report`)
@@ -168,16 +174,20 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         showRequestResponse: device.showRequestResponse!,
         syncTime: device.syncTime!,
       })
-      rainbird.on(EventType.LOG, (level: LogLevel, message: string) => {
-        const logMethods = {
-          [LogLevel.INFO]: this.infoLog,
-          [LogLevel.WARN]: this.warnLog,
-          [LogLevel.ERROR]: this.errorLog,
-          [LogLevel.DEBUG]: this.debugLog,
-        }
-        const logMethod = logMethods[level]
-        if (logMethod) {
-          logMethod.call(this, message)
+      // Listen for log events
+      rainbird.on('log', (log) => {
+        switch (log.level) {
+          case LogLevel.ERROR:
+            this.errorLog(log.message)
+            break
+          case LogLevel.WARN:
+            this.warnLog(log.message)
+            break
+          case LogLevel.DEBUG:
+            this.debugLog(log.message)
+            break
+          default:
+            this.infoLog(log.message)
         }
       })
       const metaData = await rainbird.init()
@@ -221,7 +231,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!device.delete) {
+      if (!device.hide_device) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
@@ -241,7 +251,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.delete) {
+    } else if (!device.hide_device) {
       // the accessory does not yet exist, so we need to create it
       this.infoLog(`Adding new accessory: ${rainbird!.model}`)
 
@@ -284,7 +294,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!device.delete && device.showRainSensor) {
+      if (!device.hide_device && device.showRainSensor) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
@@ -303,7 +313,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.delete && device.showRainSensor) {
+    } else if (!device.hide_device && device.showRainSensor) {
       // the accessory does not yet exist, so we need to create it
       this.infoLog(`Adding new accessory: ${model}`)
 
@@ -351,7 +361,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const irrigationAccessory = this.accessories.find(accessory => accessory.UUID === irrigationUuid)
 
     const includeZones = device.includeZones!.split(',').map(Number)
-    const registerZoneValve = !device.delete
+    const registerZoneValve = !device.hide_device
       && device.showZoneValve
       && (includeZones.includes(0) || includeZones.includes(zoneId))
 
@@ -430,7 +440,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!device.delete && device.showValveSensor) {
+      if (!device.hide_device && device.showValveSensor) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
@@ -450,7 +460,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.delete && device.showValveSensor) {
+    } else if (!device.hide_device && device.showValveSensor) {
       // the accessory does not yet exist, so we need to create it
       this.infoLog(`Adding new accessory: ${model}`)
 
@@ -504,7 +514,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!device.delete && showProgramSwitch) {
+      if (!device.hide_device && showProgramSwitch) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
@@ -524,7 +534,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.delete && showProgramSwitch) {
+    } else if (!device.hide_device && showProgramSwitch) {
       // the accessory does not yet exist, so we need to create it
       this.infoLog(`Adding new accessory: ${model}`)
 
@@ -568,7 +578,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!device.delete && device.showStopIrrigationSwitch) {
+      if (!device.hide_device && device.showStopIrrigationSwitch) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
@@ -587,7 +597,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.delete && device.showStopIrrigationSwitch) {
+    } else if (!device.hide_device && device.showStopIrrigationSwitch) {
       // the accessory does not yet exist, so we need to create it
       this.infoLog(`Adding new accessory: ${model}`)
 
@@ -630,7 +640,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!device.delete && device.showDelayIrrigationSwitch) {
+      if (!device.hide_device && device.showDelayIrrigationSwitch) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
@@ -649,7 +659,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.delete && device.showDelayIrrigationSwitch) {
+    } else if (!device.hide_device && device.showDelayIrrigationSwitch) {
       // the accessory does not yet exist, so we need to create it
       this.infoLog(`Adding new accessory: ${model}`)
 
@@ -701,61 +711,57 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     this.warnLog(`Removing existing accessory from cache: ${existingAccessory.displayName}`)
   }
 
-  async platformConfigOptions() {
-    const platformConfig: RainbirdPlatformConfig['options'] = {}
+  async getPlatformConfigSettings() {
     if (this.config.options) {
-      if (this.config.options.logging) {
-        platformConfig.logging = this.config.options.logging
+      const platformConfig: RainbirdPlatformConfig = {
+        platform: 'Rainbird',
       }
-      if (this.config.options.refreshRate) {
-        platformConfig.refreshRate = this.config.options.refreshRate
-      }
-      if (this.config.options.pushRate) {
-        platformConfig.pushRate = this.config.options.pushRate
-      }
-      if (this.config.options?.hide_device) {
-        platformConfig.hide_device = this.config.options.hide_device
-      }
+      platformConfig.logging = this.config.options.logging ? this.config.options.logging : undefined
+      platformConfig.refreshRate = this.config.options.refreshRate ? this.config.options.refreshRate : undefined
+      platformConfig.updateRate = this.config.options.updateRate ? this.config.options.updateRate : undefined
+      platformConfig.pushRate = this.config.options.pushRate ? this.config.options.pushRate : undefined
       if (Object.entries(platformConfig).length !== 0) {
-        this.debugLog(`Platform Config: ${JSON.stringify(platformConfig)}`)
+        await this.debugLog(`Platform Config: ${JSON.stringify(platformConfig)}`)
       }
       this.platformConfig = platformConfig
     }
   }
 
-  async platformLogs() {
-    this.debugMode = process.argv.includes('-D') || process.argv.includes('--debug')
-    this.platformLogging = this.config.options?.logging ?? 'standard'
-    if (this.config.options?.logging === 'debug' || this.config.options?.logging === 'standard' || this.config.options?.logging === 'none') {
-      this.platformLogging = this.config.options.logging
-      if (await this.loggingIsDebug()) {
-        this.debugWarnLog(`Using Config Logging: ${this.platformLogging}`)
-      }
-    } else if (this.debugMode) {
-      this.platformLogging = 'debugMode'
-      if (await this.loggingIsDebug()) {
-        this.debugWarnLog(`Using ${this.platformLogging} Logging`)
-      }
-    } else {
-      this.platformLogging = 'standard'
-      if (await this.loggingIsDebug()) {
-        this.debugWarnLog(`Using ${this.platformLogging} Logging`)
-      }
-    }
-    if (this.debugMode) {
-      this.platformLogging = 'debugMode'
-    }
+  async getPlatformRateSettings() {
+    this.platformRefreshRate = this.config.options?.refreshRate ? this.config.options.refreshRate : 0
+    const refreshRate = this.config.options?.refreshRate ? 'Using Platform Config refreshRate' : 'refreshRate Disabled by Default'
+    await this.debugLog(`${refreshRate}: ${this.platformRefreshRate}`)
+    this.platformUpdateRate = this.config.options?.updateRate ? this.config.options.updateRate : 1
+    const updateRate = this.config.options?.updateRate ? 'Using Platform Config updateRate' : 'Using Default updateRate'
+    await this.debugLog(`${updateRate}: ${this.platformUpdateRate}`)
+    this.platformPushRate = this.config.options?.pushRate ? this.config.options.pushRate : 1
+    const pushRate = this.config.options?.pushRate ? 'Using Platform Config pushRate' : 'Using Default pushRate'
+    await this.debugLog(`${pushRate}: ${this.platformPushRate}`)
   }
 
-  async getVersion() {
-    const json = JSON.parse(
-      readFileSync(
-        new URL('../package.json', import.meta.url),
-        'utf-8',
-      ),
-    )
-    this.debugLog(`Plugin Version: ${json.version}`)
-    this.version = json.version
+  async getPlatformLogSettings() {
+    this.debugMode = argv.includes('-D') ?? argv.includes('--debug')
+    this.platformLogging = (this.config.options?.logging === 'debug' || this.config.options?.logging === 'standard'
+      || this.config.options?.logging === 'none')
+      ? this.config.options.logging
+      : this.debugMode ? 'debugMode' : 'standard'
+    const logging = this.config.options?.logging ? 'Platform Config' : this.debugMode ? 'debugMode' : 'Default'
+    await this.debugLog(`Using ${logging} Logging: ${this.platformLogging}`)
+  }
+
+  /**
+   * Asynchronously retrieves the version of the plugin from the package.json file.
+   *
+   * This method reads the package.json file located in the parent directory,
+   * parses its content to extract the version, and logs the version using the debug logger.
+   * The extracted version is then assigned to the `version` property of the class.
+   *
+   * @returns {Promise<void>} A promise that resolves when the version has been retrieved and logged.
+   */
+  async getVersion(): Promise<void> {
+    const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8'))
+    this.debugLog(`Plugin Version: ${version}`)
+    this.version = version
   }
 
   /**
@@ -851,10 +857,10 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
   async debugLog(...log: any[]): Promise<void> {
     if (await this.enablingPlatformLogging()) {
-      if (this.platformLogging === 'debug') {
-        this.log.info('[DEBUG]', String(...log))
-      } else if (this.platformLogging === 'debugMode') {
+      if (this.platformLogging === 'debugMode') {
         this.log.debug(String(...log))
+      } else if (this.platformLogging === 'debug') {
+        this.log.info('[DEBUG]', String(...log))
       }
     }
   }
