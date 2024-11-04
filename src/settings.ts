@@ -15,11 +15,11 @@ export const PLUGIN_NAME = 'homebridge-rainbird'
 
 // Config
 export interface RainbirdPlatformConfig extends PlatformConfig {
-  devices?: DevicesConfig[]
+  devices?: devicesConfig[]
   options?: options
 }
 
-export interface DevicesConfig {
+export interface devicesConfig {
   configDeviceName?: string
   ipaddress?: IPAddress
   password?: string

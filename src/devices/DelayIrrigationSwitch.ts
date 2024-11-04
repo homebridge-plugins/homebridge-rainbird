@@ -6,7 +6,7 @@ import type { CharacteristicValue, PlatformAccessory, Service } from 'homebridge
 import type { RainBirdService } from 'rainbird'
 
 import type { RainbirdPlatform } from '../platform.js'
-import type { DevicesConfig } from '../settings.js'
+import type { devicesConfig } from '../settings.js'
 
 import { DeviceBase } from './DeviceBase.js'
 
@@ -17,7 +17,7 @@ export class DelayIrrigationSwitch extends DeviceBase {
   constructor(
     readonly platform: RainbirdPlatform,
     accessory: PlatformAccessory,
-    device: DevicesConfig,
+    device: devicesConfig,
     rainbird: RainBirdService,
   ) {
     super(platform, accessory, device, rainbird)

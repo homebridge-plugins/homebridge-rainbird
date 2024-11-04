@@ -6,7 +6,7 @@ import type { API, HAP, Logging, PlatformAccessory } from 'homebridge'
 import type { RainBirdService } from 'rainbird'
 
 import type { RainbirdPlatform } from '../platform.js'
-import type { DevicesConfig, RainbirdPlatformConfig } from '../settings.js'
+import type { devicesConfig, RainbirdPlatformConfig } from '../settings.js'
 
 export abstract class DeviceBase {
   public readonly api: API
@@ -19,11 +19,12 @@ export abstract class DeviceBase {
   protected deviceRefreshRate!: number
   protected deviceUpdateRate!: number
   protected devicePushRate!: number
+  protected deviceFirmwareVersion!: string
 
   constructor(
     protected readonly platform: RainbirdPlatform,
     protected accessory: PlatformAccessory,
-    protected device: DevicesConfig,
+    protected device: devicesConfig,
     protected rainbird: RainBirdService,
   ) {
     this.api = this.platform.api
@@ -31,9 +32,9 @@ export abstract class DeviceBase {
     this.config = this.platform.config
     this.hap = this.api.hap
 
-    this.getDeviceLogSettings(accessory, device)
-    this.getDeviceRateSettings(accessory, device)
-    this.getDeviceConfigSettings(accessory, device)
+    this.getDeviceLogSettings(device)
+    this.getDeviceRateSettings(device)
+    this.getDeviceConfigSettings(device)
     this.getDeviceContext(accessory, device)
 
     // Set accessory information
@@ -45,35 +46,31 @@ export abstract class DeviceBase {
       .setCharacteristic(this.hap.Characteristic.ConfiguredName, accessory.displayName)
       .setCharacteristic(this.hap.Characteristic.Model, accessory.context.model ?? rainbird!.model)
       .setCharacteristic(this.hap.Characteristic.SerialNumber, accessory.context.deviceID ?? rainbird!.serialNumber)
-      .setCharacteristic(this.hap.Characteristic.FirmwareRevision, accessory.context.FirmwareRevision ?? rainbird!.version)
+      .setCharacteristic(this.hap.Characteristic.FirmwareRevision, this.deviceFirmwareVersion)
       .getCharacteristic(this.hap.Characteristic.FirmwareRevision)
-      .updateValue(accessory.context.FirmwareRevision)
+      .updateValue(this.deviceFirmwareVersion)
   }
 
-  async getDeviceLogSettings(accessory: PlatformAccessory, device: DevicesConfig): Promise<void> {
+  async getDeviceLogSettings(device: devicesConfig): Promise<void> {
     this.deviceLogging = this.platform.debugMode ? 'debugMode' : device.logging ?? this.platform.platformLogging ?? 'standard'
     const logging = this.platform.debugMode ? 'Debug Mode' : device.logging ? 'Device Config' : this.platform.platformLogging ? 'Platform Config' : 'Default'
-    accessory.context.deviceLogging = this.deviceLogging
     await this.debugLog(`Using ${logging} Logging: ${this.deviceLogging}`)
   }
 
-  async getDeviceRateSettings(accessory: PlatformAccessory, device: DevicesConfig): Promise<void> {
+  async getDeviceRateSettings(device: devicesConfig): Promise<void> {
     // refreshRate
     this.deviceRefreshRate = device.refreshRate ?? this.platform.platformRefreshRate ?? 1800
-    accessory.context.deviceRefreshRate = this.deviceRefreshRate
     const refreshRate = device.refreshRate ? 'Device Config' : this.platform.platformRefreshRate ? 'Platform Config' : 'Default'
     // updateRate
     this.deviceUpdateRate = device.updateRate ?? this.platform.platformUpdateRate ?? 5
-    accessory.context.deviceUpdateRate = this.deviceUpdateRate
     const updateRate = device.updateRate ? 'Device Config' : this.platform.platformUpdateRate ? 'Platform Config' : 'Default'
     // pushRate
     this.devicePushRate = device.pushRate ?? this.platform.platformPushRate ?? 1
-    accessory.context.devicePushRate = this.devicePushRate
     const pushRate = device.pushRate ? 'Device Config' : this.platform.platformPushRate ? 'Platform Config' : 'Default'
     await this.debugLog(`Using ${refreshRate} refreshRate: ${this.deviceRefreshRate}, ${updateRate} updateRate: ${this.deviceUpdateRate}, ${pushRate} pushRate: ${this.devicePushRate}`)
   }
 
-  async getDeviceConfigSettings(accessory: PlatformAccessory, device: DevicesConfig): Promise<void> {
+  async getDeviceConfigSettings(device: devicesConfig): Promise<void> {
     const deviceConfig = {}
     const properties = [
       'logging',
@@ -105,11 +102,28 @@ export abstract class DeviceBase {
     if (Object.keys(deviceConfig).length !== 0) {
       this.infoLog(`Config: ${JSON.stringify(deviceConfig)}`)
     }
-    accessory.context.deviceConfig = deviceConfig
   }
 
-  async getDeviceContext(accessory: PlatformAccessory, device: DevicesConfig): Promise<void> {
-    accessory.context.FirmwareRevision = device.firmware ?? await this.platform.getVersion() ?? '3'
+  async getDeviceContext(accessory: PlatformAccessory, device: devicesConfig): Promise<void> {
+    const deviceFirmwareVersion = device.firmware ?? this.rainbird.version ?? this.platform.version ?? '0.0.0'
+    const version = deviceFirmwareVersion.toString()
+    this.debugLog(`Firmware Version: ${version.replace(/^V|-.*$/g, '')}`)
+    if (version?.includes('.') === false) {
+      const replace = version?.replace(/^V|-.*$/g, '')
+      const match = replace?.match(/./g)
+      const validVersion = match?.join('.')
+      this.deviceFirmwareVersion = validVersion ?? '0.0.0'
+    } else {
+      this.deviceFirmwareVersion = version.replace(/^V|-.*$/g, '') ?? '0.0.0'
+    }
+    accessory
+      .getService(this.hap.Service.AccessoryInformation)!
+      .setCharacteristic(this.hap.Characteristic.HardwareRevision, this.deviceFirmwareVersion)
+      .setCharacteristic(this.hap.Characteristic.SoftwareRevision, this.deviceFirmwareVersion)
+      .setCharacteristic(this.hap.Characteristic.FirmwareRevision, this.deviceFirmwareVersion)
+      .getCharacteristic(this.hap.Characteristic.FirmwareRevision)
+      .updateValue(this.deviceFirmwareVersion)
+    this.debugSuccessLog(`deviceFirmwareVersion: ${this.deviceFirmwareVersion}`)
   }
 
   /**

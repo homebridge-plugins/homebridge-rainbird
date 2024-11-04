@@ -4,7 +4,7 @@
  */
 import type { API, DynamicPlatformPlugin, HAP, Logging, PlatformAccessory } from 'homebridge'
 
-import type { DevicesConfig, RainbirdPlatformConfig } from './settings.js'
+import type { devicesConfig, RainbirdPlatformConfig } from './settings.js'
 
 import { readFileSync } from 'node:fs'
 import { argv } from 'node:process'
@@ -223,7 +223,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  private async createIrrigationSystem(device: DevicesConfig, rainbird: RainBirdService) {
+  private async createIrrigationSystem(device: devicesConfig, rainbird: RainBirdService) {
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${rainbird!.model}-${rainbird!.serialNumber}`)
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
@@ -283,7 +283,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  private async createLeakSensor(device: DevicesConfig, rainbird: RainBirdService): Promise<void> {
+  private async createLeakSensor(device: devicesConfig, rainbird: RainBirdService): Promise<void> {
     const model = 'WR2'
     const leakSensorModel = `${model} Leak Sensor`
     const leakSensorConfigName = device.configDeviceName ? `${device.configDeviceName} Leak Sensor` : undefined
@@ -344,11 +344,11 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  async FirmwareRevision(rainbird: RainBirdService, device: DevicesConfig): Promise<string> {
+  async FirmwareRevision(rainbird: RainBirdService, device: devicesConfig): Promise<string> {
     return String(device.firmware ?? rainbird.version ?? this.version)
   }
 
-  async createZoneValve(device: DevicesConfig, rainbird: RainBirdService, zoneId: number): Promise<void> {
+  async createZoneValve(device: devicesConfig, rainbird: RainBirdService, zoneId: number): Promise<void> {
     const model = `${rainbird!.model}-valve-${zoneId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const name = `Zone ${zoneId}`
@@ -419,7 +419,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  removeZoneValve(device: DevicesConfig, rainbird: RainBirdService, zoneId: number): void {
+  removeZoneValve(device: devicesConfig, rainbird: RainBirdService, zoneId: number): void {
     const model = `${rainbird!.model}-valve-${zoneId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const index = this.accessories.findIndex(accessory => accessory.UUID === uuid)
@@ -429,7 +429,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  async createContactSensor(device: DevicesConfig, rainbird: RainBirdService, zoneId: number): Promise<void> {
+  async createContactSensor(device: devicesConfig, rainbird: RainBirdService, zoneId: number): Promise<void> {
     const model = `${rainbird!.model}-${zoneId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const name = `Zone ${zoneId}`
@@ -492,7 +492,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  removeContactSensor(device: DevicesConfig, rainbird: RainBirdService, zoneId: number): void {
+  removeContactSensor(device: devicesConfig, rainbird: RainBirdService, zoneId: number): void {
     const model = `${rainbird!.model}-${zoneId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const index = this.accessories.findIndex(accessory => accessory.UUID === uuid)
@@ -502,7 +502,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  async createProgramSwitch(device: DevicesConfig, rainbird: RainBirdService, programId: string): Promise<void> {
+  async createProgramSwitch(device: devicesConfig, rainbird: RainBirdService, programId: string): Promise<void> {
     const model = `${rainbird!.model}-pgm-${programId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const name = `Program ${programId}`
@@ -567,7 +567,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  async createStopIrrigationSwitch(device: DevicesConfig, rainbird: RainBirdService): Promise<void> {
+  async createStopIrrigationSwitch(device: devicesConfig, rainbird: RainBirdService): Promise<void> {
     const model = `${rainbird!.model}-stop`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const name = 'Stop Irrigation'
@@ -629,7 +629,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  async createDelayIrrigationSwitch(device: DevicesConfig, rainbird: RainBirdService): Promise<void> {
+  async createDelayIrrigationSwitch(device: devicesConfig, rainbird: RainBirdService): Promise<void> {
     const model = `${rainbird!.model}-delay`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const name = 'Delay Irrigation'
@@ -691,7 +691,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  public async externalOrPlatform(device: DevicesConfig, accessory: PlatformAccessory) {
+  public async externalOrPlatform(device: devicesConfig, accessory: PlatformAccessory) {
     if (device.external) {
       this.debugWarnLog(`${accessory.displayName} External Accessory Mode`)
       this.externalAccessory(accessory)
@@ -711,6 +711,31 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     this.warnLog(`Removing existing accessory from cache: ${existingAccessory.displayName}`)
   }
 
+  async getPlatformLogSettings() {
+    this.debugMode = argv.includes('-D') ?? argv.includes('--debug')
+    this.platformLogging = (this.config.options?.logging === 'debug' || this.config.options?.logging === 'standard'
+      || this.config.options?.logging === 'none')
+      ? this.config.options.logging
+      : this.debugMode ? 'debugMode' : 'standard'
+    const logging = this.config.options?.logging ? 'Platform Config' : this.debugMode ? 'debugMode' : 'Default'
+    await this.debugLog(`Using ${logging} Logging: ${this.platformLogging}`)
+  }
+
+  async getPlatformRateSettings() {
+    // RefreshRate
+    this.platformRefreshRate = this.config.options?.refreshRate ? this.config.options.refreshRate : undefined
+    const refreshRate = this.config.options?.refreshRate ? 'Using Platform Config refreshRate' : 'refreshRate Disabled by Default'
+    await this.debugLog(`${refreshRate}: ${this.platformRefreshRate}`)
+    // UpdateRate
+    this.platformUpdateRate = this.config.options?.updateRate ? this.config.options.updateRate : undefined
+    const updateRate = this.config.options?.updateRate ? 'Using Platform Config updateRate' : 'Using Default updateRate'
+    await this.debugLog(`${updateRate}: ${this.platformUpdateRate}`)
+    // PushRate
+    this.platformPushRate = this.config.options?.pushRate ? this.config.options.pushRate : undefined
+    const pushRate = this.config.options?.pushRate ? 'Using Platform Config pushRate' : 'Using Default pushRate'
+    await this.debugLog(`${pushRate}: ${this.platformPushRate}`)
+  }
+
   async getPlatformConfigSettings() {
     if (this.config.options) {
       const platformConfig: RainbirdPlatformConfig = {
@@ -725,28 +750,6 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       }
       this.platformConfig = platformConfig
     }
-  }
-
-  async getPlatformRateSettings() {
-    this.platformRefreshRate = this.config.options?.refreshRate ? this.config.options.refreshRate : 0
-    const refreshRate = this.config.options?.refreshRate ? 'Using Platform Config refreshRate' : 'refreshRate Disabled by Default'
-    await this.debugLog(`${refreshRate}: ${this.platformRefreshRate}`)
-    this.platformUpdateRate = this.config.options?.updateRate ? this.config.options.updateRate : 1
-    const updateRate = this.config.options?.updateRate ? 'Using Platform Config updateRate' : 'Using Default updateRate'
-    await this.debugLog(`${updateRate}: ${this.platformUpdateRate}`)
-    this.platformPushRate = this.config.options?.pushRate ? this.config.options.pushRate : 1
-    const pushRate = this.config.options?.pushRate ? 'Using Platform Config pushRate' : 'Using Default pushRate'
-    await this.debugLog(`${pushRate}: ${this.platformPushRate}`)
-  }
-
-  async getPlatformLogSettings() {
-    this.debugMode = argv.includes('-D') ?? argv.includes('--debug')
-    this.platformLogging = (this.config.options?.logging === 'debug' || this.config.options?.logging === 'standard'
-      || this.config.options?.logging === 'none')
-      ? this.config.options.logging
-      : this.debugMode ? 'debugMode' : 'standard'
-    const logging = this.config.options?.logging ? 'Platform Config' : this.debugMode ? 'debugMode' : 'Default'
-    await this.debugLog(`Using ${logging} Logging: ${this.platformLogging}`)
   }
 
   /**

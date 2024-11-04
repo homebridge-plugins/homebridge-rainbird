@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [2.2.1](https://github.com/homebridge-plugins/homebridge-rainbird/releases/tag/v2.2.1) (2024-11-04)
+
+### What's Changed
+- Fix refreshRate Issue
+
+**Full Changelog**: https://github.com/homebridge-plugins/homebridge-rainbird/compare/v2.2.0...v2.2.1
+
 ## [2.2.0](https://github.com/homebridge-plugins/homebridge-rainbird/releases/tag/v2.2.0) (2024-11-03)
 
 ### What's Changed
