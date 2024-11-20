@@ -178,16 +178,16 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       rainbird.on('log', (log) => {
         switch (log.level) {
           case LogLevel.ERROR:
-            this.errorLog(log.message)
+            this.errorLog(`From Rainbird Library: ${log.message}`)
             break
           case LogLevel.WARN:
-            this.warnLog(log.message)
+            this.warnLog(`From Rainbird Library: ${log.message}`)
             break
           case LogLevel.DEBUG:
-            this.debugLog(log.message)
+            this.debugLog(`From Rainbird Library: ${log.message}`)
             break
           default:
-            this.infoLog(log.message)
+            this.infoLog(`From Rainbird Library: ${log.message}`)
         }
       })
       const metaData = await rainbird.init()
@@ -286,7 +286,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   private async createLeakSensor(device: devicesConfig, rainbird: RainBirdService): Promise<void> {
     const model = 'WR2'
     const leakSensorModel = `${model} Leak Sensor`
-    const leakSensorConfigName = device.configDeviceName ? `${device.configDeviceName} Leak Sensor` : undefined
+    const leakSensorConfigName = device.configDeviceName ? `${device.configDeviceName} Leak Sensor` : 'Leak Sensor'
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
@@ -352,7 +352,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const model = `${rainbird!.model}-valve-${zoneId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const name = `Zone ${zoneId}`
-    const valveConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : undefined
+    const valveConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : 'Valve'
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
@@ -433,7 +433,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const model = `${rainbird!.model}-${zoneId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const name = `Zone ${zoneId}`
-    const contactSensorConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : undefined
+    const contactSensorConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : 'Contact Sensor'
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
@@ -506,7 +506,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const model = `${rainbird!.model}-pgm-${programId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const name = `Program ${programId}`
-    const programSwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : undefined
+    const programSwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : 'Program Switch'
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
@@ -571,7 +571,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const model = `${rainbird!.model}-stop`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const name = 'Stop Irrigation'
-    const stopSwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : undefined
+    const stopSwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : 'Stop Switch'
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
@@ -633,7 +633,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const model = `${rainbird!.model}-delay`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const name = 'Delay Irrigation'
-    const delaySwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : undefined
+    const delaySwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : 'Delay Switch'
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
