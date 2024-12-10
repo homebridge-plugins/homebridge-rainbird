@@ -34,7 +34,7 @@ export class DelayIrrigationSwitch extends DeviceBase {
     this.service
       .getCharacteristic(this.hap.Characteristic.On)
       .onGet(async () => {
-        const state = await this.rainbird!.getIrrigatinDelay() > 0
+        const state = await this.rainbird!.getIrrigationDelay() > 0
         this.debugLog(`${this.constructor.name}: ${this.accessory.displayName} On: ${state}`)
         return state
       })
@@ -56,7 +56,7 @@ export class DelayIrrigationSwitch extends DeviceBase {
    * Updates the status for each of the HomeKit Characteristics
    */
   private async updateHomeKitCharacteristics(): Promise<void> {
-    const state = await this.rainbird!.getIrrigatinDelay() > 0
+    const state = await this.rainbird!.getIrrigationDelay() > 0
     this.service.updateCharacteristic(this.hap.Characteristic.On, state)
     this.debugLog(`${this.constructor.name}: ${this.accessory.displayName} updateCharacteristic On: ${state}`)
   }
