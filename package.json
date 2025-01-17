@@ -1,5 +1,5 @@
 {
-  "name": "homebridge-rainbird",
+  "name": "@homebridge-plugins/homebridge-rainbird",
   "displayName": "Rainbird",
   "type": "module",
   "version": "3.0.0",
