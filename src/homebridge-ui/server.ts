@@ -1,6 +1,6 @@
 /* Copyright(C) 2021-2024, donavanbecker (https://github.com/donavanbecker) & mantorok1 (https://github.com/mantorok1). All rights reserved.
  *
- * server.ts: homebridge-rainbird.
+ * server.ts: @homebridge-plugins/homebridge-rainbird.
  */
 import fs from 'node:fs'
 
@@ -15,7 +15,7 @@ class PluginUiServer extends HomebridgePluginUiServer {
     */
     this.onRequest('getCachedAccessories', () => {
       try {
-        const plugin = 'homebridge-rainbird'
+        const plugin = '@homebridge-plugins/homebridge-rainbird'
         const devicesToReturn = []
 
         // The path and file of the cached accessories

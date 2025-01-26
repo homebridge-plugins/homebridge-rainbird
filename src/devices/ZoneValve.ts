@@ -1,6 +1,6 @@
 /* Copyright(C) 2021-2024, donavanbecker (https://github.com/donavanbecker) & mantorok1 (https://github.com/mantorok1). All rights reserved.
  *
- * ZoneValue.ts: homebridge-rainbird.
+ * ZoneValue.ts: @homebridge-plugins/homebridge-rainbird.
  */
 import type { CharacteristicValue, PlatformAccessory, Service, UnknownContext } from 'homebridge'
 import type { RainBirdService } from 'rainbird'

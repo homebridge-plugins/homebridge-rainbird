@@ -1,6 +1,6 @@
 /* Copyright(C) 2021-2024, donavanbecker (https://github.com/donavanbecker) & mantorok1 (https://github.com/mantorok1). All rights reserved.
  *
- * StopIrrigationSwitch.ts: homebridge-rainbird.
+ * StopIrrigationSwitch.ts: @homebridge-plugins/homebridge-rainbird.
  */
 import type { CharacteristicValue, PlatformAccessory, Service } from 'homebridge'
 import type { RainBirdService } from 'rainbird'

@@ -1,6 +1,6 @@
 /* Copyright(C) 2021-2024, donavanbecker (https://github.com/donavanbecker) & mantorok1 (https://github.com/mantorok1). All rights reserved.
  *
- * DeviceBase.ts: homebridge-rainbird.
+ * DeviceBase.ts: @homebridge-plugins/homebridge-rainbird.
  */
 import type { API, HAP, Logging, PlatformAccessory } from 'homebridge'
 import type { RainBirdService } from 'rainbird'
@@ -100,7 +100,7 @@ export abstract class DeviceBase {
       }
     })
     if (Object.keys(deviceConfig).length !== 0) {
-      this.infoLog(`Config: ${JSON.stringify(deviceConfig)}`)
+      this.debugSuccessLog(`Config: ${JSON.stringify(deviceConfig)}`)
     }
   }
 

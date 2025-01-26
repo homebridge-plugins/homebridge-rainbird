@@ -1,6 +1,6 @@
 /* Copyright(C) 2021-2024, donavanbecker (https://github.com/donavanbecker) & mantorok1 (https://github.com/mantorok1). All rights reserved.
  *
- * settings.ts: homebridge-rainbird.
+ * settings.ts: @homebridge-plugins/homebridge-rainbird.
  */
 import type { IPAddress, PlatformConfig } from 'homebridge'
 /**
@@ -11,7 +11,7 @@ export const PLATFORM_NAME = 'RainBird'
 /**
  * This must match the name of your plugin as defined the package.json
  */
-export const PLUGIN_NAME = 'homebridge-rainbird'
+export const PLUGIN_NAME = '@homebridge-plugins/homebridge-rainbird'
 
 // Config
 export interface RainbirdPlatformConfig extends PlatformConfig {

@@ -1,6 +1,6 @@
 /* Copyright(C) 2021-2024, donavanbecker (https://github.com/donavanbecker) & mantorok1 (https://github.com/mantorok1). All rights reserved.
  *
- * index.ts: homebridge-rainbird.
+ * index.ts: @homebridge-plugins/homebridge-rainbird.
  */
 import type { API } from 'homebridge'
 
