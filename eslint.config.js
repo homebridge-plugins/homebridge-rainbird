@@ -1,4 +1,5 @@
 import antfu from '@antfu/eslint-config'
+import importPlugin from 'eslint-plugin-import'
 
 export default antfu(
   {
@@ -7,6 +8,9 @@ export default antfu(
     typescript: true,
     formatters: {
       markdown: true,
+    },
+    plugins: {
+      import: importPlugin,
     },
     rules: {
       'curly': ['error', 'multi-line'],
