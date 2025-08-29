@@ -1,7 +1,7 @@
 name: Feature Request
 description: Suggest an idea for this project
 title: "Feature Request: "
-labels: [enhancement]
+labels: [enhancement, minor]
 assignees:
   - donavanbecker
   - mantorok1
@@ -10,6 +10,8 @@ body:
     attributes:
       value: |
         Is your feature request related to a problem? Please describe.
+        
+        **Note for Maintainers:** Before assigning to Copilot, ensure the appropriate semantic version label (`minor` for new features, `major` for breaking changes) is applied to this issue.
   - type: input
     attributes:
       label: Problem

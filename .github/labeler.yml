@@ -36,3 +36,21 @@ latest:
 workflow:
 - changed-files:
   - any-glob-to-any-file: .github/**
+
+# Semantic versioning labels for Copilot workflow
+# These labels must be manually assigned before assigning issues to Copilot
+# patch: Bug fixes, documentation updates, non-breaking changes
+# minor: New features, enhancements, backwards-compatible changes  
+# major: Breaking changes requiring major version bump
+
+# Add 'patch' label to any PR that targets a patch beta branch
+patch:
+- base-branch: 'beta-*.*.?'
+
+# Add 'minor' label to any PR that targets a minor beta branch  
+minor:
+- base-branch: 'beta-*.?.0'
+
+# Add 'major' label to any PR that targets a major beta branch
+major:
+- base-branch: 'beta-?.0.0'
