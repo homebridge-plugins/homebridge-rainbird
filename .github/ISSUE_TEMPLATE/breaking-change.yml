@@ -1,0 +1,50 @@
+name: Breaking Change
+description: Propose a breaking change that requires a major version bump
+title: "Breaking Change: "
+labels: [breaking-change, major]
+assignees:
+  - donavanbecker
+  - mantorok1
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **Warning: This is for breaking changes that will require a major version bump**
+        
+        Breaking changes affect existing functionality and may require users to modify their configurations or code.
+  - type: input
+    attributes:
+      label: Current Behavior
+      placeholder: Describe the current behavior that needs to change
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Proposed Breaking Change
+      placeholder: Describe the breaking change you want to implement
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Justification
+      placeholder: Explain why this breaking change is necessary
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Migration Path
+      placeholder: Describe how users can migrate from the old behavior to the new behavior
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Alternative Solutions
+      placeholder: Describe any non-breaking alternative solutions you've considered
+    validations:
+      required: false
+  - type: input
+    attributes:
+      label: Additional Context
+      placeholder: Add any other context about this breaking change
+    validations:
+      required: false
