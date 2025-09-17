@@ -167,59 +167,85 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
    */
   private async discoverDevices(): Promise<void> {
     for (const device of this.config.devices!) {
-      const rainbird = new RainBirdService({
-        address: device.ipaddress!,
-        password: device.password!,
-        refreshRate: this.config.options!.refreshRate,
-        showRequestResponse: device.showRequestResponse!,
-        syncTime: device.syncTime!,
-      })
-      // Listen for log events
-      rainbird.on('log', (log) => {
-        switch (log.level) {
-          case LogLevel.ERROR:
-            this.errorLog(`From Rainbird Library: ${log.message}`)
-            break
-          case LogLevel.WARN:
-            this.warnLog(`From Rainbird Library: ${log.message}`)
-            break
-          case LogLevel.DEBUG:
-            this.debugLog(`From Rainbird Library: ${log.message}`)
-            break
-          default:
-            this.infoLog(`From Rainbird Library: ${log.message}`)
-        }
-      })
-      const metaData = await rainbird.init()
-      this.debugLog(JSON.stringify(metaData))
+      try {
+        const rainbird = new RainBirdService({
+          address: device.ipaddress!,
+          password: device.password!,
+          refreshRate: this.config.options!.refreshRate,
+          showRequestResponse: device.showRequestResponse!,
+          syncTime: device.syncTime!,
+        })
+        // Listen for log events
+        rainbird.on('log', (log) => {
+          switch (log.level) {
+            case LogLevel.ERROR:
+              this.errorLog(`From Rainbird Library: ${log.message}`)
+              break
+            case LogLevel.WARN:
+              this.warnLog(`From Rainbird Library: ${log.message}`)
+              break
+            case LogLevel.DEBUG:
+              this.debugLog(`From Rainbird Library: ${log.message}`)
+              break
+            default:
+              this.infoLog(`From Rainbird Library: ${log.message}`)
+          }
+        })
+        const metaData = await rainbird.init()
+        this.debugLog(JSON.stringify(metaData))
 
-      // Display device details
-      this.infoLog(`Model: ${metaData.model}, [Version: ${metaData.version}, Serial Number: ${metaData.serialNumber}, Zones: ${JSON.stringify(metaData.zones)}]`)
-      const irrigationAccessory = this.createIrrigationSystem(device, rainbird)
-      this.createLeakSensor(device, rainbird)
-      for (const zoneId of metaData.zones) {
-        const configured = (await irrigationAccessory)!.context.configured[zoneId] ?? this.hap.Characteristic.IsConfigured.CONFIGURED
-        if (configured === this.hap.Characteristic.IsConfigured.CONFIGURED) {
-          this.createZoneValve(device, rainbird, zoneId)
-          this.createContactSensor(device, rainbird, zoneId)
+        // Display device details
+        this.infoLog(`Model: ${metaData.model}, [Version: ${metaData.version}, Serial Number: ${metaData.serialNumber}, Zones: ${JSON.stringify(metaData.zones)}]`)
+        const irrigationAccessory = this.createIrrigationSystem(device, rainbird)
+        this.createLeakSensor(device, rainbird)
+        for (const zoneId of metaData.zones) {
+          const configured = (await irrigationAccessory)!.context.configured[zoneId] ?? this.hap.Characteristic.IsConfigured.CONFIGURED
+          if (configured === this.hap.Characteristic.IsConfigured.CONFIGURED) {
+            this.createZoneValve(device, rainbird, zoneId)
+            this.createContactSensor(device, rainbird, zoneId)
+          }
         }
-      }
-      for (const programId of ['A', 'B', 'C', 'D']) {
-        this.createProgramSwitch(device, rainbird, programId)
-      }
-      this.createStopIrrigationSwitch(device, rainbird)
-      this.createDelayIrrigationSwitch(device, rainbird)
+        for (const programId of ['A', 'B', 'C', 'D']) {
+          this.createProgramSwitch(device, rainbird, programId)
+        }
+        this.createStopIrrigationSwitch(device, rainbird)
+        this.createDelayIrrigationSwitch(device, rainbird)
 
-      // Handle zone enable/disable
-      rainbird.on('zone_enable', (zoneId, enabled) => {
-        if (enabled) {
-          this.createContactSensor(device, rainbird, zoneId)
-          // this.createZoneValve(device, rainbird, zoneId);
+        // Handle zone enable/disable
+        rainbird.on('zone_enable', (zoneId, enabled) => {
+          if (enabled) {
+            this.createContactSensor(device, rainbird, zoneId)
+            // this.createZoneValve(device, rainbird, zoneId);
+          } else {
+            this.removeContactSensor(device, rainbird, zoneId)
+            // this.removeZoneValve(device, rainbird, zoneId);
+          }
+        })
+      } catch (e: any) {
+        this.errorLog(`Failed to connect to RainBird controller at ${device.ipaddress}: ${e.message}`)
+        
+        // Provide specific troubleshooting guidance based on error type
+        if (e.message?.includes('ECONNREFUSED')) {
+          this.errorLog('Connection refused - Troubleshooting steps:')
+          this.errorLog('  1. Verify the RainBird controller is powered on and connected to your network')
+          this.errorLog('  2. Check that the IP address in your config matches your controller\'s actual IP')
+          this.errorLog('  3. Ensure your controller is accessible from this device (try pinging the IP)')
+          this.errorLog('  4. Verify the RainBird LNK WiFi module is properly installed and functioning')
+          this.errorLog('  5. Check if your router has "Band Steering" enabled and try disabling it')
+          this.errorLog('  6. Ensure your WiFi network is not using channel 13 (not supported by some RainBird modules)')
+          this.errorLog('  7. Close the RainBird mobile app if it\'s running (can cause connectivity conflicts)')
+        } else if (e.message?.includes('ETIMEDOUT') || e.message?.includes('timeout')) {
+          this.errorLog('Connection timeout - The controller may be slow to respond or overloaded')
+          this.errorLog('  Try restarting the RainBird controller and check your network connection')
+        } else if (e.message?.includes('EHOSTUNREACH')) {
+          this.errorLog('Host unreachable - Check your network configuration and firewall settings')
         } else {
-          this.removeContactSensor(device, rainbird, zoneId)
-          // this.removeZoneValve(device, rainbird, zoneId);
+          this.errorLog('Connection error - Please check your controller configuration and network settings')
         }
-      })
+        
+        this.errorLog(`Skipping device at ${device.ipaddress} and continuing with other devices...`)
+        continue
+      }
     }
   }
 
