@@ -1,5 +1,4 @@
 import antfu from '@antfu/eslint-config'
-import importPlugin from 'eslint-plugin-import'
 
 export default antfu(
   {
@@ -9,12 +8,8 @@ export default antfu(
     formatters: {
       markdown: true,
     },
-    plugins: {
-      import: importPlugin,
-    },
     rules: {
       'curly': ['error', 'multi-line'],
-      'import/extensions': ['error', 'ignorePackages'],
       'import/order': 0,
       'jsdoc/check-alignment': 'error',
       'jsdoc/check-line-alignment': 'error',
