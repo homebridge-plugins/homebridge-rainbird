@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [3.0.4](https://github.com/homebridge-plugins/homebridge-rainbird/releases/tag/v3.0.4) (2025-09-18)
+
+## What's Changed
+* update dependencies by @Donavan Becker in https://github.com/homebridge-plugins/homebridge-rainbird/commit/4d8dd46
+
+**Full Changelog**: https://github.com/homebridge-plugins/homebridge-rainbird/compare/v3.0.3...v3.0.4
+
 ## [3.0.3](https://github.com/homebridge-plugins/homebridge-rainbird/releases/tag/v3.0.3) (2025-06-10)
 
 ### What's Changed
