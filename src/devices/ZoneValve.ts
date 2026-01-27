@@ -4,13 +4,11 @@
  */
 import type { CharacteristicValue, PlatformAccessory, Service, UnknownContext } from 'homebridge'
 import type { RainBirdService } from 'rainbird'
-
-import type { RainbirdPlatform } from '../platform.js'
-import type { devicesConfig } from '../settings.js'
-
 import { fromEvent, interval, Subject } from 'rxjs'
 import { debounceTime, skipWhile, tap } from 'rxjs/operators'
 
+import type { RainbirdPlatform } from '../platform.js'
+import type { devicesConfig } from '../settings.js'
 import { DeviceBase } from './DeviceBase.js'
 
 export class ZoneValve extends DeviceBase {

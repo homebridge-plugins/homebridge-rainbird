@@ -18,16 +18,12 @@ export default antfu(
       'perfectionist/sort-imports': [
         'error',
         {
+          // Use supported groups: builtin, external, internal, parent/sibling/index, unknown
           groups: [
-            'builtin-type',
-            'external-type',
-            'internal-type',
-            ['parent-type', 'sibling-type', 'index-type'],
             'builtin',
             'external',
             'internal',
             ['parent', 'sibling', 'index'],
-            'object',
             'unknown',
           ],
           order: 'asc',
