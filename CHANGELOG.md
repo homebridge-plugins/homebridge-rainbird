@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file. This projec
 - add optional per-zone Test Zone switch accessory using the RainBird 1.2.7 `testZone()` API
 - add `showTestZoneSwitch` device config option and schema support
 - use RainBird `getControllerFirmwareVersion()` for accessory firmware revision with fallback behavior
+- detect and log controller command capabilities via `getCommandSupport()` for new 1.2.7 commands
+- use `stackRunZone()` for zone activations when supported by the controller
+- read and log `getWaterBudget()`, `getZonesSeasonalAdjustFactor()`, and `getControllerEventTimestamp()` values when supported
 
 ### Dependency Updates
 
@@ -28,6 +31,7 @@ All notable changes to this project will be documented in this file. This projec
 - move firmware parsing regex patterns in `DeviceBase` to module-scope constants for updated lint rules
 - avoid side-effect-only constructor usage by tracking created handler instances in platform code
 - normalize platform accessory creation through a constructor alias that uses an UpperCamelCase identifier
+- add `"types": ["node"]` to tsconfig for TypeScript 6 compatibility
 
 ## [3.0.6](https://github.com/homebridge-plugins/homebridge-rainbird/compare/v3.0.5...v3.0.6) (2026-01-27)
 

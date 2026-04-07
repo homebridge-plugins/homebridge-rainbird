@@ -21,7 +21,23 @@ import { TestZoneSwitch } from './devices/TestZoneSwitch.js'
 import { ZoneValve } from './devices/ZoneValve.js'
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js'
 
+interface ControllerCapabilities {
+  supportsControllerFirmwareVersion: boolean
+  supportsRetrieveSchedule: boolean
+  supportsWaterBudget: boolean
+  supportsZonesSeasonalAdjustFactor: boolean
+  supportsTestZone: boolean
+  supportsControllerEventTimestamp: boolean
+  supportsStackRunZone: boolean
+}
+
+const COMMAND_ID_CONTROLLER_FIRMWARE_VERSION = 0x0B
+const COMMAND_ID_RETRIEVE_SCHEDULE = 0x20
+const COMMAND_ID_WATER_BUDGET = 0x30
+const COMMAND_ID_ZONES_SEASONAL_ADJUST_FACTOR = 0x32
 const COMMAND_ID_TEST_ZONE = 0x3A
+const COMMAND_ID_CONTROLLER_EVENT_TIMESTAMP = 0x4A
+const COMMAND_ID_STACK_RUN_ZONE = 0x4B
 const UNKNOWN_FIRMWARE_VERSION = 'Unknown'
 
 /**
@@ -32,6 +48,7 @@ const UNKNOWN_FIRMWARE_VERSION = 'Unknown'
 export class RainbirdPlatform implements DynamicPlatformPlugin {
   public accessories: PlatformAccessory[]
   private readonly handlers: object[] = []
+  private readonly controllerCapabilities = new Map<string, ControllerCapabilities>()
   public readonly api: API
   public readonly log: Logging
   protected readonly hap: HAP
@@ -123,6 +140,50 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     return new PlatformAccessoryCtor(displayName, uuid)
   }
 
+  public supportsStackRunZone(deviceId: string): boolean {
+    return this.controllerCapabilities.get(deviceId)?.supportsStackRunZone ?? false
+  }
+
+  private async detectControllerCapabilities(rainbird: RainBirdService): Promise<ControllerCapabilities> {
+    const capabilities: ControllerCapabilities = {
+      supportsControllerFirmwareVersion: await rainbird.getCommandSupport(COMMAND_ID_CONTROLLER_FIRMWARE_VERSION),
+      supportsRetrieveSchedule: await rainbird.getCommandSupport(COMMAND_ID_RETRIEVE_SCHEDULE),
+      supportsWaterBudget: await rainbird.getCommandSupport(COMMAND_ID_WATER_BUDGET),
+      supportsZonesSeasonalAdjustFactor: await rainbird.getCommandSupport(COMMAND_ID_ZONES_SEASONAL_ADJUST_FACTOR),
+      supportsTestZone: await rainbird.getCommandSupport(COMMAND_ID_TEST_ZONE),
+      supportsControllerEventTimestamp: await rainbird.getCommandSupport(COMMAND_ID_CONTROLLER_EVENT_TIMESTAMP),
+      supportsStackRunZone: await rainbird.getCommandSupport(COMMAND_ID_STACK_RUN_ZONE),
+    }
+    return capabilities
+  }
+
+  private async logControllerEnhancements(rainbird: RainBirdService, capabilities: ControllerCapabilities): Promise<void> {
+    this.debugLog(`Controller capabilities: ${JSON.stringify(capabilities)}`)
+
+    if (capabilities.supportsWaterBudget) {
+      for (const program of [0, 1, 2, 3]) {
+        const waterBudget = await rainbird.getWaterBudget(program)
+        this.debugLog(`Program ${program} water budget: ${waterBudget}%`)
+      }
+    }
+
+    if (capabilities.supportsZonesSeasonalAdjustFactor) {
+      for (const program of [0, 1, 2, 3]) {
+        const seasonalAdjust = await rainbird.getZonesSeasonalAdjustFactor(program)
+        if (seasonalAdjust.length > 0) {
+          this.debugLog(`Program ${program} zones seasonal adjust: ${JSON.stringify(seasonalAdjust)}`)
+        }
+      }
+    }
+
+    if (capabilities.supportsControllerEventTimestamp) {
+      const timestamp = await rainbird.getControllerEventTimestamp(0)
+      if (timestamp > 0) {
+        this.debugLog(`Controller event timestamp(0): ${new Date(timestamp * 1000).toISOString()}`)
+      }
+    }
+  }
+
   /**
    * Verify the config passed to the plugin is valid
    */
@@ -209,8 +270,9 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         })
         const metaData = await rainbird.init()
         this.debugLog(JSON.stringify(metaData))
-        const supportsTestZone = await rainbird.getCommandSupport(COMMAND_ID_TEST_ZONE)
-        this.debugLog(`Controller supports TestZone command: ${supportsTestZone}`)
+        const capabilities = await this.detectControllerCapabilities(rainbird)
+        this.controllerCapabilities.set(metaData.serialNumber, capabilities)
+        await this.logControllerEnhancements(rainbird, capabilities)
 
         // Display device details
         this.infoLog(`Model: ${metaData.model}, [Version: ${metaData.version}, Serial Number: ${metaData.serialNumber}, Zones: ${JSON.stringify(metaData.zones)}]`)
@@ -221,7 +283,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
           if (configured === this.hap.Characteristic.IsConfigured.CONFIGURED) {
             this.createZoneValve(device, rainbird, zoneId)
             this.createContactSensor(device, rainbird, zoneId)
-            this.createTestZoneSwitch(device, rainbird, zoneId, supportsTestZone)
+            this.createTestZoneSwitch(device, rainbird, zoneId, capabilities.supportsTestZone)
           }
         }
         for (const programId of ['A', 'B', 'C', 'D']) {
@@ -234,7 +296,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         rainbird.on('zone_enable', (zoneId, enabled) => {
           if (enabled) {
             this.createContactSensor(device, rainbird, zoneId)
-            this.createTestZoneSwitch(device, rainbird, zoneId, supportsTestZone)
+            this.createTestZoneSwitch(device, rainbird, zoneId, capabilities.supportsTestZone)
             // this.createZoneValve(device, rainbird, zoneId);
           } else {
             this.removeContactSensor(device, rainbird, zoneId)

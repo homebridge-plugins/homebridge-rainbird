@@ -349,7 +349,13 @@ export class IrrigationSystem extends DeviceBase {
    */
   async pushChanges(zone: number): Promise<void> {
     if (this.valves.get(zone)!.Active === this.hap.Characteristic.Active.ACTIVE) {
-      this.rainbird!.activateZone(zone, this.accessory.context.duration[zone])
+      const durationSeconds = Number(this.accessory.context.duration[zone] ?? 300)
+      if (this.platform.supportsStackRunZone(this.accessory.context.deviceID)) {
+        const durationMinutes = Math.max(1, Math.min(Math.ceil(durationSeconds / 60), 255))
+        await this.rainbird!.stackRunZone(0, zone, durationMinutes)
+      } else {
+        this.rainbird!.activateZone(zone, durationSeconds)
+      }
     } else {
       await this.rainbird!.deactivateZone(zone)
     }
