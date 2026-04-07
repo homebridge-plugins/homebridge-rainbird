@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [3.0.7](https://github.com/homebridge-plugins/homebridge-rainbird/compare/v3.0.6...HEAD) (2026-04-07)
+
+### Features
+
+- add optional per-zone Test Zone switch accessory using the RainBird 1.2.7 `testZone()` API
+- add `showTestZoneSwitch` device config option and schema support
+- use RainBird `getControllerFirmwareVersion()` for accessory firmware revision with fallback behavior
+
+### Dependency Updates
+
+- bump `rainbird` to `^1.2.7`
+- bump `@homebridge/plugin-ui-utils` to `^2.2.3`
+- bump `@antfu/eslint-config` to `^7.7.3`
+- bump `@types/node` to `^25.5.2`
+- bump `eslint` to `^10.2.0`
+- bump `eslint-plugin-format` to `^2.0.1`
+- bump `homebridge` to `^1.11.4`
+- bump `nodemon` to `^3.1.14`
+- bump `typedoc` to `^0.28.18`
+- bump `typescript` to `^6.0.2`
+
+### Code Quality
+
+- move firmware parsing regex patterns in `DeviceBase` to module-scope constants for updated lint rules
+- avoid side-effect-only constructor usage by tracking created handler instances in platform code
+- normalize platform accessory creation through a constructor alias that uses an UpperCamelCase identifier
+
 ## [3.0.6](https://github.com/homebridge-plugins/homebridge-rainbird/compare/v3.0.5...v3.0.6) (2026-01-27)
 
 
