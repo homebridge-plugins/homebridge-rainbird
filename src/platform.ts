@@ -21,6 +21,9 @@ import { TestZoneSwitch } from './devices/TestZoneSwitch.js'
 import { ZoneValve } from './devices/ZoneValve.js'
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js'
 
+const COMMAND_ID_TEST_ZONE = 0x3A
+const UNKNOWN_FIRMWARE_VERSION = 'Unknown'
+
 /**
  * HomebridgePlatform
  * This class is the main constructor for your plugin, this is where you should
@@ -206,6 +209,8 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         })
         const metaData = await rainbird.init()
         this.debugLog(JSON.stringify(metaData))
+        const supportsTestZone = await rainbird.getCommandSupport(COMMAND_ID_TEST_ZONE)
+        this.debugLog(`Controller supports TestZone command: ${supportsTestZone}`)
 
         // Display device details
         this.infoLog(`Model: ${metaData.model}, [Version: ${metaData.version}, Serial Number: ${metaData.serialNumber}, Zones: ${JSON.stringify(metaData.zones)}]`)
@@ -216,7 +221,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
           if (configured === this.hap.Characteristic.IsConfigured.CONFIGURED) {
             this.createZoneValve(device, rainbird, zoneId)
             this.createContactSensor(device, rainbird, zoneId)
-            this.createTestZoneSwitch(device, rainbird, zoneId)
+            this.createTestZoneSwitch(device, rainbird, zoneId, supportsTestZone)
           }
         }
         for (const programId of ['A', 'B', 'C', 'D']) {
@@ -229,7 +234,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         rainbird.on('zone_enable', (zoneId, enabled) => {
           if (enabled) {
             this.createContactSensor(device, rainbird, zoneId)
-            this.createTestZoneSwitch(device, rainbird, zoneId)
+            this.createTestZoneSwitch(device, rainbird, zoneId, supportsTestZone)
             // this.createZoneValve(device, rainbird, zoneId);
           } else {
             this.removeContactSensor(device, rainbird, zoneId)
@@ -390,11 +395,11 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     if (device.firmware) {
       return String(device.firmware)
     }
-    try {
-      return await rainbird.getControllerFirmwareVersion()
-    } catch {
-      return String(rainbird.version ?? this.version)
+    const controllerFirmwareVersion = await rainbird.getControllerFirmwareVersion()
+    if (controllerFirmwareVersion && controllerFirmwareVersion !== UNKNOWN_FIRMWARE_VERSION) {
+      return controllerFirmwareVersion
     }
+    return String(rainbird.version ?? this.version)
   }
 
   async createZoneValve(device: devicesConfig, rainbird: RainBirdService, zoneId: number): Promise<void> {
@@ -551,7 +556,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  async createTestZoneSwitch(device: devicesConfig, rainbird: RainBirdService, zoneId: number): Promise<void> {
+  async createTestZoneSwitch(device: devicesConfig, rainbird: RainBirdService, zoneId: number, supportsTestZone: boolean): Promise<void> {
     const model = `${rainbird!.model}-test-${zoneId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const name = `Zone ${zoneId} Test`
@@ -559,7 +564,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
 
     if (existingAccessory) {
-      if (!device.hide_device && device.showTestZoneSwitch) {
+      if (!device.hide_device && device.showTestZoneSwitch && supportsTestZone) {
         this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
         existingAccessory.displayName = testSwitchConfigName
           ? await this.validateAndCleanDisplayName(testSwitchConfigName, `configDeviceName ${name}`, testSwitchConfigName)
@@ -575,7 +580,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
-    } else if (!device.hide_device && device.showTestZoneSwitch) {
+    } else if (!device.hide_device && device.showTestZoneSwitch && supportsTestZone) {
       this.infoLog(`Adding new accessory: ${model}`)
       const accessory = this.createPlatformAccessory(model, uuid)
       accessory.displayName = testSwitchConfigName
@@ -592,6 +597,10 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       this.accessories.push(accessory)
     } else {
       if (this.platformLogging.includes('debug') && device.showTestZoneSwitch) {
+        if (!supportsTestZone) {
+          this.warnLog(`Skipping Test Zone switch for ${rainbird.model}: controller does not support command 0x${COMMAND_ID_TEST_ZONE.toString(16).toUpperCase()}`)
+          return
+        }
         this.errorLog(`Unable to Register new device: ${model}`)
       }
     }
