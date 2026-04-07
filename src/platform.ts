@@ -17,6 +17,7 @@ import { IrrigationSystem } from './devices/IrrigationSystem.js'
 import { LeakSensor } from './devices/LeakSensor.js'
 import { ProgramSwitch } from './devices/ProgramSwitch.js'
 import { StopIrrigationSwitch } from './devices/StopIrrigationSwitch.js'
+import { TestZoneSwitch } from './devices/TestZoneSwitch.js'
 import { ZoneValve } from './devices/ZoneValve.js'
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js'
 
@@ -155,6 +156,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       device.includeZones = device.includeZones ?? ''
       device.showDelayIrrigationSwitch = device.showDelayIrrigationSwitch ?? false
       device.irrigationDelay = device.irrigationDelay ?? 1
+      device.showTestZoneSwitch = device.showTestZoneSwitch ?? false
       device.syncTime = device.syncTime ?? false
       device.showRequestResponse = device.showRequestResponse ?? false
       device.minValueRemainingDuration = device.minValueRemainingDuration ?? 0
@@ -203,6 +205,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
           if (configured === this.hap.Characteristic.IsConfigured.CONFIGURED) {
             this.createZoneValve(device, rainbird, zoneId)
             this.createContactSensor(device, rainbird, zoneId)
+            this.createTestZoneSwitch(device, rainbird, zoneId)
           }
         }
         for (const programId of ['A', 'B', 'C', 'D']) {
@@ -215,9 +218,11 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         rainbird.on('zone_enable', (zoneId, enabled) => {
           if (enabled) {
             this.createContactSensor(device, rainbird, zoneId)
+            this.createTestZoneSwitch(device, rainbird, zoneId)
             // this.createZoneValve(device, rainbird, zoneId);
           } else {
             this.removeContactSensor(device, rainbird, zoneId)
+            this.removeTestZoneSwitch(device, rainbird, zoneId)
             // this.removeZoneValve(device, rainbird, zoneId);
           }
         })
@@ -371,7 +376,14 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   }
 
   async FirmwareRevision(rainbird: RainBirdService, device: devicesConfig): Promise<string> {
-    return String(device.firmware ?? rainbird.version ?? this.version)
+    if (device.firmware) {
+      return String(device.firmware)
+    }
+    try {
+      return await rainbird.getControllerFirmwareVersion()
+    } catch {
+      return String(rainbird.version ?? this.version)
+    }
   }
 
   async createZoneValve(device: devicesConfig, rainbird: RainBirdService, zoneId: number): Promise<void> {
@@ -520,6 +532,62 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
   removeContactSensor(device: devicesConfig, rainbird: RainBirdService, zoneId: number): void {
     const model = `${rainbird!.model}-${zoneId}`
+    const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
+    const index = this.accessories.findIndex(accessory => accessory.UUID === uuid)
+    if (index >= 0) {
+      this.unregisterPlatformAccessories(this.accessories[index])
+      this.accessories.splice(index, 1)
+    }
+  }
+
+  async createTestZoneSwitch(device: devicesConfig, rainbird: RainBirdService, zoneId: number): Promise<void> {
+    const model = `${rainbird!.model}-test-${zoneId}`
+    const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
+    const name = `Zone ${zoneId} Test`
+    const testSwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : 'Test Zone Switch'
+    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
+
+    if (existingAccessory) {
+      if (!device.hide_device && device.showTestZoneSwitch) {
+        this.infoLog(`Restoring existing accessory from cache: ${existingAccessory.displayName}`)
+        existingAccessory.displayName = testSwitchConfigName
+          ? await this.validateAndCleanDisplayName(testSwitchConfigName, `configDeviceName ${name}`, testSwitchConfigName)
+          : await this.validateAndCleanDisplayName(name, `${name} name`, name)
+        existingAccessory.context.device = device
+        existingAccessory.context.deviceID = rainbird!.serialNumber
+        existingAccessory.context.model = model
+        existingAccessory.context.FirmwareRevision = await this.FirmwareRevision(rainbird, device)
+        existingAccessory.context.zoneId = zoneId
+        this.api.updatePlatformAccessories([existingAccessory])
+        new TestZoneSwitch(this, existingAccessory, device, rainbird)
+        this.debugLog(`Test Zone Switch uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${existingAccessory.UUID})`)
+      } else {
+        this.unregisterPlatformAccessories(existingAccessory)
+      }
+    } else if (!device.hide_device && device.showTestZoneSwitch) {
+      this.infoLog(`Adding new accessory: ${model}`)
+      const accessory = new this.api.platformAccessory(model, uuid)
+      accessory.displayName = testSwitchConfigName
+        ? await this.validateAndCleanDisplayName(testSwitchConfigName, `configDeviceName ${name}`, testSwitchConfigName)
+        : await this.validateAndCleanDisplayName(name, `${name} name`, name)
+      accessory.context.device = device
+      accessory.context.deviceID = rainbird!.serialNumber
+      accessory.context.model = model
+      accessory.context.FirmwareRevision = await this.FirmwareRevision(rainbird, device)
+      accessory.context.zoneId = zoneId
+      new TestZoneSwitch(this, accessory, device, rainbird)
+      this.debugLog(`Test Zone Switch uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${accessory.UUID})`)
+      this.externalOrPlatform(device, accessory)
+      this.accessories.push(accessory)
+    } else {
+      if (this.platformLogging.includes('debug') && device.showTestZoneSwitch) {
+        this.errorLog(`Unable to Register new device: ${model}`)
+      }
+    }
+  }
+
+  removeTestZoneSwitch(device: devicesConfig, rainbird: RainBirdService, zoneId: number): void {
+    const model = `${rainbird!.model}-test-${zoneId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const index = this.accessories.findIndex(accessory => accessory.UUID === uuid)
     if (index >= 0) {

@@ -39,6 +39,7 @@ export interface devicesConfig {
   includeZones?: string
   showDelayIrrigationSwitch?: boolean
   irrigationDelay?: number
+  showTestZoneSwitch?: boolean
   external: boolean
   firmware?: number
   refreshRate?: number

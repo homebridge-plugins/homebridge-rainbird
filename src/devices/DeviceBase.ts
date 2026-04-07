@@ -8,6 +8,9 @@ import type { RainBirdService } from 'rainbird'
 import type { RainbirdPlatform } from '../platform.js'
 import type { devicesConfig, RainbirdPlatformConfig } from '../settings.js'
 
+const FIRMWARE_VERSION_STRIP_RE = /^V|-.*$/g
+const FIRMWARE_VERSION_DOT_RE = /./g
+
 export abstract class DeviceBase {
   public readonly api: API
   public readonly log: Logging
@@ -107,14 +110,14 @@ export abstract class DeviceBase {
   async getDeviceContext(accessory: PlatformAccessory, device: devicesConfig): Promise<void> {
     const deviceFirmwareVersion = device.firmware ?? this.rainbird.version ?? this.platform.version ?? '0.0.0'
     const version = deviceFirmwareVersion.toString()
-    this.debugLog(`Firmware Version: ${version.replace(/^V|-.*$/g, '')}`)
+    this.debugLog(`Firmware Version: ${version.replace(FIRMWARE_VERSION_STRIP_RE, '')}`)
     if (version?.includes('.') === false) {
-      const replace = version?.replace(/^V|-.*$/g, '')
-      const match = replace?.match(/./g)
+      const replace = version?.replace(FIRMWARE_VERSION_STRIP_RE, '')
+      const match = replace?.match(FIRMWARE_VERSION_DOT_RE)
       const validVersion = match?.join('.')
       this.deviceFirmwareVersion = validVersion ?? '0.0.0'
     } else {
-      this.deviceFirmwareVersion = version.replace(/^V|-.*$/g, '') ?? '0.0.0'
+      this.deviceFirmwareVersion = version.replace(FIRMWARE_VERSION_STRIP_RE, '') ?? '0.0.0'
     }
     accessory
       .getService(this.hap.Service.AccessoryInformation)!

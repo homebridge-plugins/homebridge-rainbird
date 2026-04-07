@@ -138,6 +138,15 @@
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
               }
             },
+            "showTestZoneSwitch": {
+              "title": "Show Test Zone Switch",
+              "type": "boolean",
+              "required": false,
+              "description": "Show a switch for each zone to trigger a brief zone test",
+              "condition": {
+                "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
+              }
+            },
             "irrigationDelay": {
               "title": "Irrigation Delay (days)",
               "type": "number",
@@ -317,6 +326,7 @@
             "devices[].includeZones",
             "devices[].showDelayIrrigationSwitch",
             "devices[].irrigationDelay",
+            "devices[].showTestZoneSwitch",
             "devices[].minValueRemainingDuration",
             "devices[].maxValueRemainingDuration",
             "devices[].syncTime",
