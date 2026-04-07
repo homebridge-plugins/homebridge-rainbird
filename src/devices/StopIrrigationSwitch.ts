@@ -4,10 +4,12 @@
  */
 import type { CharacteristicValue, PlatformAccessory, Service } from 'homebridge'
 import type { RainBirdService } from 'rainbird'
-import { fromEvent } from 'rxjs'
 
 import type { RainbirdPlatform } from '../platform.js'
 import type { devicesConfig } from '../settings.js'
+
+import { fromEvent } from 'rxjs'
+
 import { DeviceBase } from './DeviceBase.js'
 
 export class StopIrrigationSwitch extends DeviceBase {

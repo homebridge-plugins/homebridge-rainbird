@@ -7,6 +7,7 @@ import type { RainBirdService } from 'rainbird'
 
 import type { RainbirdPlatform } from '../platform.js'
 import type { devicesConfig } from '../settings.js'
+
 import { DeviceBase } from './DeviceBase.js'
 
 export class DelayIrrigationSwitch extends DeviceBase {

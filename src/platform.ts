@@ -28,6 +28,7 @@ import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js'
  */
 export class RainbirdPlatform implements DynamicPlatformPlugin {
   public accessories: PlatformAccessory[]
+  private readonly handlers: object[] = []
   public readonly api: API
   public readonly log: Logging
   protected readonly hap: HAP
@@ -107,6 +108,16 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
     this.accessories.push(accessory)
+  }
+
+  private registerHandler<T extends object>(handler: T): T {
+    this.handlers.push(handler)
+    return handler
+  }
+
+  private createPlatformAccessory(displayName: string, uuid: string): PlatformAccessory {
+    const PlatformAccessoryCtor = this.api.platformAccessory
+    return new PlatformAccessoryCtor(displayName, uuid)
   }
 
   /**
@@ -228,7 +239,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         })
       } catch (e: any) {
         this.errorLog(`Failed to connect to RainBird controller at ${device.ipaddress}: ${e.message}`)
-        
+
         // Provide specific troubleshooting guidance based on error type
         if (e.message?.includes('ECONNREFUSED')) {
           this.errorLog('Connection refused - Troubleshooting steps:')
@@ -247,7 +258,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         } else {
           this.errorLog('Connection error - Please check your controller configuration and network settings')
         }
-        
+
         this.errorLog(`Skipping device at ${device.ipaddress} and continuing with other devices...`)
         continue
       }
@@ -276,7 +287,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.api.updatePlatformAccessories([existingAccessory])
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        new IrrigationSystem(this, existingAccessory, device, rainbird)
+        this.registerHandler(new IrrigationSystem(this, existingAccessory, device, rainbird))
         this.debugLog(`Irrigation System uuid: ${device.ipaddress}-${rainbird!.model}-${rainbird!.serialNumber}, (${existingAccessory.UUID})`)
         return existingAccessory
       } else {
@@ -287,7 +298,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       this.infoLog(`Adding new accessory: ${rainbird!.model}`)
 
       // create a new accessory
-      const accessory = new this.api.platformAccessory(rainbird!.model, uuid)
+      const accessory = this.createPlatformAccessory(rainbird!.model, uuid)
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
@@ -300,7 +311,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       accessory.context.FirmwareRevision = await this.FirmwareRevision(rainbird, device)
       // create the accessory handler for the newly create accessory
       // this is imported from `platformAccessory.ts`
-      new IrrigationSystem(this, accessory, device, rainbird)
+      this.registerHandler(new IrrigationSystem(this, accessory, device, rainbird))
       this.debugLog(`Irrigation System uuid: ${device.ipaddress}-${rainbird!.model}-${rainbird!.serialNumber}, (${accessory.UUID})`)
 
       // link the accessory to your platform
@@ -339,7 +350,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.api.updatePlatformAccessories([existingAccessory])
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        new LeakSensor(this, existingAccessory, device, rainbird)
+        this.registerHandler(new LeakSensor(this, existingAccessory, device, rainbird))
         this.debugLog(`Leak Sensor uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${existingAccessory.UUID})`)
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
@@ -349,7 +360,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       this.infoLog(`Adding new accessory: ${model}`)
 
       // create a new accessory
-      const accessory = new this.api.platformAccessory(model, uuid)
+      const accessory = this.createPlatformAccessory(model, uuid)
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
@@ -362,7 +373,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       accessory.context.FirmwareRevision = await this.FirmwareRevision(rainbird, device)
       // create the accessory handler for the newly create accessory
       // this is imported from `platformAccessory.ts`
-      new LeakSensor(this, accessory, device, rainbird)
+      this.registerHandler(new LeakSensor(this, accessory, device, rainbird))
       this.debugLog(`Leak Sensor uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${accessory.UUID})`)
 
       // link the accessory to your platform
@@ -420,7 +431,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.api.updatePlatformAccessories([existingAccessory])
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        new ZoneValve(this, existingAccessory, device, rainbird, irrigationAccessory!.context)
+        this.registerHandler(new ZoneValve(this, existingAccessory, device, rainbird, irrigationAccessory!.context))
         this.debugLog(`Zone Valve uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${existingAccessory.UUID})`)
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
@@ -430,7 +441,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       this.infoLog(`Adding new accessory: ${model}`)
 
       // create a new accessory
-      const accessory = new this.api.platformAccessory(name, uuid)
+      const accessory = this.createPlatformAccessory(name, uuid)
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
@@ -444,7 +455,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       accessory.context.zoneId = zoneId
       // create the accessory handler for the newly create accessory
       // this is imported from `platformAccessory.ts`
-      new ZoneValve(this, accessory, device, rainbird, irrigationAccessory!.context)
+      this.registerHandler(new ZoneValve(this, accessory, device, rainbird, irrigationAccessory!.context))
       this.debugLog(`Valve Zone uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${accessory.UUID})`)
 
       // link the accessory to your platform
@@ -493,7 +504,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.api.updatePlatformAccessories([existingAccessory])
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        new ContactSensor(this, existingAccessory, device, rainbird)
+        this.registerHandler(new ContactSensor(this, existingAccessory, device, rainbird))
         this.debugLog(`Contact Sensor uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${existingAccessory.UUID})`)
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
@@ -503,7 +514,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       this.infoLog(`Adding new accessory: ${model}`)
 
       // create a new accessory
-      const accessory = new this.api.platformAccessory(model, uuid)
+      const accessory = this.createPlatformAccessory(model, uuid)
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
@@ -517,7 +528,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       accessory.context.zoneId = zoneId
       // create the accessory handler for the newly create accessory
       // this is imported from `platformAccessory.ts`
-      new ContactSensor(this, accessory, device, rainbird)
+      this.registerHandler(new ContactSensor(this, accessory, device, rainbird))
       this.debugLog(`Contact Sensor uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${accessory.UUID})`)
 
       // link the accessory to your platform
@@ -559,14 +570,14 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         existingAccessory.context.FirmwareRevision = await this.FirmwareRevision(rainbird, device)
         existingAccessory.context.zoneId = zoneId
         this.api.updatePlatformAccessories([existingAccessory])
-        new TestZoneSwitch(this, existingAccessory, device, rainbird)
+        this.registerHandler(new TestZoneSwitch(this, existingAccessory, device, rainbird))
         this.debugLog(`Test Zone Switch uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${existingAccessory.UUID})`)
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
       }
     } else if (!device.hide_device && device.showTestZoneSwitch) {
       this.infoLog(`Adding new accessory: ${model}`)
-      const accessory = new this.api.platformAccessory(model, uuid)
+      const accessory = this.createPlatformAccessory(model, uuid)
       accessory.displayName = testSwitchConfigName
         ? await this.validateAndCleanDisplayName(testSwitchConfigName, `configDeviceName ${name}`, testSwitchConfigName)
         : await this.validateAndCleanDisplayName(name, `${name} name`, name)
@@ -575,7 +586,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       accessory.context.model = model
       accessory.context.FirmwareRevision = await this.FirmwareRevision(rainbird, device)
       accessory.context.zoneId = zoneId
-      new TestZoneSwitch(this, accessory, device, rainbird)
+      this.registerHandler(new TestZoneSwitch(this, accessory, device, rainbird))
       this.debugLog(`Test Zone Switch uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${accessory.UUID})`)
       this.externalOrPlatform(device, accessory)
       this.accessories.push(accessory)
@@ -623,7 +634,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.api.updatePlatformAccessories([existingAccessory])
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        new ProgramSwitch(this, existingAccessory, device, rainbird)
+        this.registerHandler(new ProgramSwitch(this, existingAccessory, device, rainbird))
         this.debugLog(`Program Switch uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${existingAccessory.UUID})`)
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
@@ -633,7 +644,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       this.infoLog(`Adding new accessory: ${model}`)
 
       // create a new accessory
-      const accessory = new this.api.platformAccessory(model, uuid)
+      const accessory = this.createPlatformAccessory(model, uuid)
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
@@ -648,7 +659,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // create the accessory handler for the newly create accessory
       // this is imported from `platformAccessory.ts`
-      new ProgramSwitch(this, accessory, device, rainbird)
+      this.registerHandler(new ProgramSwitch(this, accessory, device, rainbird))
       this.debugLog(`Program Switch uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${accessory.UUID})`)
 
       // link the accessory to your platform
@@ -686,7 +697,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.api.updatePlatformAccessories([existingAccessory])
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        new StopIrrigationSwitch(this, existingAccessory, device, rainbird)
+        this.registerHandler(new StopIrrigationSwitch(this, existingAccessory, device, rainbird))
         this.debugLog(`Stop Irrigation Switch uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${existingAccessory.UUID})`)
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
@@ -696,7 +707,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       this.infoLog(`Adding new accessory: ${model}`)
 
       // create a new accessory
-      const accessory = new this.api.platformAccessory(model, uuid)
+      const accessory = this.createPlatformAccessory(model, uuid)
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
@@ -710,7 +721,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // create the accessory handler for the newly create accessory
       // this is imported from `platformAccessory.ts`
-      new StopIrrigationSwitch(this, accessory, device, rainbird)
+      this.registerHandler(new StopIrrigationSwitch(this, accessory, device, rainbird))
       this.debugLog(`Stop Irrigation Switch uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${accessory.UUID})`)
 
       // link the accessory to your platform
@@ -748,7 +759,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         this.api.updatePlatformAccessories([existingAccessory])
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        new DelayIrrigationSwitch(this, existingAccessory, device, rainbird)
+        this.registerHandler(new DelayIrrigationSwitch(this, existingAccessory, device, rainbird))
         this.debugLog(`Delay Irrigation Switch uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${existingAccessory.UUID})`)
       } else {
         this.unregisterPlatformAccessories(existingAccessory)
@@ -758,7 +769,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       this.infoLog(`Adding new accessory: ${model}`)
 
       // create a new accessory
-      const accessory = new this.api.platformAccessory(model, uuid)
+      const accessory = this.createPlatformAccessory(model, uuid)
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
@@ -772,7 +783,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
       // create the accessory handler for the newly create accessory
       // this is imported from `platformAccessory.ts`
-      new DelayIrrigationSwitch(this, accessory, device, rainbird)
+      this.registerHandler(new DelayIrrigationSwitch(this, accessory, device, rainbird))
       this.debugLog(`Delay Irrigation Switch uuid: ${device.ipaddress}-${model}-${rainbird!.serialNumber}, (${accessory.UUID})`)
 
       // link the accessory to your platform
