@@ -309,11 +309,12 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
         // Provide specific troubleshooting guidance based on error type
         if (e.message?.includes('Status: 430')) {
-          this.errorLog('HTTP 430 - The controller rejected the request. This is likely caused by a new RainBird firmware')
-          this.errorLog('  that uses a different communication protocol which is not yet supported by this plugin.')
-          this.errorLog('  See: https://github.com/home-assistant/core/issues/142123')
-          this.errorLog('  If you recently updated your RainBird app or controller firmware, this is the likely cause.')
-          this.errorLog('  Unfortunately there is nothing that can be done until the new protocol is reverse engineered.')
+          this.errorLog('HTTP 430 - The controller rejected the HTTP request.')
+          this.errorLog('  Controllers updated by the RainBird 2.x app switch their local API to HTTPS (with a self-signed')
+          this.errorLog('  certificate). This plugin currently communicates over HTTP and is therefore incompatible.')
+          this.errorLog('  If you recently updated your RainBird controller via the RainBird 2.x app, this is the cause.')
+          this.errorLog('  See: https://github.com/home-assistant/core/pull/163915 for background on this issue.')
+          this.errorLog('  Support for HTTPS controllers is being tracked and will be added in a future update.')
         } else if (e.message?.includes('ECONNREFUSED')) {
           this.errorLog('Connection refused - Troubleshooting steps:')
           this.errorLog('  1. Verify the RainBird controller is powered on and connected to your network')
