@@ -30,6 +30,7 @@ export abstract class DeviceBase {
     protected device: devicesConfig,
     protected rainbird: RainBirdService,
   ) {
+    this.platform = platform
     this.api = this.platform.api
     this.log = this.platform.log
     this.config = this.platform.config
