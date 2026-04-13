@@ -256,17 +256,17 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         rainbird.on('log', (log) => {
           switch (log.level) {
             case LogLevel.ERROR:
-              this.errorLog(log.message)
+              this.errorLog(`From Rainbird Library: ${log.message}`)
               break
             case LogLevel.WARN:
-              this.warnLog(log.message)
+              this.warnLog(`From Rainbird Library: ${log.message}`)
               break
             case LogLevel.DEBUG:
-              this.debugLog(log.message)
+              this.debugLog(`From Rainbird Library: ${log.message}`)
               break
             case LogLevel.INFO:
             default:
-              this.infoLog(log.message)
+              this.infoLog(`From Rainbird Library: ${log.message}`)
           }
         })
         const metaData = await rainbird.init()
