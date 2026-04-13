@@ -50,6 +50,7 @@ Any controller that supports the [RainBird LNK WiFi Module](https://www.rainbird
 - Using the RainBird app while the plugin is running can cause connectivity issues.
 - The RainBird LNK WiFi Module may not support "Band Steering" and WiFi Channel 13. Try not using these on your router if you are having connectivity issues.
 - Some models do not yet have support for displaying the time remaining. If its not working for your model please log a GitHub issue and we will try to add it with your help.
+- **New RainBird Firmware (2.0 app)**: Controllers that have been upgraded to the new RainBird firmware use a different communication protocol that is not yet supported by this plugin. If your controller returns an HTTP 430 error, this is likely the cause. See [this issue](https://github.com/home-assistant/core/issues/142123) for more details.
 
 ## Libraries
 
