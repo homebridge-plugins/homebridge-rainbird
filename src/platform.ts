@@ -264,6 +264,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
             case LogLevel.DEBUG:
               this.debugLog(`From Rainbird Library: ${log.message}`)
               break
+            case LogLevel.INFO:
             default:
               this.infoLog(`From Rainbird Library: ${log.message}`)
           }
