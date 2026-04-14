@@ -126,8 +126,10 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
   /**
    * Register or update a Matter accessory. Always rebuilds the accessory definition
    * to apply config changes and re-attach handlers, merging into the cached instance if present.
+   * When device.external is true the accessory is published as an external Matter accessory.
    */
   private async registerOrUpdateMatterAccessory(
+    device: devicesConfig,
     uuidKey: string,
     buildAccessory: () => any,
   ): Promise<void> {
@@ -150,11 +152,30 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
         this.debugLog(`Updated cached Matter accessory: ${existing.displayName}`)
       } else {
         this.matterAccessories.set(uuid, freshDef)
-        await this.matterApi.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [freshDef])
+        await this.externalOrPlatformMatter(device, freshDef)
         this.infoLog(`Registered Matter accessory: ${freshDef.displayName}`)
       }
     } catch (e: any) {
       this.errorLog(`Failed to register Matter accessory (key: ${uuidKey}): ${e.message}`)
+    }
+  }
+
+  /**
+   * Publish a Matter accessory as either an external accessory or a platform accessory,
+   * mirroring the HAP externalOrPlatform behaviour.
+   */
+  private async externalOrPlatformMatter(device: devicesConfig, accessory: any): Promise<void> {
+    if (device.external) {
+      this.debugWarnLog(`${accessory.displayName} External Matter Accessory Mode`)
+      if (typeof this.matterApi.publishExternalAccessories === 'function') {
+        await this.matterApi.publishExternalAccessories(PLUGIN_NAME, [accessory])
+      } else {
+        this.warnLog(`${accessory.displayName} Matter API does not support publishExternalAccessories; registering as platform accessory`)
+        await this.matterApi.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory])
+      }
+    } else {
+      this.debugLog(`${accessory.displayName} Platform Matter Accessory Mode`)
+      await this.matterApi.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory])
     }
   }
 
@@ -199,7 +220,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
       ? await this.validateAndCleanDisplayName(device.configDeviceName, 'configDeviceName', device.configDeviceName)
       : await this.validateAndCleanDisplayName(rainbird.model, 'model', rainbird.model)
 
-    await this.registerOrUpdateMatterAccessory(uuidKey, () => ({
+    await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
       UUID: this.matterApi.uuid.generate(uuidKey),
       displayName,
       deviceType: this.matterApi.deviceTypes.OnOffSwitch,
@@ -247,7 +268,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     const rawName = device.configDeviceName ? `${device.configDeviceName} Leak Sensor` : 'Leak Sensor'
     const displayName = await this.validateAndCleanDisplayName(rawName, 'configDeviceName Leak Sensor', rawName)
 
-    await this.registerOrUpdateMatterAccessory(uuidKey, () => ({
+    await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
       UUID: this.matterApi.uuid.generate(uuidKey),
       displayName,
       deviceType: this.matterApi.deviceTypes.LeakSensor,
@@ -289,7 +310,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     const displayName = await this.validateAndCleanDisplayName(rawName, `configDeviceName ${name}`, rawName)
     const durationSeconds = 300
 
-    await this.registerOrUpdateMatterAccessory(uuidKey, () => ({
+    await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
       UUID: this.matterApi.uuid.generate(uuidKey),
       displayName,
       deviceType: this.matterApi.deviceTypes.OnOffSwitch,
@@ -336,7 +357,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     const displayName = await this.validateAndCleanDisplayName(rawName, `configDeviceName ${name}`, rawName)
 
     // Matter BooleanState: true = contact detected (zone NOT in use), false = contact not detected (zone in use)
-    await this.registerOrUpdateMatterAccessory(uuidKey, () => ({
+    await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
       UUID: this.matterApi.uuid.generate(uuidKey),
       displayName,
       deviceType: this.matterApi.deviceTypes.ContactSensor,
@@ -373,7 +394,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     const rawName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name
     const displayName = await this.validateAndCleanDisplayName(rawName, `configDeviceName ${name}`, rawName)
 
-    await this.registerOrUpdateMatterAccessory(uuidKey, () => ({
+    await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
       UUID: this.matterApi.uuid.generate(uuidKey),
       displayName,
       deviceType: this.matterApi.deviceTypes.OnOffSwitch,
@@ -421,7 +442,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     const rawName = device.configDeviceName ? `${device.configDeviceName} Stop Irrigation` : 'Stop Irrigation'
     const displayName = await this.validateAndCleanDisplayName(rawName, 'configDeviceName Stop Irrigation', rawName)
 
-    await this.registerOrUpdateMatterAccessory(uuidKey, () => ({
+    await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
       UUID: this.matterApi.uuid.generate(uuidKey),
       displayName,
       deviceType: this.matterApi.deviceTypes.OnOffSwitch,
@@ -466,7 +487,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
       return 0
     })
 
-    await this.registerOrUpdateMatterAccessory(uuidKey, () => ({
+    await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
       UUID: this.matterApi.uuid.generate(uuidKey),
       displayName,
       deviceType: this.matterApi.deviceTypes.OnOffSwitch,
@@ -510,7 +531,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     const rawName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name
     const displayName = await this.validateAndCleanDisplayName(rawName, `configDeviceName ${name}`, rawName)
 
-    await this.registerOrUpdateMatterAccessory(uuidKey, () => ({
+    await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
       UUID: this.matterApi.uuid.generate(uuidKey),
       displayName,
       deviceType: this.matterApi.deviceTypes.OnOffSwitch,
