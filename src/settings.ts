@@ -54,4 +54,6 @@ export interface options {
   updateRate?: number
   pushRate?: number
   logging?: string
+  preferMatter?: boolean
+  enableMatter?: boolean
 }

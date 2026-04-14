@@ -242,7 +242,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   /**
    * This method is used to discover the your location and devices.
    */
-  private async discoverDevices(): Promise<void> {
+  protected async discoverDevices(): Promise<void> {
     for (const device of this.config.devices!) {
       try {
         const rainbird = new RainBirdService({
