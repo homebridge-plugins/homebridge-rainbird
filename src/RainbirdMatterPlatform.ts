@@ -3,6 +3,7 @@
  * RainbirdMatterPlatform.ts: @homebridge-plugins/homebridge-rainbird.
  */
 import type { RainBirdService } from 'rainbird'
+import type { Subscription } from 'rxjs'
 
 import type { devicesConfig } from './settings.js'
 
@@ -21,10 +22,13 @@ import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js'
 export class RainbirdMatterPlatform extends RainbirdPlatform {
   /** Map of Matter cached accessories restored from disk */
   public readonly matterAccessories: Map<string, any> = new Map()
+  private readonly matterSubscriptions: Map<string, Subscription> = new Map()
 
   get matterApi(): any {
     return (this.api as any).matter
   }
+
+
 
   /**
    * Called when homebridge restores cached HAP accessories from disk.
@@ -180,11 +184,27 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
   }
 
   /**
+   * Ensure each Matter accessory has at most one event subscription attached.
+   */
+  private ensureMatterSubscription(uuidKey: string, createSubscription: () => Subscription): void {
+    const uuid = this.matterApi.uuid.generate(uuidKey)
+    if (this.matterSubscriptions.has(uuid)) {
+      return
+    }
+
+    this.matterSubscriptions.set(uuid, createSubscription())
+  }
+
+  /**
    * Unregister a Matter accessory by UUID key.
    */
   private unregisterMatterAccessory(uuidKey: string): void {
     const uuid = this.matterApi.uuid.generate(uuidKey)
     const accessory = this.matterAccessories.get(uuid)
+    const subscription = this.matterSubscriptions.get(uuid)
+    subscription?.unsubscribe()
+    this.matterSubscriptions.delete(uuid)
+
     if (accessory) {
       try {
         this.matterApi.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory])
@@ -223,24 +243,27 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
       UUID: this.matterApi.uuid.generate(uuidKey),
       displayName,
-      deviceType: this.matterApi.deviceTypes.OnOffSwitch,
+      deviceType: this.matterApi.deviceTypes.WaterValve,
       serialNumber: rainbird.serialNumber,
       manufacturer: 'RainBird',
       model: rainbird.model,
       firmwareRevision: rainbird.version ?? this.version,
       hardwareRevision: '1.0.0',
       clusters: {
-        onOff: { onOff: rainbird.isInUse() },
+        valveConfigurationAndControl: {
+          currentState: rainbird.isInUse() ? 1 : 0,
+          targetState: rainbird.isInUse() ? 1 : 0,
+        },
       },
       handlers: {
-        onOff: {
-          on: async () => {
+        valveConfigurationAndControl: {
+          open: async (request: any) => {
             const zones = rainbird.zones
             if (zones.length > 0) {
-              rainbird.activateZone(zones[0], 300)
+              rainbird.activateZone(zones[0], request?.openDuration ?? 300)
             }
           },
-          off: async () => {
+          close: async () => {
             await rainbird.stopIrrigation()
           },
         },
@@ -248,12 +271,14 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
       context: { deviceId: uuidKey },
     }))
 
-    // Subscribe to status events to update Matter state
-    fromEvent(rainbird, 'status').subscribe({
+    this.ensureMatterSubscription(uuidKey, () => fromEvent(rainbird, 'status').subscribe({
       next: async () => {
-        await this.updateMatterState(uuidKey, 'onOff', { onOff: rainbird.isInUse() })
+        await this.updateMatterState(uuidKey, 'valveConfigurationAndControl', {
+          currentState: rainbird.isInUse() ? 1 : 0,
+          targetState: rainbird.isInUse() ? 1 : 0,
+        })
       },
-    })
+    }))
   }
 
   // ─── Leak Sensor ─────────────────────────────────────────────────────────────
@@ -283,12 +308,11 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
       context: { deviceId: uuidKey },
     }))
 
-    // Subscribe to rain sensor events to update Matter state
-    fromEvent(rainbird, 'rain_sensor_state').subscribe({
+    this.ensureMatterSubscription(uuidKey, () => fromEvent(rainbird, 'rain_sensor_state').subscribe({
       next: async () => {
         await this.updateMatterState(uuidKey, 'booleanState', { stateValue: rainbird.rainSetPointReached })
       },
-    })
+    }))
   }
 
   // ─── Zone Valve ──────────────────────────────────────────────────────────────
@@ -313,21 +337,24 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
       UUID: this.matterApi.uuid.generate(uuidKey),
       displayName,
-      deviceType: this.matterApi.deviceTypes.OnOffSwitch,
+      deviceType: this.matterApi.deviceTypes.WaterValve,
       serialNumber: rainbird.serialNumber,
       manufacturer: 'RainBird',
       model,
       firmwareRevision: rainbird.version ?? this.version,
       hardwareRevision: '1.0.0',
       clusters: {
-        onOff: { onOff: rainbird.isActive(zoneId) },
+        valveConfigurationAndControl: {
+          currentState: rainbird.isActive(zoneId) ? 1 : 0,
+          targetState: rainbird.isActive(zoneId) ? 1 : 0,
+        },
       },
       handlers: {
-        onOff: {
-          on: async () => {
-            rainbird.activateZone(zoneId, durationSeconds)
+        valveConfigurationAndControl: {
+          open: async (request: any) => {
+            rainbird.activateZone(zoneId, request?.openDuration ?? durationSeconds)
           },
-          off: async () => {
+          close: async () => {
             await rainbird.deactivateZone(zoneId)
           },
         },
@@ -335,12 +362,14 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
       context: { deviceId: uuidKey, zoneId },
     }))
 
-    // Subscribe to status events to update Matter state
-    fromEvent(rainbird, 'status').subscribe({
+    this.ensureMatterSubscription(uuidKey, () => fromEvent(rainbird, 'status').subscribe({
       next: async () => {
-        await this.updateMatterState(uuidKey, 'onOff', { onOff: rainbird.isActive(zoneId) })
+        await this.updateMatterState(uuidKey, 'valveConfigurationAndControl', {
+          currentState: rainbird.isActive(zoneId) ? 1 : 0,
+          targetState: rainbird.isActive(zoneId) ? 1 : 0,
+        })
       },
-    })
+    }))
   }
 
   // ─── Contact Sensor ──────────────────────────────────────────────────────────
@@ -372,12 +401,11 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
       context: { deviceId: uuidKey, zoneId },
     }))
 
-    // Subscribe to status events to update Matter state
-    fromEvent(rainbird, 'status').subscribe({
+    this.ensureMatterSubscription(uuidKey, () => fromEvent(rainbird, 'status').subscribe({
       next: async () => {
         await this.updateMatterState(uuidKey, 'booleanState', { stateValue: !rainbird.isInUse(zoneId) })
       },
-    })
+    }))
   }
 
   // ─── Program Switch ──────────────────────────────────────────────────────────
@@ -419,15 +447,14 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
       context: { deviceId: uuidKey, programId },
     }))
 
-    // Subscribe to status events to update Matter state
-    fromEvent(rainbird, 'status').subscribe({
+    this.ensureMatterSubscription(uuidKey, () => fromEvent(rainbird, 'status').subscribe({
       next: async () => {
         const isRunning = rainbird.isProgramRunning(programId)
         if (isRunning !== undefined) {
           await this.updateMatterState(uuidKey, 'onOff', { onOff: isRunning })
         }
       },
-    })
+    }))
   }
 
   // ─── Stop Irrigation Switch ──────────────────────────────────────────────────
