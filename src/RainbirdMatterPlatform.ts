@@ -109,7 +109,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
             await this.registerMatterContactSensor(device, rainbird, zoneId)
             await this.registerMatterTestZoneSwitch(device, rainbird, zoneId)
           } else {
-            this.unregisterMatterAccessory(`${device.ipaddress}-${rainbird.model}-${zoneId}-${rainbird.serialNumber}`)
+            this.unregisterMatterAccessory(`${device.ipaddress}-${rainbird.model}-${zoneId}-contact-${rainbird.serialNumber}`)
             this.unregisterMatterAccessory(`${device.ipaddress}-${rainbird.model}-test-${zoneId}-${rainbird.serialNumber}`)
           }
         })
@@ -449,7 +449,10 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     const displayName = await this.validateAndCleanDisplayName(rawName, 'configDeviceName Delay Irrigation', rawName)
     const irrigationDelay = device.irrigationDelay ?? 1
 
-    const initialDelay = await rainbird.getIrrigationDelay().catch(() => 0)
+    const initialDelay = await rainbird.getIrrigationDelay().catch((e: any) => {
+      this.debugLog(`Failed to get irrigation delay for ${device.ipaddress}: ${e.message}`)
+      return 0
+    })
 
     await this.registerOrUpdateMatterAccessory(uuidKey, () => ({
       UUID: this.matterApi.uuid.generate(uuidKey),
