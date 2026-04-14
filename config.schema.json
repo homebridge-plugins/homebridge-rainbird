@@ -288,6 +288,18 @@
             "title": "Allow Invalid Characters",
             "type": "boolean",
             "description": "If true, invalid characters will be allowed in the device name."
+          },
+          "enableMatter": {
+            "title": "Enable Matter Support",
+            "type": "boolean",
+            "default": true,
+            "description": "Enable Homebridge Matter support. When enabled and Matter is available on your Homebridge instance, RainBird devices will be registered as Matter accessories."
+          },
+          "preferMatter": {
+            "title": "Prefer Matter over HAP",
+            "type": "boolean",
+            "default": true,
+            "description": "When Matter is available, prioritize Matter over HAP (HomeKit Accessory Protocol). Disable this to always use HAP regardless of Matter availability."
           }
         }
       }
@@ -361,7 +373,9 @@
           "notitle": true
         },
         "options.logging",
-        "options.allowInvalidCharacters"
+        "options.allowInvalidCharacters",
+        "options.enableMatter",
+        "options.preferMatter"
       ]
     }
   ]

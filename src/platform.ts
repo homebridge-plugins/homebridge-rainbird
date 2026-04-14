@@ -144,7 +144,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     return this.controllerCapabilities.get(deviceId)?.supportsStackRunZone ?? false
   }
 
-  private async detectControllerCapabilities(rainbird: RainBirdService): Promise<ControllerCapabilities> {
+  protected async detectControllerCapabilities(rainbird: RainBirdService): Promise<ControllerCapabilities> {
     const capabilities: ControllerCapabilities = {
       supportsControllerFirmwareVersion: await rainbird.getCommandSupport(COMMAND_ID_CONTROLLER_FIRMWARE_VERSION),
       supportsRetrieveSchedule: await rainbird.getCommandSupport(COMMAND_ID_RETRIEVE_SCHEDULE),
@@ -242,7 +242,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   /**
    * This method is used to discover the your location and devices.
    */
-  private async discoverDevices(): Promise<void> {
+  protected async discoverDevices(): Promise<void> {
     for (const device of this.config.devices!) {
       try {
         const rainbird = new RainBirdService({
