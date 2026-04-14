@@ -28,10 +28,11 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
 
   /**
    * Called when homebridge restores cached HAP accessories from disk.
-   * In Matter mode we do not use HAP accessories, so this is a no-op.
+   * Delegate to the HAP platform implementation so fallback to HAP mode
+   * continues to use the restored cache without creating duplicates.
    */
-  override configureAccessory(): void {
-    // Matter platform does not use HAP cached accessories
+  override configureAccessory(accessory: any): void {
+    super.configureAccessory(accessory)
   }
 
   /**
@@ -83,6 +84,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
 
         const metaData = await rainbird.init()
         this.debugLog(JSON.stringify(metaData))
+        const capabilities = await this.detectControllerCapabilities(rainbird)
 
         // Display device details
         this.infoLog(`Matter Mode - Model: ${metaData.model}, [Version: ${metaData.version}, Serial Number: ${metaData.serialNumber}, Zones: ${JSON.stringify(metaData.zones)}]`)
@@ -93,7 +95,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
         for (const zoneId of metaData.zones) {
           await this.registerMatterZoneValve(device, rainbird, zoneId)
           await this.registerMatterContactSensor(device, rainbird, zoneId)
-          await this.registerMatterTestZoneSwitch(device, rainbird, zoneId)
+          await this.registerMatterTestZoneSwitch(device, rainbird, zoneId, capabilities.supportsTestZone)
         }
 
         for (const programId of ['A', 'B', 'C', 'D']) {
@@ -107,7 +109,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
         rainbird.on('zone_enable', async (zoneId, enabled) => {
           if (enabled) {
             await this.registerMatterContactSensor(device, rainbird, zoneId)
-            await this.registerMatterTestZoneSwitch(device, rainbird, zoneId)
+            await this.registerMatterTestZoneSwitch(device, rainbird, zoneId, capabilities.supportsTestZone)
           } else {
             this.unregisterMatterAccessory(`${device.ipaddress}-${rainbird.model}-${zoneId}-contact-${rainbird.serialNumber}`)
             this.unregisterMatterAccessory(`${device.ipaddress}-${rainbird.model}-test-${zoneId}-${rainbird.serialNumber}`)
@@ -122,7 +124,8 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
   }
 
   /**
-   * Register or update a Matter accessory. Reuses cached accessory if available.
+   * Register or update a Matter accessory. Always rebuilds the accessory definition
+   * to apply config changes and re-attach handlers, merging into the cached instance if present.
    */
   private async registerOrUpdateMatterAccessory(
     uuidKey: string,
@@ -131,15 +134,24 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     const uuid = this.matterApi.uuid.generate(uuidKey)
 
     try {
+      const freshDef = buildAccessory()
       const existing = this.matterAccessories.get(uuid)
-      const accessory = existing ?? buildAccessory()
 
-      if (!existing) {
-        this.matterAccessories.set(uuid, accessory)
-        await this.matterApi.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory])
-        this.infoLog(`Registered Matter accessory: ${accessory.displayName}`)
+      if (existing) {
+        // Always apply fresh config/handlers to cached instance so config changes and
+        // handler re-attachment are not skipped on subsequent starts.
+        existing.displayName = freshDef.displayName
+        existing.clusters = freshDef.clusters
+        existing.handlers = freshDef.handlers
+        existing.firmwareRevision = freshDef.firmwareRevision
+        if (typeof this.matterApi.updatePlatformAccessories === 'function') {
+          await this.matterApi.updatePlatformAccessories([existing])
+        }
+        this.debugLog(`Updated cached Matter accessory: ${existing.displayName}`)
       } else {
-        this.debugLog(`Matter accessory already cached: ${accessory.displayName}`)
+        this.matterAccessories.set(uuid, freshDef)
+        await this.matterApi.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [freshDef])
+        this.infoLog(`Registered Matter accessory: ${freshDef.displayName}`)
       }
     } catch (e: any) {
       this.errorLog(`Failed to register Matter accessory (key: ${uuidKey}): ${e.message}`)
@@ -482,8 +494,13 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
 
   // ─── Test Zone Switch ────────────────────────────────────────────────────────
 
-  private async registerMatterTestZoneSwitch(device: devicesConfig, rainbird: RainBirdService, zoneId: number): Promise<void> {
+  private async registerMatterTestZoneSwitch(device: devicesConfig, rainbird: RainBirdService, zoneId: number, supportsTestZone: boolean): Promise<void> {
     if (device.hide_device || !device.showTestZoneSwitch) {
+      return
+    }
+
+    if (!supportsTestZone) {
+      this.warnLog(`Skipping Test Zone switch for zone ${zoneId} on ${rainbird.model}: controller does not support the testZone command`)
       return
     }
 
