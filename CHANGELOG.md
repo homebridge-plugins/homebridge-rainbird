@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [3.1.1](https://github.com/homebridge-plugins/homebridge-rainbird/compare/v3.0.10...v3.1.1) (2026-04-14)
 
+## What's Changed
+- add native Homebridge Matter support pathway with HAP fallback when Matter is unavailable
+
+**Full Changelog**: https://github.com/homebridge-plugins/homebridge-rainbird/compare/v3.0.10...v3.1.1
 ## [3.0.10](https://github.com/homebridge-plugins/homebridge-rainbird/compare/v3.0.9...v3.0.10) (2026-04-14)
 
 ## [3.0.9](https://github.com/homebridge-plugins/homebridge-rainbird/compare/v3.0.8...v3.0.9) (2026-04-13)
@@ -99,6 +103,7 @@ All notable changes to this project will be documented in this file. This projec
 # [1.0.0](https://github.com/homebridge-plugins/homebridge-rainbird/compare/v0.1.0...v1.0.0) (2021-09-19)
 
 # 0.1.0 (2021-08-29)
+>>>>>>> 7f2d49f (chore(release): v3.1.1 [skip ci])
 
 ## [3.1.0](https://github.com/homebridge-plugins/homebridge-rainbird/releases/tag/v3.1.0) (2026-04-14)
 
