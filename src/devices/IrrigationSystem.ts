@@ -5,7 +5,7 @@
 import type { CharacteristicValue, PlatformAccessory, Service } from 'homebridge'
 import type { RainBirdService } from 'rainbird'
 
-import type { RainbirdPlatform } from '../platform.js'
+import type { RainbirdPlatform } from '../Platform.HAP.js'
 import type { devicesConfig } from '../settings.js'
 
 import { fromEvent, interval, Subject } from 'rxjs'

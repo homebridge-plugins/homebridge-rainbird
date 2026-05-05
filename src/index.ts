@@ -4,8 +4,8 @@
  */
 import type { API } from 'homebridge'
 
-import { RainbirdMatterPlatform } from './RainbirdMatterPlatform.js'
-import { RainbirdPlatform } from './platform.js'
+import { RainbirdPlatform } from './Platform.HAP.js'
+import { RainbirdMatterPlatform } from './Platform.Matter.js'
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js'
 import { createPlatformProxy } from './utils.js'
 
