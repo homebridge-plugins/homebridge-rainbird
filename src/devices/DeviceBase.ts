@@ -5,7 +5,7 @@
 import type { API, HAP, Logging, PlatformAccessory } from 'homebridge'
 import type { RainBirdService } from 'rainbird'
 
-import type { RainbirdPlatform } from '../platform.js'
+import type { RainbirdPlatform } from '../Platform.HAP.js'
 import type { devicesConfig, RainbirdPlatformConfig } from '../settings.js'
 
 const FIRMWARE_VERSION_STRIP_RE = /^V|-.*$/g
