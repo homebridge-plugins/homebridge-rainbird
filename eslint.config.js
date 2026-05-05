@@ -13,7 +13,8 @@ export default antfu(
       'import/order': 0,
       'jsdoc/check-alignment': 'error',
       'jsdoc/check-line-alignment': 'error',
-      'no-undef': 'error',
+      'no-new': 0,
+      'no-undef': 0,
       'perfectionist/sort-exports': 'error',
       'perfectionist/sort-imports': [
         'error',
