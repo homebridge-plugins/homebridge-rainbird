@@ -1,16 +1,16 @@
 /* Copyright(C) 2021-2024, donavanbecker (https://github.com/donavanbecker) & mantorok1 (https://github.com/mantorok1). All rights reserved.
  *
- * RainbirdMatterPlatform.ts: @homebridge-plugins/homebridge-rainbird.
+ * Platform.Matter.ts: @homebridge-plugins/homebridge-rainbird.
  */
 import type { RainBirdService } from 'rainbird'
 import type { Subscription } from 'rxjs'
 
 import type { devicesConfig } from './settings.js'
 
-import { fromEvent } from 'rxjs'
 import { LogLevel } from 'rainbird'
+import { fromEvent } from 'rxjs'
 
-import { RainbirdPlatform } from './platform.js'
+import { RainbirdPlatform } from './Platform.HAP.js'
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js'
 
 /**
@@ -27,8 +27,6 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
   get matterApi(): any {
     return (this.api as any).matter
   }
-
-
 
   /**
    * Called when homebridge restores cached HAP accessories from disk.
