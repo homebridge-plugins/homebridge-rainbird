@@ -16,6 +16,7 @@
 - docs: refresh the readme
 - docs: add claude and copilot instructions files
 - docs: use the standard org readme banner
+- chore(github): update the setup-node action to v7
 
 ## [3.1.2](https://github.com/homebridge-plugins/homebridge-rainbird/compare/v3.1.1...v3.1.2) (2026-05-04)
 
