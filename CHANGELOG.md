@@ -2,6 +2,7 @@
 
 ### Changed
 
+- fix: keep matter display names within the 32 character limit (#587)
 - chore(deps): update dependencies
 - chore: add .idea to .gitignore
 - chore(github): align workflows, funding and issue templates with the other org plugins

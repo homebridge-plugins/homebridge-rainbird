@@ -130,6 +130,20 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
    * to apply config changes and re-attach handlers, merging into the cached instance if present.
    * When device.external is true the accessory is published as an external Matter accessory.
    */
+  /**
+   * Matter's BridgedDeviceBasicInformation.NodeLabel is constrained to 32 characters.
+   * Homebridge sets the nodeLabel from the accessory displayName, so longer names make
+   * the whole endpoint fail to register with "Behaviors have errors" (#587).
+   */
+  private clampMatterDisplayName(displayName: string): string {
+    if (displayName.length <= 32) {
+      return displayName
+    }
+    const clamped = displayName.slice(0, 32).trim()
+    this.debugLog(`Display name "${displayName}" exceeds Matter's 32 character limit, using "${clamped}"`)
+    return clamped
+  }
+
   private async registerOrUpdateMatterAccessory(
     device: devicesConfig,
     uuidKey: string,
@@ -139,6 +153,7 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
 
     try {
       const freshDef = buildAccessory()
+      freshDef.displayName = this.clampMatterDisplayName(freshDef.displayName)
       const existing = this.matterAccessories.get(uuid)
 
       if (existing) {
