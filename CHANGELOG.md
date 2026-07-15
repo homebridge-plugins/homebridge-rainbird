@@ -3,6 +3,7 @@
 ### Changed
 
 - chore(deps): update dependencies
+- chore: add .idea to .gitignore
 
 ## [3.1.2](https://github.com/homebridge-plugins/homebridge-rainbird/compare/v3.1.1...v3.1.2) (2026-05-04)
 
