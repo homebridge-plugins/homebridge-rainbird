@@ -1,57 +1,65 @@
+<p align="center">
+   <a href="https://github.com/homebridge-plugins/homebridge-rainbird"><img alt="homebridge-rainbird" src="https://raw.githubusercontent.com/homebridge-plugins/homebridge-rainbird/latest/branding/Homebridge_x_Rainbird.png" width="600px"></a>
+</p>
 <span align="center">
 
-<a href="https://github.com/homebridge/verified/blob/master/verified-plugins.json"><img alt="homebridge-verified" src="https://raw.githubusercontent.com/homebridge-plugins/homebridge-rainbird/latest/branding/Homebridge_x_Rainbird.svg?sanitize=true" width="500px"></a>
+## homebridge-rainbird
 
-# Homebridge Rainbird
+Homebridge plugin to integrate RainBird irrigation controllers into HomeKit
 
-<a href="https://www.npmjs.com/package/homebridge-rainbird"><img alt="badge" title="npm version" src="https://badgen.net/npm/v/homebridge-rainbird?icon=npm&label" ></a>
-<a href="https://www.npmjs.com/package/homebridge-rainbird"><img alt="badge" title="npm downloads" src="https://badgen.net/npm/dt/homebridge-rainbird?label=downloads" ></a>
-<a href="https://discord.gg/8fpZA4S"><img alt="badge" title="discord-rainbird" src="https://badgen.net/discord/online-members/8fpZA4S?icon=discord&label=discord" ></a>
-
-<a href="https://paypal.me/donavanbecker"><img alt="badge" title="donavanbecker" src="https://badgen.net/badge/donavanbecker/paypal/yellow" ></a>
-<a href="https://paypal.me/Mantorok1"><img alt="badge" title="mantorok1" src="https://badgen.net/badge/mantorok1/paypal/yellow" ></a>
-
-<p>The Homebridge <a href="https://rainbird.com">RainBird</a>
-plugin allows you to access your RainBird Controller from HomeKit with
-  <a href="https://homebridge.io">Homebridge</a>.
-</p>
+[![npm](https://img.shields.io/npm/v/@homebridge-plugins/homebridge-rainbird/latest?label=latest)](https://www.npmjs.com/package/@homebridge-plugins/homebridge-rainbird)
+[![npm](https://img.shields.io/npm/v/@homebridge-plugins/homebridge-rainbird/beta?label=beta)](https://github.com/homebridge/homebridge/wiki/How-to-Install-Alternate-Plugin-Versions)<br>
+[![verified-by-homebridge](https://img.shields.io/badge/homebridge-verified-blueviolet?color=%23491F59&style=flat)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)<br>
+[![npm](https://img.shields.io/npm/dt/@homebridge-plugins/homebridge-rainbird)](https://www.npmjs.com/package/@homebridge-plugins/homebridge-rainbird)
+[![Discord](https://img.shields.io/discord/432663330281226270?color=728ED5&logo=discord&label=hb-discord)](https://discord.gg/bHjKNkN)
 
 </span>
 
-## Installation
+### Plugin Information
 
-1. Search for "Rainbird" on the plugin screen of [Homebridge Config UI X](https://github.com/oznu/homebridge-config-ui-x).
-2. Click **Install**.
+- This plugin allows you to view and control your [RainBird](https://www.rainbird.com) irrigation controller within HomeKit. The plugin:
+  - communicates with your controller locally over your network (no cloud required)
+  - requires your controller's IP address and password
+  - exposes your zones as a HomeKit irrigation system, with optional program switches, zone valves, delay and stop switches, and rain sensors
 
-## Configuration
+### Setup
 
-1. Set a Static IP Address to your [RainBird](https://www.rainbird.com) Controller - [How to Set Static IP Address](https://www.howtogeek.com/184310/ask-htg-should-i-be-setting-static-ip-addresses-on-my-router/).
-2. Input Static IP Address and Password for [RainBird](https://www.rainbird.com) Controller into Plugin UI Settings and restart Homebridge.
-   - If you choose to create child bridge with this plugin, do it at this time.
-   - Password is the password you used to setup the rainbird controller.
+- Installation
+  - Search for "Rainbird" on the plugin screen of the [Homebridge UI](https://github.com/homebridge/homebridge-config-ui-x) and click **Install**.
+- Configuration
+  1. Set a static IP address for your RainBird controller in your router settings.
+  2. Enter the controller's IP address and password in the plugin settings.
+     - The password is the one you used to set up the RainBird controller in the RainBird app.
+  3. Click **Save** and restart Homebridge.
 
-## Collaborators
+### Supported Controllers
 
-- Main developer of the RaindBird API:
-  - [mantorok1](https://github.com/mantorok1)
+- Any controller that supports the [RainBird LNK WiFi Module](https://www.rainbird.com/products/lnk-wifi-module) should be compatible, including:
+  - ESP-Me
+  - ESP-TM2
+  - ESP-RZXe
+  - ESP-ME3
 
-## Compatiable Controllers
+### Known Limitations
 
-Any controller that supports the [RainBird LNK WiFi Module](https://www.rainbird.com/products/lnk-wifi-module) should be compatible. This includes:
-
-- ESP-Me
-- ESP-TM2
-- ESP-RZXe
-- ESP-ME3
-
-## Known Limitations
-
-- The Home app will default all sprinkler zone names to the Irrigation System's name which means it's not obvious which zone is which. The first one in the list may not necessarily be Zone 1. You'll need to use trial and error to figure out the zone and rename them appropriately.
+- The Home app defaults all sprinkler zone names to the irrigation system's name, so it's not obvious which zone is which. The first one in the list may not necessarily be Zone 1 - rename them once you've worked out which is which.
 - Using the RainBird app while the plugin is running can cause connectivity issues.
-- The RainBird LNK WiFi Module may not support "Band Steering" and WiFi Channel 13. Try not using these on your router if you are having connectivity issues.
-- Some models do not yet have support for displaying the time remaining. If its not working for your model please log a GitHub issue and we will try to add it with your help.
+- The RainBird LNK WiFi Module may not support "Band Steering" or WiFi channel 13 - avoid these on your router if you have connectivity issues.
+- Some models do not support displaying the time remaining. If it's not working for your model, please open a GitHub issue and we will try to add it with your help.
 
-## Libraries
+### Help/About
 
-- [RainBird](https://github.com/donavanbecker/rainbird)
-  - Library used to comunicate with Rainbird Controllers.
+- [Support Request](https://github.com/homebridge-plugins/homebridge-rainbird/issues/new/choose)
+- [Changelog](https://github.com/homebridge-plugins/homebridge-rainbird/blob/latest/CHANGELOG.md)
+- [About Me](https://github.com/sponsors/bwp91)
+
+### Credits
+
+- To [@donavanbecker](https://github.com/donavanbecker): the original creator and maintainer of this plugin.
+- To [@mantorok1](https://github.com/mantorok1): the main developer of the [RainBird API library](https://github.com/donavanbecker/rainbird) this plugin uses.
+- To the creators/contributors of [Homebridge](https://homebridge.io) who make this plugin possible.
+
+### Disclaimer
+
+- I am in no way affiliated with RainBird and this plugin is a personal project that I maintain in my free time.
+- Use this plugin entirely at your own risk - please see licence for more information.
