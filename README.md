@@ -4,12 +4,12 @@
 
 # Homebridge Rainbird
 
-<a href="https://www.npmjs.com/package/homebridge-rainbird"><img title="npm version" src="https://badgen.net/npm/v/homebridge-rainbird?icon=npm&label" ></a>
-<a href="https://www.npmjs.com/package/homebridge-rainbird"><img title="npm downloads" src="https://badgen.net/npm/dt/homebridge-rainbird?label=downloads" ></a>
-<a href="https://discord.gg/8fpZA4S"><img title="discord-rainbird" src="https://badgen.net/discord/online-members/8fpZA4S?icon=discord&label=discord" ></a>
+<a href="https://www.npmjs.com/package/homebridge-rainbird"><img alt="badge" title="npm version" src="https://badgen.net/npm/v/homebridge-rainbird?icon=npm&label" ></a>
+<a href="https://www.npmjs.com/package/homebridge-rainbird"><img alt="badge" title="npm downloads" src="https://badgen.net/npm/dt/homebridge-rainbird?label=downloads" ></a>
+<a href="https://discord.gg/8fpZA4S"><img alt="badge" title="discord-rainbird" src="https://badgen.net/discord/online-members/8fpZA4S?icon=discord&label=discord" ></a>
 
-<a href="https://paypal.me/donavanbecker"><img title="donavanbecker" src="https://badgen.net/badge/donavanbecker/paypal/yellow" ></a>
-<a href="https://paypal.me/Mantorok1"><img title="mantorok1" src="https://badgen.net/badge/mantorok1/paypal/yellow" ></a>
+<a href="https://paypal.me/donavanbecker"><img alt="badge" title="donavanbecker" src="https://badgen.net/badge/donavanbecker/paypal/yellow" ></a>
+<a href="https://paypal.me/Mantorok1"><img alt="badge" title="mantorok1" src="https://badgen.net/badge/mantorok1/paypal/yellow" ></a>
 
 <p>The Homebridge <a href="https://rainbird.com">RainBird</a>
 plugin allows you to access your RainBird Controller from HomeKit with
