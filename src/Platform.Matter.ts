@@ -55,6 +55,14 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
       return super.discoverDevices()
     }
 
+    // Matter mode is active, so any HAP accessories restored from cache are stale
+    // leftovers from a previous HAP run and would show up as duplicates in HomeKit (#586)
+    if (this.accessories.length) {
+      this.infoLog(`Removing ${this.accessories.length} stale cached HAP accessories as Matter mode is active`)
+      this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, this.accessories)
+      this.accessories.splice(0)
+    }
+
     for (const device of this.config.devices!) {
       try {
         const { RainBirdService: RainBirdServiceCtor } = await import('rainbird')
