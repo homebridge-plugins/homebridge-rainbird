@@ -4,6 +4,7 @@
 
 - fix: keep matter display names within the 32 character limit (#587)
 - fix: remove stale cached hap accessories when matter mode is active (#586)
+- fix: use request packing that newer lnk2 firmware accepts (#588) (@RedRed-blip)
 - chore(deps): update dependencies
 - chore: add .idea to .gitignore
 - chore(github): align workflows, funding and issue templates with the other org plugins
