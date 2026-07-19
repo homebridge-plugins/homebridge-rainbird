@@ -22,15 +22,18 @@ Homebridge plugin to integrate RainBird irrigation controllers into HomeKit
   - requires your controller's IP address and password
   - exposes your zones as a HomeKit irrigation system, with optional program switches, zone valves, delay and stop switches, and rain sensors
 
+### Prerequisites
+
+- To use this plugin, you will need to already have:
+  - [Node](https://nodejs.org): latest version of `v22` or `v24` - any other major version is not supported.
+  - [Homebridge](https://homebridge.io): `v2` - refer to link for more information and installation instructions.
+
 ### Setup
 
-- Installation
-  - Search for "Rainbird" on the plugin screen of the [Homebridge UI](https://github.com/homebridge/homebridge-config-ui-x) and click **Install**.
-- Configuration
-  1. Set a static IP address for your RainBird controller in your router settings.
-  2. Enter the controller's IP address and password in the plugin settings.
-     - The password is the one you used to set up the RainBird controller in the RainBird app.
-  3. Click **Save** and restart Homebridge.
+- [Installation](https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Installation)
+- [Configuration](https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Configuration)
+- [Beta Version](https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Beta-Version)
+- [Node Version](https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Node-Version)
 
 ### Supported Controllers
 
@@ -49,6 +52,7 @@ Homebridge plugin to integrate RainBird irrigation controllers into HomeKit
 
 ### Help/About
 
+- [Common Errors](https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Common-Errors)
 - [Support Request](https://github.com/homebridge-plugins/homebridge-rainbird/issues/new/choose)
 - [Changelog](https://github.com/homebridge-plugins/homebridge-rainbird/blob/latest/CHANGELOG.md)
 - [About Me](https://github.com/sponsors/bwp91)
