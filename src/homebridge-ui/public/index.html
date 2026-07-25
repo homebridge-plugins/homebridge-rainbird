@@ -1,3 +1,24 @@
+<style>
+  .dark-mode {
+    background-color: #242424;
+    color: lightgrey;
+
+    .form-control {
+      background-color: #333333 !important;
+      border: none !important;
+      color: #eeeeee !important;
+    }
+
+    thead, tbody, tr {
+      border-style: hidden;
+    }
+
+    th {
+      color: #eeeeee !important;
+      font-weight: 500 !important;
+    }
+  }
+</style>
 <p class="text-center">
     <img src="https://raw.githubusercontent.com/homebridge-plugins/homebridge-rainbird/latest/branding/Homebridge_x_Rainbird.svg"
         alt="homebridge-rainbird logo" style="width: 60%;">
@@ -14,9 +35,7 @@
     <button type="button" class="btn btn-primary" id="menuSettings">
         Settings
     </button>
-    <button type="button" class="btn btn-primary" id="menuDevices">
-        Devices
-    </button>
+    <button type="button" class="btn btn-primary" id="menuDevices">My Devices</button>
     <button type="button" class="btn btn-primary mr-0" id="menuHome">
         Support
     </button>
@@ -59,63 +78,67 @@
         <p class="text-center">External Accessories Will Not Display Here.</p>
     </div>
 </div>
-<div id="pageSupport" class="mt-4" style="display: none;">
-    <p class="text-center lead">Thank you for using
-        <strong>homebridge-rainbird</strong>
-    </p>
-    <p class="text-center">The links below will take you to our GitHub wiki</p>
-    <h5>Setup</h5>
-    <ul>
-        <li>
-            <a href="https://github.com/homebridge-plugins/homebridge-rainbird/wiki" target="_blank">Wiki Home</a>
-        </li>
-        <li>
-            <a href="https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Configuration"
-                target="_blank">Configuration</a>
-        </li>
-        <li>
-            <a href="https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Beta-Version" target="_blank">
-                Beta
-                Version
-            </a>
-        </li>
-        <li>
-            <a href="https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Node-Version" target="_blank">
-                Node
-                Version
-            </a>
-        </li>
-        <li>
-            <a href="https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Uninstallation"
-                target="_blank">Uninstallation</a>
-        </li>
-    </ul>
-    <h5>Help/About</h5>
-    <ul>
-        <li>
-            <a href="https://github.com/homebridge-plugins/homebridge-rainbird/issues/new/choose" target="_blank">
-                Support
-                Request
-            </a>
-        </li>
-        <li>
-            <a href="https://github.com/homebridge-plugins/homebridge-rainbird/blob/latest/CHANGELOG.md"
-                target="_blank">Changelog</a>
-        </li>
-        <li>
-            <a href="https://github.com/sponsors/donavanbecker" target="_blank">About Me</a>
-        </li>
-    </ul>
-    <h5>Disclaimer</h5>
-    <ul>
-        <li>
-            I am in no way affiliated with RainBird and this plugin is a personal project that I maintain in
-            my free time.
-        </li>
-        <li>
-            Use this plugin entirely at your own risk - please see licence for more information.
-        </li>
-    </ul>
+<div id="pageSupport" class="mt-4" style="display: none">
+  <p class="text-center lead">Thank you for using <strong>homebridge-rainbird</strong></p>
+  <h5>Plugin Information</h5>
+<ul>
+  <li>This plugin allows you to view and control your <a href="https://www.rainbird.com" target="_blank">RainBird</a> irrigation controller within HomeKit. The plugin:</li>
+  <ul>
+    <li>communicates with your controller locally over your network (no cloud required)</li>
+    <li>requires your controller's IP address and password</li>
+    <li>exposes your zones as a HomeKit irrigation system, with optional program switches, zone valves, delay and stop switches, and rain sensors</li>
+  </ul>
+</ul>
+  <h5>Prerequisites</h5>
+<ul>
+  <li>To use this plugin, you will need to already have:</li>
+  <ul>
+    <li><a href="https://nodejs.org" target="_blank">Node</a>: latest version of <code>v22</code> or <code>v24</code> - any other major version is not supported.</li>
+    <li><a href="https://homebridge.io" target="_blank">Homebridge</a>: <code>v2</code> - refer to link for more information and installation instructions.</li>
+  </ul>
+</ul>
+  <h5>Setup</h5>
+<ul>
+  <li><a href="https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Installation" target="_blank">Installation</a></li>
+  <li><a href="https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Configuration" target="_blank">Configuration</a></li>
+  <li><a href="https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Beta-Version" target="_blank">Beta Version</a></li>
+  <li><a href="https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Node-Version" target="_blank">Node Version</a></li>
+</ul>
+  <h5>Supported Controllers</h5>
+<ul>
+  <li>Any controller that supports the <a href="https://www.rainbird.com/products/lnk-wifi-module" target="_blank">RainBird LNK WiFi Module</a> should be compatible, including:</li>
+  <ul>
+    <li>ESP-Me</li>
+    <li>ESP-TM2</li>
+    <li>ESP-RZXe</li>
+    <li>ESP-ME3</li>
+  </ul>
+</ul>
+  <h5>Known Limitations</h5>
+<ul>
+  <li>The Home app defaults all sprinkler zone names to the irrigation system's name, so it's not obvious which zone is which. The first one in the list may not necessarily be Zone 1 - rename them once you've worked out which is which.</li>
+  <li>Using the RainBird app while the plugin is running can cause connectivity issues.</li>
+  <li>The RainBird LNK WiFi Module may not support "Band Steering" or WiFi channel 13 - avoid these on your router if you have connectivity issues.</li>
+  <li>Some models do not support displaying the time remaining. If it's not working for your model, please open a GitHub issue and we will try to add it with your help.</li>
+</ul>
+  <h5>Help/About</h5>
+<ul>
+  <li><a href="https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Common-Errors" target="_blank">Common Errors</a></li>
+  <li><a href="https://github.com/homebridge-plugins/homebridge-rainbird/issues/new/choose" target="_blank">Support Request</a></li>
+  <li><a href="https://github.com/homebridge-plugins/homebridge-rainbird/blob/latest/CHANGELOG.md" target="_blank">Changelog</a></li>
+  <li><a href="https://github.com/sponsors/bwp91" target="_blank">About Me</a></li>
+</ul>
+  <h5>Credits</h5>
+<ul>
+  <li>To <a href="https://github.com/donavanbecker" target="_blank">@donavanbecker</a>: the original creator and maintainer of this plugin.</li>
+  <li>To <a href="https://github.com/mantorok1" target="_blank">@mantorok1</a>: the main developer of the <a href="https://github.com/donavanbecker/rainbird" target="_blank">RainBird API library</a> this plugin uses.</li>
+  <li>To the creators/contributors of <a href="https://homebridge.io" target="_blank">Homebridge</a> who make this plugin possible.</li>
+</ul>
+  <h5>Disclaimer</h5>
+<ul>
+  <li>I am in no way affiliated with RainBird and this plugin is a personal project that I maintain in my free time.</li>
+  <li>Use this plugin entirely at your own risk - please see licence for more information.</li>
+</ul>
 </div>
 <script>
     ; (async () => {
