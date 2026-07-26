@@ -8,18 +8,19 @@
   "footerDisplay": "Your RainBird account has been linked. Please raise any issues on our [project page](https://github.com/homebridge-plugins/homebridge-rainbird/issues).\n\nIf you would like to have other features, please open a [feature request](https://github.com/homebridge-plugins/homebridge-rainbird/issues/new/choose).",
   "schema": {
     "type": "object",
+    "required": ["name"],
     "properties": {
       "name": {
         "type": "string",
         "title": "Name",
-        "default": "RainBird",
-        "required": true
+        "default": "RainBird"
       },
       "devices": {
         "type": "array",
         "items": {
           "title": "Devices",
           "type": "object",
+          "required": ["ipaddress"],
           "properties": {
             "configDeviceName": {
               "title": "Device Name",
@@ -33,13 +34,11 @@
               "type": "string",
               "format": "ipv4",
               "pattern": "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$",
-              "placeholder": "192.168.1.1",
-              "required": true
+              "placeholder": "192.168.1.1"
             },
             "password": {
               "title": "Password",
               "type": "string",
-              "required": true,
               "x-schema-form": {
                 "type": "password"
               },
@@ -58,7 +57,6 @@
             "showRainSensor": {
               "title": "Show Rain Sensor (as Leak Sensor)",
               "type": "boolean",
-              "required": false,
               "condition": {
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
               }
@@ -66,7 +64,6 @@
             "showValveSensor": {
               "title": "Enable Valve Notifications (as Contact Sensors)",
               "type": "boolean",
-              "required": false,
               "description": "If enabled, whichever zone runs the contact sensors will go off as detected so you know that it is running.",
               "condition": {
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
@@ -115,7 +112,6 @@
             "showZoneValve": {
               "title": "Show Zones as Valve Accessories",
               "type": "boolean",
-              "required": false,
               "condition": {
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
               }
@@ -133,7 +129,6 @@
             "showDelayIrrigationSwitch": {
               "title": "Show Delay Irrigation Switch",
               "type": "boolean",
-              "required": false,
               "condition": {
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
               }
@@ -141,7 +136,6 @@
             "showTestZoneSwitch": {
               "title": "Show Test Zone Switch",
               "type": "boolean",
-              "required": false,
               "description": "Show a switch for each zone to trigger a brief zone test",
               "condition": {
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
@@ -153,7 +147,6 @@
               "minimum": 1,
               "maximum": 14,
               "placeholder": 1,
-              "required": false,
               "condition": {
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
               }
@@ -162,7 +155,6 @@
               "title": "Min Value for Ramaining Duration",
               "type": "number",
               "placeholder": 0,
-              "required": false,
               "condition": {
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
               }
@@ -171,7 +163,6 @@
               "title": "Max Value for Ramaining Duration",
               "type": "number",
               "placeholder": 3600,
-              "required": false,
               "condition": {
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
               }
@@ -180,7 +171,6 @@
               "title": "Sync date and time of controller with host",
               "type": "boolean",
               "default": false,
-              "required": false,
               "description": "Useful for automatically changing the controller's time when Daylight Savings starts/ends or fixing the time if the controller's internal clock runs fast or slow",
               "condition": {
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
@@ -224,7 +214,6 @@
               "title": "Device Logging Level Override",
               "description": "Overrides the plugin logging level for this device only. None turns off all messages from this plugin. Standard shows normal activity, warnings and errors. Debug adds detailed messages, and is what to use when reporting a problem. Default behaves the same as Standard.",
               "type": "string",
-              "required": true,
               "default": "",
               "oneOf": [
                 {
@@ -253,6 +242,7 @@
       },
       "options": {
         "type": "object",
+        "required": ["logging"],
         "properties": {
           "refreshRate": {
             "title": "Refresh Rate",
@@ -265,7 +255,6 @@
             "title": "Plugin Logging Level",
             "description": "None turns off all messages from this plugin. Standard shows normal activity, warnings and errors. Debug adds detailed messages, and is what to use when reporting a problem. Default behaves the same as Standard.",
             "type": "string",
-            "required": true,
             "default": "",
             "oneOf": [
               {
