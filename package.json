@@ -72,12 +72,12 @@
   },
   "dependencies": {
     "@homebridge/plugin-ui-utils": "^2.2.5",
-    "rainbird": "^1.2.11",
+    "rainbird": "^1.2.12",
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^9.1.0",
-    "@types/node": "^26.1.1",
+    "@antfu/eslint-config": "^9.2.0",
+    "@types/node": "^26.1.2",
     "homebridge": "^2.2.1",
     "nodemon": "^3.1.14",
     "rimraf": "^6.1.3",
