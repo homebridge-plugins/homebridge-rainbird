@@ -1,10 +1,15 @@
-## v3.1.5 (Pending Release)
+## v3.1.5 (2026-07-28)
 
 ### Changed
 
+- chore(github): allow the codeql scan to be started manually
+- chore(github): stop concurrent release runs racing for the same version
+- chore: add the supports-matter keyword
+- chore(github): use the shared homebridge action to deprecate past pre-releases
 - style(ui): standardise the custom ui layout and sync the support tab with the readme
 - fix(schema): declare required fields the standard way so the homebridge ui stops reporting a config validation failure
 - chore: declare the supports-hap transport keyword for the homebridge ui
+- chore(deps): dependency updates
 
 ## v3.1.4 (2026-07-20)
 
