@@ -6,6 +6,7 @@
 - chore: add a test setup with tests for the shared helper functions
 - chore(github): run the build and tests in ci, on node 22, 24 and 26
 - chore: use the same lint setup across every plugin
+- chore: add a changelog:sync script to populate the pending section from the commits
 
 ## v3.1.5 (2026-07-28)
 
