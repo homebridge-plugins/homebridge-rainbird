@@ -3,6 +3,7 @@
 ### Changed
 
 - chore: keep test files out of the published package
+- chore: add a test setup with tests for the shared helper functions
 
 ## v3.1.5 (2026-07-28)
 
