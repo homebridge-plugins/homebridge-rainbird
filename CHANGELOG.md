@@ -4,6 +4,8 @@
 
 - chore: keep test files out of the published package
 - chore: add a test setup with tests for the shared helper functions
+- chore: declare support for node 26
+- chore(github): run the build and tests in ci, on node 22, 24 and 26
 
 ## v3.1.5 (2026-07-28)
 
