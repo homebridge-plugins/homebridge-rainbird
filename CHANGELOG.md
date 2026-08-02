@@ -10,6 +10,7 @@
 - chore: count a repeated commit subject once when syncing the changelog
 - chore(github): check the changelog against the commits in ci
 - chore(deps): dependency updates
+- chore: restore the original author and remove personal funding links
 
 ## v3.1.5 (2026-07-28)
 

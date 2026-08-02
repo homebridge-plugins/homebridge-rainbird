@@ -55,7 +55,6 @@ Homebridge plugin to integrate RainBird irrigation controllers into HomeKit
 - [Common Errors](https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Common-Errors)
 - [Support Request](https://github.com/homebridge-plugins/homebridge-rainbird/issues/new/choose)
 - [Changelog](https://github.com/homebridge-plugins/homebridge-rainbird/blob/latest/CHANGELOG.md)
-- [About Me](https://github.com/sponsors/bwp91)
 
 ### Credits
 
