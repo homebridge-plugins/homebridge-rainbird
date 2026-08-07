@@ -188,19 +188,12 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   verifyConfig() {
     this.initialiseConfig()
 
-    if (this.config.devices) {
-      for (const device of this.config.devices!) {
-        if (!device.ipaddress) {
-          throw new Error('The devices config section is missing the "IP Address" in the config, and will be skipped.')
-        }
-        if (!device.password) {
-          throw new Error('The devices config section is missing the "Password" in the config, and will be skipped.')
-        }
-      }
-    } else {
-      throw new Error('The devices config section is missing from the config. This device will be skipped.')
-    }
-
+    // Apply the defaults first. These used to come after the device checks, so a
+    // single incomplete device entry - someone clicking Add Device and saving
+    // before typing a password - threw past them and left refreshRate unset for
+    // every controller. That either crashed discovery outright or produced
+    // `interval(NaN)`, which emits once and never repeats, so polling stopped
+    // silently for the whole session.
     this.config.options = this.config.options || {}
 
     if (!this.config.options.refreshRate) {
@@ -213,6 +206,19 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       // default 100 milliseconds
       this.config.options!.pushRate! = 0.1
       this.debugLog('Using Default Push Rate.')
+    }
+
+    if (this.config.devices) {
+      for (const device of this.config.devices!) {
+        if (!device.ipaddress) {
+          throw new Error('The devices config section is missing the "IP Address" in the config, and will be skipped.')
+        }
+        if (!device.password) {
+          throw new Error('The devices config section is missing the "Password" in the config, and will be skipped.')
+        }
+      }
+    } else {
+      throw new Error('The devices config section is missing from the config. This device will be skipped.')
     }
   }
 

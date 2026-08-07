@@ -15,6 +15,7 @@
 - chore: allow dependency install scripts by package name rather than pinned version, so a version bump cannot silently block a native build
 - chore: exclude test files and the test config from the published package
 - fix: restore debug logging when the plugin runs in a child bridge
+- fix: keep polling every controller when one device entry is incomplete
 
 ## v3.1.5 (2026-07-28)
 
