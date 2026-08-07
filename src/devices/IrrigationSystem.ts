@@ -232,19 +232,23 @@ export class IrrigationSystem extends DeviceBase {
     this.updateHomeKitCharacteristics()
 
     // Device Parse when status event emitted
-    fromEvent(rainbird!, 'status').subscribe({
-      next: () => {
-        this.parseStatus()
-        this.updateHomeKitCharacteristics()
-      },
-    })
+    this.subscriptions.push(
+      fromEvent(rainbird!, 'status').subscribe({
+        next: () => {
+          this.parseStatus()
+          this.updateHomeKitCharacteristics()
+        },
+      }),
+    )
 
     // Start an update interval
-    interval(this.deviceRefreshRate * 1000)
-      .pipe(skipWhile(() => this.irrigationSystemUpdateInProgress))
-      .subscribe(() => {
-        this.rainbird!.refreshStatus()
-      })
+    this.subscriptions.push(
+      interval(this.deviceRefreshRate * 1000)
+        .pipe(skipWhile(() => this.irrigationSystemUpdateInProgress))
+        .subscribe(() => {
+          this.rainbird!.refreshStatus()
+        }),
+    )
 
     this.doIrrigationSystemUpdate
       .pipe(

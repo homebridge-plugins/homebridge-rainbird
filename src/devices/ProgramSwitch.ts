@@ -51,12 +51,14 @@ export class ProgramSwitch extends DeviceBase {
     this.updateHomeKitCharacteristics()
 
     // Device Parse when status event emitted
-    fromEvent(rainbird!, 'status').subscribe({
-      next: () => {
-        this.parseStatus()
-        this.updateHomeKitCharacteristics()
-      },
-    })
+    this.subscriptions.push(
+      fromEvent(rainbird!, 'status').subscribe({
+        next: () => {
+          this.parseStatus()
+          this.updateHomeKitCharacteristics()
+        },
+      }),
+    )
   }
 
   private async setOn(value: CharacteristicValue) {

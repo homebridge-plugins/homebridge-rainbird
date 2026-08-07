@@ -50,12 +50,14 @@ export class LeakSensor extends DeviceBase {
     this.updateHomeKitCharacteristics()
 
     // Device Parse when status event emitted
-    fromEvent(rainbird!, 'rain_sensor_state').subscribe({
-      next: () => {
-        this.parseStatus()
-        this.updateHomeKitCharacteristics()
-      },
-    })
+    this.subscriptions.push(
+      fromEvent(rainbird!, 'rain_sensor_state').subscribe({
+        next: () => {
+          this.parseStatus()
+          this.updateHomeKitCharacteristics()
+        },
+      }),
+    )
   }
 
   parseStatus() {

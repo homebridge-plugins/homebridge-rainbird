@@ -16,11 +16,12 @@
 - chore: exclude test files and the test config from the published package
 - fix: restore debug logging when the plugin runs in a child bridge
 - fix: keep polling every controller when one device entry is incomplete
-- fix: remove every accessory for a controller set to be deleted, and stop the false network error
+- fix: remove every accessory for a deleted controller, and stop the false network error
 - fix: stop warning once per zone about a test command the controller does not have
 - fix: clamp the remaining duration range as the warning says it will
 - fix: honour a controller's own refresh rate, and remove a rate setting nothing read
 - fix: stop a failed hourly refresh or test-switch reset from ending the process
+- fix: stop the polling and status subscriptions when homebridge shuts down
 
 ## v3.1.5 (2026-07-28)
 

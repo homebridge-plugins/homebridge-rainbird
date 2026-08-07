@@ -105,6 +105,13 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     // Dynamic Platform plugins should only register new accessories after this event was fired,
     // in order to ensure they weren't added to homebridge already. This event can also be used
     // to start discovery of new accessories.
+    // Stop every device's polling and status subscriptions on the way out
+    this.api.on('shutdown', () => {
+      this.handlers.forEach((handler) => {
+        (handler as { shutdown?: () => void }).shutdown?.()
+      })
+    })
+
     this.api.on('didFinishLaunching', async () => {
       this.debugLog('Executed didFinishLaunching callback')
       try {

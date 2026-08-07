@@ -4,6 +4,7 @@
  */
 import type { API, HAP, Logging, PlatformAccessory } from 'homebridge'
 import type { RainBirdService } from 'rainbird'
+import type { Subscription } from 'rxjs'
 
 import type { RainbirdPlatform } from '../Platform.HAP.js'
 import type { devicesConfig, RainbirdPlatformConfig } from '../settings.js'
@@ -12,6 +13,20 @@ const FIRMWARE_VERSION_STRIP_RE = /^V|-.*$/g
 const FIRMWARE_VERSION_DOT_RE = /./g
 
 export abstract class DeviceBase {
+  /**
+   * Everything this device subscribed to - controller status events and the
+   * polling interval. Homebridge emits 'shutdown' so a plugin can stop its own
+   * work; without this these kept firing at a controller while the bridge was
+   * tearing down, and held the process open.
+   */
+  protected readonly subscriptions: Subscription[] = []
+
+  /** Stop everything this device started. Called by the platform on shutdown. */
+  public shutdown(): void {
+    this.subscriptions.forEach(s => s.unsubscribe())
+    this.subscriptions.length = 0
+  }
+
   public readonly api: API
   public readonly log: Logging
   public readonly config!: RainbirdPlatformConfig
