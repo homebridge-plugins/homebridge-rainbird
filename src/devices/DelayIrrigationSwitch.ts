@@ -47,8 +47,14 @@ export class DelayIrrigationSwitch extends DeviceBase {
         }
       })
 
+    // A rejection in a timer callback is unhandled and ends the process, so the
+    // hourly refresh has to swallow its own failures
     setInterval(async () => {
-      await this.updateHomeKitCharacteristics()
+      try {
+        await this.updateHomeKitCharacteristics()
+      } catch (e: any) {
+        this.debugWarnLog(`Hourly refresh failed: ${e?.message ?? e}`)
+      }
     }, 3600000) // every hour
   }
 

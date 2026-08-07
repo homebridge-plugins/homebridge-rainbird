@@ -20,6 +20,7 @@
 - fix: stop warning once per zone about a test command the controller does not have
 - fix: clamp the remaining duration range as the warning says it will
 - fix: honour a controller's own refresh rate, and remove a rate setting nothing read
+- fix: stop a failed hourly refresh or test-switch reset from ending the process
 
 ## v3.1.5 (2026-07-28)
 

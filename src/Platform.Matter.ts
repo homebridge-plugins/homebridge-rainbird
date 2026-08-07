@@ -604,8 +604,10 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
               this.errorLog(`testZone(${zoneId}) failed: ${e.message}`)
             }
             // Auto-turn off after test completes
-            setTimeout(async () => {
-              await this.updateMatterState(uuidKey, 'onOff', { onOff: false })
+            setTimeout(() => {
+              // Unhandled here would end the process - the switch simply stays on
+              this.updateMatterState(uuidKey, 'onOff', { onOff: false })
+                .catch((e: any) => this.debugWarnLog(`Could not turn the test switch back off: ${e?.message ?? e}`))
             }, 500)
           },
           off: async () => {
