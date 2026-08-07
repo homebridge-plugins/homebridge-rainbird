@@ -240,7 +240,7 @@ export class IrrigationSystem extends DeviceBase {
     })
 
     // Start an update interval
-    interval(this.platform.config.options!.refreshRate! * 1000)
+    interval(this.deviceRefreshRate * 1000)
       .pipe(skipWhile(() => this.irrigationSystemUpdateInProgress))
       .subscribe(() => {
         this.rainbird!.refreshStatus()
@@ -251,7 +251,7 @@ export class IrrigationSystem extends DeviceBase {
         tap(() => {
           this.irrigationSystemUpdateInProgress = true
         }),
-        debounceTime(this.platform.config.options!.pushRate! * 1000),
+        debounceTime(this.devicePushRate * 1000),
       )
       .subscribe(async (zone: number) => {
         try {

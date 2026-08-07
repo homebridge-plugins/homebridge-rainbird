@@ -57,7 +57,6 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   platformLogging!: RainbirdPlatformConfig['logging']
   platformRefreshRate!: RainbirdPlatformConfig['refreshRate']
   platformPushRate!: RainbirdPlatformConfig['pushRate']
-  platformUpdateRate!: RainbirdPlatformConfig['updateRate']
   version!: string
 
   constructor(
@@ -925,10 +924,6 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     this.platformRefreshRate = this.config.options?.refreshRate ? this.config.options.refreshRate : undefined
     const refreshRate = this.config.options?.refreshRate ? 'Using Platform Config refreshRate' : 'refreshRate Disabled by Default'
     await this.debugLog(`${refreshRate}: ${this.platformRefreshRate}`)
-    // UpdateRate
-    this.platformUpdateRate = this.config.options?.updateRate ? this.config.options.updateRate : undefined
-    const updateRate = this.config.options?.updateRate ? 'Using Platform Config updateRate' : 'Using Default updateRate'
-    await this.debugLog(`${updateRate}: ${this.platformUpdateRate}`)
     // PushRate
     this.platformPushRate = this.config.options?.pushRate ? this.config.options.pushRate : undefined
     const pushRate = this.config.options?.pushRate ? 'Using Platform Config pushRate' : 'Using Default pushRate'

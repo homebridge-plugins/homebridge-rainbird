@@ -20,7 +20,6 @@ export abstract class DeviceBase {
   // Config
   protected deviceLogging!: string
   protected deviceRefreshRate!: number
-  protected deviceUpdateRate!: number
   protected devicePushRate!: number
   protected deviceFirmwareVersion!: string
 
@@ -63,15 +62,15 @@ export abstract class DeviceBase {
 
   async getDeviceRateSettings(device: devicesConfig): Promise<void> {
     // refreshRate
-    this.deviceRefreshRate = device.refreshRate ?? this.platform.platformRefreshRate ?? 1800
+    // The defaults here match what the polling code actually used, so honouring
+    // these settings changes nothing for anyone who has not set them
+    this.deviceRefreshRate = device.refreshRate ?? this.platform.config.options?.refreshRate ?? this.platform.platformRefreshRate ?? 300
     const refreshRate = device.refreshRate ? 'Device Config' : this.platform.platformRefreshRate ? 'Platform Config' : 'Default'
-    // updateRate
-    this.deviceUpdateRate = device.updateRate ?? this.platform.platformUpdateRate ?? 5
-    const updateRate = device.updateRate ? 'Device Config' : this.platform.platformUpdateRate ? 'Platform Config' : 'Default'
-    // pushRate
-    this.devicePushRate = device.pushRate ?? this.platform.platformPushRate ?? 1
+    // pushRate. updateRate used to be parsed and echoed back here too, which made
+    // it look accepted - nothing has ever read it, at either level.
+    this.devicePushRate = device.pushRate ?? this.platform.config.options?.pushRate ?? this.platform.platformPushRate ?? 0.1
     const pushRate = device.pushRate ? 'Device Config' : this.platform.platformPushRate ? 'Platform Config' : 'Default'
-    await this.debugLog(`Using ${refreshRate} refreshRate: ${this.deviceRefreshRate}, ${updateRate} updateRate: ${this.deviceUpdateRate}, ${pushRate} pushRate: ${this.devicePushRate}`)
+    await this.debugLog(`Using ${refreshRate} refreshRate: ${this.deviceRefreshRate}, ${pushRate} pushRate: ${this.devicePushRate}`)
   }
 
   async getDeviceConfigSettings(device: devicesConfig): Promise<void> {
