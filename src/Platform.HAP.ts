@@ -281,10 +281,20 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
 
         // Display device details
         this.infoLog(`Model: ${metaData.model}, [Version: ${metaData.version}, Serial Number: ${metaData.serialNumber}, Zones: ${JSON.stringify(metaData.zones)}]`)
-        const irrigationAccessory = this.createIrrigationSystem(device, rainbird)
+        const irrigationAccessory = await this.createIrrigationSystem(device, rainbird)
         this.createLeakSensor(device, rainbird)
+
+        // With "Delete Device" ticked there is no irrigation accessory. This used
+        // to be dereferenced anyway, and the TypeError was caught below and
+        // reported as a controller connection failure - so the owner was told
+        // their network was broken, and every other accessory for that controller
+        // stayed in HomeKit for good, because the calls that remove them were
+        // never reached. Each zone is still visited, so those calls can take
+        // their own hide_device branch and clean up.
         for (const zoneId of metaData.zones) {
-          const configured = (await irrigationAccessory)!.context.configured[zoneId] ?? this.hap.Characteristic.IsConfigured.CONFIGURED
+          const configured = irrigationAccessory
+            ? irrigationAccessory.context.configured[zoneId] ?? this.hap.Characteristic.IsConfigured.CONFIGURED
+            : this.hap.Characteristic.IsConfigured.CONFIGURED
           if (configured === this.hap.Characteristic.IsConfigured.CONFIGURED) {
             this.createZoneValve(device, rainbird, zoneId)
             this.createContactSensor(device, rainbird, zoneId)

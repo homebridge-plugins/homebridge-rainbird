@@ -16,6 +16,7 @@
 - chore: exclude test files and the test config from the published package
 - fix: restore debug logging when the plugin runs in a child bridge
 - fix: keep polling every controller when one device entry is incomplete
+- fix: remove every accessory for a controller set to be deleted, and stop the false network error
 
 ## v3.1.5 (2026-07-28)
 
