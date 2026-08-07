@@ -18,6 +18,7 @@
 - fix: keep polling every controller when one device entry is incomplete
 - fix: remove every accessory for a controller set to be deleted, and stop the false network error
 - fix: stop warning once per zone about a test command the controller does not have
+- fix: clamp the remaining duration range as the warning says it will
 
 ## v3.1.5 (2026-07-28)
 

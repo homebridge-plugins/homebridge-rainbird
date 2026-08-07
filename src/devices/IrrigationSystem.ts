@@ -113,7 +113,10 @@ export class IrrigationSystem extends DeviceBase {
       .setProps({
         minValue: device.minValueRemainingDuration,
         maxValue: Math.min(device.maxValueRemainingDuration! * rainbird!.zones.length, 4294967295),
-        validValueRanges: [minValueRemainingDuration, Math.min(maxValueRemainingDuration)],
+        // Math.min with one argument is a no-op, so this upper bound was never
+        // clamped even though maxValue on the line above was, and the warning above
+        // promised a clamp that only half happened
+        validValueRanges: [minValueRemainingDuration, Math.min(maxValueRemainingDuration, 4294967295)],
       })
       .onGet(() => {
         this.rainbird!.refreshStatus()
