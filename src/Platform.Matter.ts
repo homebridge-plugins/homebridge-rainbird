@@ -569,7 +569,11 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     }
 
     if (!supportsTestZone) {
-      this.warnLog(`Skipping Test Zone switch for zone ${zoneId} on ${rainbird.model}: controller does not support the testZone command`)
+      // Debug, not warn: this is a fixed hardware limitation the owner cannot do
+      // anything about, and it fired once per zone on every restart - twelve
+      // identical warnings on a twelve zone controller. The HAP path already
+      // keeps the same message behind debug logging.
+      this.debugLog(`Skipping Test Zone switch for zone ${zoneId} on ${rainbird.model}: controller does not support the testZone command`)
       return
     }
 
