@@ -196,6 +196,7 @@
               "title": "Device Refresh Rate",
               "type": "number",
               "minimum": 120,
+              "maximum": 2073600,
               "placeholder": 900,
               "description": "Indicates the number of seconds between refreshes of the Rainbird Client.",
               "condition": {
@@ -258,6 +259,7 @@
             "title": "Refresh Rate",
             "type": "number",
             "minimum": 120,
+            "maximum": 2073600,
             "placeholder": 900,
             "description": "Indicates the number of seconds between refreshes of the Rainbird Client."
           },

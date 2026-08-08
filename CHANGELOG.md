@@ -25,6 +25,7 @@
 - fix: log the error message rather than the whole error object, which can carry the api response
 - fix(schema): define the push rate setting the settings page already tried to show
 - fix: stop confirming updateRate in the log, when nothing reads it
+- fix: clamp the poll interval, so a very large refresh rate cannot make it poll every millisecond
 
 ## v3.1.5 (2026-07-28)
 

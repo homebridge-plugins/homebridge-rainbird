@@ -11,6 +11,7 @@ import type { devicesConfig } from '../settings.js'
 import { fromEvent, interval, Subject } from 'rxjs'
 import { debounceTime, skipWhile, tap } from 'rxjs/operators'
 
+import { safeTimerMs } from '../utils.js'
 import { DeviceBase } from './DeviceBase.js'
 
 /**
@@ -243,7 +244,7 @@ export class IrrigationSystem extends DeviceBase {
 
     // Start an update interval
     this.subscriptions.push(
-      interval(this.deviceRefreshRate * 1000)
+      interval(safeTimerMs(this.deviceRefreshRate * 1000))
         .pipe(skipWhile(() => this.irrigationSystemUpdateInProgress))
         .subscribe(() => {
           this.rainbird!.refreshStatus()
