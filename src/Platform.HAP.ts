@@ -943,7 +943,6 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
       }
       platformConfig.logging = this.config.options.logging ? this.config.options.logging : undefined
       platformConfig.refreshRate = this.config.options.refreshRate ? this.config.options.refreshRate : undefined
-      platformConfig.updateRate = this.config.options.updateRate ? this.config.options.updateRate : undefined
       platformConfig.pushRate = this.config.options.pushRate ? this.config.options.pushRate : undefined
       if (Object.entries(platformConfig).length !== 0) {
         await this.debugLog(`Platform Config: ${JSON.stringify(platformConfig)}`)

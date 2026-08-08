@@ -43,7 +43,6 @@ export interface devicesConfig {
   external: boolean
   firmware?: number
   refreshRate?: number
-  updateRate?: number
   pushRate?: number
   logging?: string
 }
@@ -51,7 +50,6 @@ export interface devicesConfig {
 export interface options {
   allowInvalidCharacters?: boolean
   refreshRate?: number
-  updateRate?: number
   pushRate?: number
   logging?: string
   preferMatter?: boolean

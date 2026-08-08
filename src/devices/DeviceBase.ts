@@ -93,7 +93,6 @@ export abstract class DeviceBase {
     const properties = [
       'logging',
       'refreshRate',
-      'updateRate',
       'pushRate',
       'external',
       'showRainSensor',

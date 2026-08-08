@@ -23,6 +23,8 @@
 - fix: stop a failed hourly refresh or test-switch reset from ending the process
 - fix: stop the polling and status subscriptions when homebridge shuts down
 - fix: log the error message rather than the whole error object, which can carry the api response
+- fix(schema): define the push rate setting the settings page already tried to show
+- fix: stop confirming updateRate in the log, when nothing reads it
 
 ## v3.1.5 (2026-07-28)
 
