@@ -202,6 +202,16 @@
                 "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
               }
             },
+            "pushRate": {
+              "title": "Device Push Rate",
+              "type": "number",
+              "minimum": 0.1,
+              "placeholder": 0.1,
+              "description": "Indicates the number of seconds to wait for further changes before sending a command to the Rainbird Client.",
+              "condition": {
+                "functionBody": "return (model.devices && model.devices[arrayIndices].ipaddress);"
+              }
+            },
             "hide_device": {
               "title": "Delete Device",
               "type": "boolean",
@@ -250,6 +260,13 @@
             "minimum": 120,
             "placeholder": 900,
             "description": "Indicates the number of seconds between refreshes of the Rainbird Client."
+          },
+          "pushRate": {
+            "title": "Push Rate",
+            "type": "number",
+            "minimum": 0.1,
+            "placeholder": 0.1,
+            "description": "Indicates the number of seconds to wait for further changes before sending a command to the Rainbird Client."
           },
           "logging": {
             "title": "Plugin Logging Level",
@@ -336,6 +353,7 @@
             "devices[].showRequestResponse",
             "devices[].firmware",
             "devices[].refreshRate",
+            "devices[].pushRate",
             "devices[].logging"
           ]
         }
