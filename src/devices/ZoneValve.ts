@@ -140,9 +140,9 @@ export class ZoneValve extends DeviceBase {
         try {
           await this.pushChanges(zone)
         } catch (e: any) {
-          this.debugLog(`${this.constructor.name}: ${this.accessory.displayName} - ${JSON.stringify(e.messsage)}`)
+          this.debugLog(`${this.constructor.name}: ${this.accessory.displayName} - ${e instanceof Error ? e.message : String(e)}`)
           if (this.deviceLogging.includes('debug')) {
-            this.debugLog(`${this.constructor.name}: ${this.accessory.displayName} - ${JSON.stringify(e)}`)
+            this.debugLog(`${this.constructor.name}: ${this.accessory.displayName} - ${e instanceof Error ? e.message : String(e)}`)
           }
         }
         this.zoneUpdateInProgress = false

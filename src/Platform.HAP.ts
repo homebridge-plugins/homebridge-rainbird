@@ -118,7 +118,6 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
         await this.discoverDevices()
       } catch (e: any) {
         this.errorLog(`Failed to Discover Devices, ${JSON.stringify(e.message)}`)
-        this.debugLog(JSON.stringify(e))
       }
     })
   }

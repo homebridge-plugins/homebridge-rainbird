@@ -22,6 +22,7 @@
 - fix: honour a controller's own refresh rate, and remove a rate setting nothing read
 - fix: stop a failed hourly refresh or test-switch reset from ending the process
 - fix: stop the polling and status subscriptions when homebridge shuts down
+- fix: log the error message rather than the whole error object, which can carry the api response
 
 ## v3.1.5 (2026-07-28)
 
