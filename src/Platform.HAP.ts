@@ -163,25 +163,34 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   private async logControllerEnhancements(rainbird: RainBirdService, capabilities: ControllerCapabilities): Promise<void> {
     this.debugLog(`Controller capabilities: ${JSON.stringify(capabilities)}`)
 
+    // Some controllers (e.g. the ST8x-WiFi2) answer getCommandSupport(...) with `true`
+    // for an enhancement and then return `undefined` from the enhancement getter itself.
+    // The rainbird library types these getters as always-defined (number / number[]), so
+    // without these guards the seasonal-adjust branch dereferences `.length` on `undefined`
+    // and throws. Discovery wraps this in a try/catch that reports any throw as "Failed to
+    // connect to RainBird controller", so a fully reachable controller looks like a network
+    // failure and no accessories are created (#595). Treat a missing value as "not reported".
     if (capabilities.supportsWaterBudget) {
       for (const program of [0, 1, 2, 3]) {
-        const waterBudget = await rainbird.getWaterBudget(program)
-        this.debugLog(`Program ${program} water budget: ${waterBudget}%`)
+        const waterBudget: number | undefined = await rainbird.getWaterBudget(program)
+        if (waterBudget !== undefined) {
+          this.debugLog(`Program ${program} water budget: ${waterBudget}%`)
+        }
       }
     }
 
     if (capabilities.supportsZonesSeasonalAdjustFactor) {
       for (const program of [0, 1, 2, 3]) {
-        const seasonalAdjust = await rainbird.getZonesSeasonalAdjustFactor(program)
-        if (seasonalAdjust.length > 0) {
+        const seasonalAdjust: number[] | undefined = await rainbird.getZonesSeasonalAdjustFactor(program)
+        if (seasonalAdjust !== undefined && seasonalAdjust.length > 0) {
           this.debugLog(`Program ${program} zones seasonal adjust: ${JSON.stringify(seasonalAdjust)}`)
         }
       }
     }
 
     if (capabilities.supportsControllerEventTimestamp) {
-      const timestamp = await rainbird.getControllerEventTimestamp(0)
-      if (timestamp > 0) {
+      const timestamp: number | undefined = await rainbird.getControllerEventTimestamp(0)
+      if (timestamp !== undefined && timestamp > 0) {
         this.debugLog(`Controller event timestamp(0): ${new Date(timestamp * 1000).toISOString()}`)
       }
     }
