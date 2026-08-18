@@ -3,6 +3,7 @@
 ### Changed
 
 - fix: guard controller enhancement logging when a supported command returns undefined (#596) (@ethanhawkes-gif)
+- chore(deps): dependency updates
 
 ## v3.1.7 (2026-08-13)
 
