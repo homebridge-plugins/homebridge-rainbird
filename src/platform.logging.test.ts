@@ -175,3 +175,60 @@ describe('a default install, from the settings it actually works out', () => {
     expect(log.error).not.toHaveBeenCalled()
   })
 })
+
+/**
+ * Some controllers - the ST8x-WiFi2 among them - answer `getCommandSupport(0x32)`
+ * with `true` and then return `undefined` from `getZonesSeasonalAdjustFactor()`
+ * itself. `logControllerEnhancements` trusted the library's `number[]` return type
+ * and went straight to `seasonalAdjust.length`, throwing "Cannot read properties of
+ * undefined (reading 'length')". Discovery runs inside a try/catch that renders any
+ * throw as "Failed to connect to RainBird controller", so a fully reachable controller
+ * looked like a network failure and no accessories were ever created (#595). The two
+ * neighbouring enhancement getters have the same shape - a `true` support flag and an
+ * `undefined` value - so they are guarded here too, which also keeps a bogus
+ * `water budget: undefined%` line out of the debug log.
+ */
+describe('controller enhancement logging when a supported command returns nothing', () => {
+  function makeHost() {
+    const log = makeLog()
+    const host: any = Object.create(RainbirdPlatform.prototype)
+    host.log = log
+    host.platformLogging = 'debugMode'
+    return { host, log }
+  }
+
+  const allSupported = {
+    supportsControllerFirmwareVersion: true,
+    supportsRetrieveSchedule: true,
+    supportsWaterBudget: true,
+    supportsZonesSeasonalAdjustFactor: true,
+    supportsTestZone: true,
+    supportsControllerEventTimestamp: true,
+    supportsStackRunZone: true,
+  }
+
+  it('does not throw when a supported seasonal-adjust command returns undefined', async () => {
+    const { host } = makeHost()
+    const overReporting: any = {
+      getWaterBudget: async () => undefined,
+      getZonesSeasonalAdjustFactor: async () => undefined,
+      getControllerEventTimestamp: async () => undefined,
+    }
+
+    await expect(host.logControllerEnhancements(overReporting, allSupported)).resolves.toBeUndefined()
+  })
+
+  it('does not log a water budget of "undefined%" when the value is missing', async () => {
+    const { host, log } = makeHost()
+    const overReporting: any = {
+      getWaterBudget: async () => undefined,
+      getZonesSeasonalAdjustFactor: async () => [100, 100],
+      getControllerEventTimestamp: async () => 0,
+    }
+
+    await host.logControllerEnhancements(overReporting, allSupported)
+
+    const debugLines = (log.debug as any).mock.calls.map((call: any[]) => String(call[0]))
+    expect(debugLines.some((line: string) => line.includes('undefined%'))).toBe(false)
+  })
+})

@@ -1,3 +1,9 @@
+## v3.1.8 (Pending Release)
+
+### Changed
+
+- fix: guard controller enhancement logging when a supported command returns undefined (#596) (@ethanhawkes-gif)
+
 ## v3.1.7 (2026-08-13)
 
 ### Changed
