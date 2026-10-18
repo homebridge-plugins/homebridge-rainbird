@@ -1,4 +1,4 @@
-## v3.1.9 (Pending Release)
+## v3.1.9 (2026-10-18)
 
 ### Changed
 
