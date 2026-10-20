@@ -232,3 +232,45 @@ describe('controller enhancement logging when a supported command returns nothin
     expect(debugLines.some((line: string) => line.includes('undefined%'))).toBe(false)
   })
 })
+
+/**
+ * The config UI now saves 'default' for the "Default" plugin logging choice,
+ * because a required field that defaults to an empty string always failed the
+ * UI's validation. 'default' has to behave exactly as an empty or missing
+ * value always has: follow Homebridge's own debug setting.
+ */
+describe('the default plugin logging choice', () => {
+  async function platformFor(options: Record<string, unknown>) {
+    const host: any = Object.create(RainbirdPlatform.prototype)
+    host.log = makeLog()
+    host.config = { options }
+    await host.getPlatformLogSettings()
+    return host
+  }
+
+  it('resolves the same as an empty or missing level', async () => {
+    const missing = (await platformFor({})).platformLogging
+
+    expect((await platformFor({ logging: 'default' })).platformLogging).toBe(missing)
+    expect((await platformFor({ logging: '' })).platformLogging).toBe(missing)
+    expect(missing).toBe('debugMode')
+  })
+
+  it('reports itself as the default, not as a platform setting', async () => {
+    const host = await platformFor({ logging: 'default' })
+
+    expect(host.log.debug).toHaveBeenCalledWith('Using Default Logging: debugMode')
+  })
+
+  it('leaves a device with no level of its own on the same level', async () => {
+    const platform = await platformFor({ logging: 'default' })
+    const device: any = Object.create(DeviceBase.prototype)
+    device.log = makeLog()
+    device.platform = platform
+    device.accessory = { displayName: 'Zone 1' }
+
+    await device.getDeviceLogSettings({})
+
+    expect(device.deviceLogging).toBe('debugMode')
+  })
+})
