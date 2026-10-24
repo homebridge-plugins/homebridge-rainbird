@@ -71,7 +71,9 @@ export abstract class DeviceBase {
 
   async getDeviceLogSettings(device: devicesConfig): Promise<void> {
     this.deviceLogging = device.logging ?? this.platform.platformLogging ?? 'standard'
-    const logging = device.logging ? 'Device Config' : this.platform.platformLogging ? 'Platform Config' : 'Default'
+    const logging = device.logging
+      ? 'Device Config'
+      : this.platform.platformLogging ? 'Platform Config' : 'Default'
     await this.debugLog(`Using ${logging} Logging: ${this.deviceLogging}`)
   }
 
@@ -80,11 +82,15 @@ export abstract class DeviceBase {
     // The defaults here match what the polling code actually used, so honouring
     // these settings changes nothing for anyone who has not set them
     this.deviceRefreshRate = device.refreshRate ?? this.platform.config.options?.refreshRate ?? this.platform.platformRefreshRate ?? 300
-    const refreshRate = device.refreshRate ? 'Device Config' : this.platform.platformRefreshRate ? 'Platform Config' : 'Default'
+    const refreshRate = device.refreshRate
+      ? 'Device Config'
+      : this.platform.platformRefreshRate ? 'Platform Config' : 'Default'
     // pushRate. updateRate used to be parsed and echoed back here too, which made
     // it look accepted - nothing has ever read it, at either level.
     this.devicePushRate = device.pushRate ?? this.platform.config.options?.pushRate ?? this.platform.platformPushRate ?? 0.1
-    const pushRate = device.pushRate ? 'Device Config' : this.platform.platformPushRate ? 'Platform Config' : 'Default'
+    const pushRate = device.pushRate
+      ? 'Device Config'
+      : this.platform.platformPushRate ? 'Platform Config' : 'Default'
     await this.debugLog(`Using ${refreshRate} refreshRate: ${this.deviceRefreshRate}, ${pushRate} pushRate: ${this.devicePushRate}`)
   }
 

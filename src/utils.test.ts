@@ -26,9 +26,18 @@ function build(config: Partial<PlatformConfig>, api: any) {
   return new Proxy({}, config as PlatformConfig, api)
 }
 
-const matterReady = { isMatterAvailable: () => true, isMatterEnabled: () => true }
-const matterOff = { isMatterAvailable: () => true, isMatterEnabled: () => false }
-const noMatter = { isMatterAvailable: () => false, isMatterEnabled: () => false }
+const matterReady = {
+  isMatterAvailable: () => true,
+  isMatterEnabled: () => true,
+}
+const matterOff = {
+  isMatterAvailable: () => true,
+  isMatterEnabled: () => false,
+}
+const noMatter = {
+  isMatterAvailable: () => false,
+  isMatterEnabled: () => false,
+}
 
 describe('createPlatformProxy', () => {
   it('uses matter when it is available and nothing opts out', () => {
@@ -48,11 +57,15 @@ describe('createPlatformProxy', () => {
   })
 
   it('honours enableMatter: false even on a matter-ready setup', () => {
-    expect(build({ options: { enableMatter: false } } as any, matterReady).kind).toBe('hap')
+    expect(build({
+      options: { enableMatter: false },
+    } as any, matterReady).kind).toBe('hap')
   })
 
   it('honours preferMatter: false even on a matter-ready setup', () => {
-    expect(build({ options: { preferMatter: false } } as any, matterReady).kind).toBe('hap')
+    expect(build({
+      options: { preferMatter: false },
+    } as any, matterReady).kind).toBe('hap')
   })
 
   it('treats a missing api as hap rather than throwing', () => {
@@ -64,7 +77,9 @@ describe('createPlatformProxy', () => {
 
   it('passes log, config and api straight through to the chosen platform', () => {
     const Proxy = createPlatformProxy(FakeHAPPlatform, FakeMatterPlatform)
-    const log = { info: () => {} }
+    const log = {
+      info: () => {},
+    }
     const config = { platform: 'RainBird' } as PlatformConfig
     const impl = new Proxy(log, config, noMatter)
 

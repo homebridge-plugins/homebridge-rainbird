@@ -117,7 +117,10 @@ export class IrrigationSystem extends DeviceBase {
         // Math.min with one argument is a no-op, so this upper bound was never
         // clamped even though maxValue on the line above was, and the warning above
         // promised a clamp that only half happened
-        validValueRanges: [minValueRemainingDuration, Math.min(maxValueRemainingDuration, 4294967295)],
+        validValueRanges: [
+          minValueRemainingDuration,
+          Math.min(maxValueRemainingDuration, 4294967295),
+        ],
       })
       .onGet(() => {
         this.rainbird!.refreshStatus()
@@ -262,9 +265,13 @@ export class IrrigationSystem extends DeviceBase {
         try {
           await this.pushChanges(zone)
         } catch (e: any) {
-          this.debugLog(`${this.constructor.name} ${this.accessory.displayName} - ${e instanceof Error ? e.message : String(e)}`)
+          this.debugLog(`${this.constructor.name} ${this.accessory.displayName} - ${e instanceof Error
+            ? e.message
+            : String(e)}`)
           if (this.deviceLogging.includes('debug')) {
-            this.debugLog(`${this.constructor.name} ${this.accessory.displayName} - ${e instanceof Error ? e.message : String(e)}`)
+            this.debugLog(`${this.constructor.name} ${this.accessory.displayName} - ${e instanceof Error
+              ? e.message
+              : String(e)}`)
           }
         }
         this.irrigationSystemUpdateInProgress = false
@@ -276,16 +283,24 @@ export class IrrigationSystem extends DeviceBase {
    */
   parseStatus() {
     // Irrigation System
-    this.irrigation.Active = this.rainbird!.isActive() ? this.hap.Characteristic.Active.ACTIVE : this.hap.Characteristic.Active.INACTIVE
+    this.irrigation.Active = this.rainbird!.isActive()
+      ? this.hap.Characteristic.Active.ACTIVE
+      : this.hap.Characteristic.Active.INACTIVE
 
-    this.irrigation.InUse = this.rainbird!.isInUse() ? this.hap.Characteristic.InUse.IN_USE : this.hap.Characteristic.InUse.NOT_IN_USE
+    this.irrigation.InUse = this.rainbird!.isInUse()
+      ? this.hap.Characteristic.InUse.IN_USE
+      : this.hap.Characteristic.InUse.NOT_IN_USE
     this.debugLog(`${this.constructor.name}: ${this.accessory.displayName}, Active: ${this.irrigation.Active}, InUse: ${this.irrigation.InUse}`)
 
     // Valves
     for (const [zone, valve] of this.valves.entries()) {
-      valve.Active = this.rainbird!.isActive(zone) ? this.hap.Characteristic.Active.ACTIVE : this.hap.Characteristic.Active.INACTIVE
+      valve.Active = this.rainbird!.isActive(zone)
+        ? this.hap.Characteristic.Active.ACTIVE
+        : this.hap.Characteristic.Active.INACTIVE
 
-      valve.InUse = this.rainbird!.isInUse(zone) ? this.hap.Characteristic.InUse.IN_USE : this.hap.Characteristic.InUse.NOT_IN_USE
+      valve.InUse = this.rainbird!.isInUse(zone)
+        ? this.hap.Characteristic.InUse.IN_USE
+        : this.hap.Characteristic.InUse.NOT_IN_USE
 
       this.debugLog(`${this.constructor.name} Valve: ${zone}, Active: ${valve.Active}, InUse: ${valve.InUse}`)
     }

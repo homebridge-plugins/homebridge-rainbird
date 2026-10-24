@@ -272,8 +272,12 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
       hardwareRevision: '1.0.0',
       clusters: {
         valveConfigurationAndControl: {
-          currentState: rainbird.isInUse() ? 1 : 0,
-          targetState: rainbird.isInUse() ? 1 : 0,
+          currentState: rainbird.isInUse()
+            ? 1
+            : 0,
+          targetState: rainbird.isInUse()
+            ? 1
+            : 0,
         },
       },
       handlers: {
@@ -295,8 +299,12 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     this.ensureMatterSubscription(uuidKey, () => fromEvent(rainbird, 'status').subscribe({
       next: async () => {
         await this.updateMatterState(uuidKey, 'valveConfigurationAndControl', {
-          currentState: rainbird.isInUse() ? 1 : 0,
-          targetState: rainbird.isInUse() ? 1 : 0,
+          currentState: rainbird.isInUse()
+            ? 1
+            : 0,
+          targetState: rainbird.isInUse()
+            ? 1
+            : 0,
         })
       },
     }))
@@ -311,7 +319,9 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
 
     const model = 'WR2'
     const uuidKey = `${device.ipaddress}-${model}-${rainbird.serialNumber}`
-    const rawName = device.configDeviceName ? `${device.configDeviceName} Leak Sensor` : 'Leak Sensor'
+    const rawName = device.configDeviceName
+      ? `${device.configDeviceName} Leak Sensor`
+      : 'Leak Sensor'
     const displayName = await this.validateAndCleanDisplayName(rawName, 'configDeviceName Leak Sensor', rawName)
 
     await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
@@ -351,7 +361,9 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     const model = `${rainbird.model}-valve-${zoneId}`
     const uuidKey = `${device.ipaddress}-${model}-${rainbird.serialNumber}`
     const name = `Zone ${zoneId}`
-    const rawName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name
+    const rawName = device.configDeviceName
+      ? `${device.configDeviceName} ${name}`
+      : name
     const displayName = await this.validateAndCleanDisplayName(rawName, `configDeviceName ${name}`, rawName)
     const durationSeconds = 300
 
@@ -366,8 +378,12 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
       hardwareRevision: '1.0.0',
       clusters: {
         valveConfigurationAndControl: {
-          currentState: rainbird.isActive(zoneId) ? 1 : 0,
-          targetState: rainbird.isActive(zoneId) ? 1 : 0,
+          currentState: rainbird.isActive(zoneId)
+            ? 1
+            : 0,
+          targetState: rainbird.isActive(zoneId)
+            ? 1
+            : 0,
         },
       },
       handlers: {
@@ -386,8 +402,12 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     this.ensureMatterSubscription(uuidKey, () => fromEvent(rainbird, 'status').subscribe({
       next: async () => {
         await this.updateMatterState(uuidKey, 'valveConfigurationAndControl', {
-          currentState: rainbird.isActive(zoneId) ? 1 : 0,
-          targetState: rainbird.isActive(zoneId) ? 1 : 0,
+          currentState: rainbird.isActive(zoneId)
+            ? 1
+            : 0,
+          targetState: rainbird.isActive(zoneId)
+            ? 1
+            : 0,
         })
       },
     }))
@@ -403,7 +423,9 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     const model = `${rainbird.model}-${zoneId}`
     const uuidKey = `${device.ipaddress}-${model}-contact-${rainbird.serialNumber}`
     const name = `Zone ${zoneId}`
-    const rawName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name
+    const rawName = device.configDeviceName
+      ? `${device.configDeviceName} ${name}`
+      : name
     const displayName = await this.validateAndCleanDisplayName(rawName, `configDeviceName ${name}`, rawName)
 
     // Matter BooleanState: true = contact detected (zone NOT in use), false = contact not detected (zone in use)
@@ -440,7 +462,9 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     const model = `${rainbird.model}-pgm-${programId}`
     const uuidKey = `${device.ipaddress}-${model}-${rainbird.serialNumber}`
     const name = `Program ${programId}`
-    const rawName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name
+    const rawName = device.configDeviceName
+      ? `${device.configDeviceName} ${name}`
+      : name
     const displayName = await this.validateAndCleanDisplayName(rawName, `configDeviceName ${name}`, rawName)
 
     await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
@@ -487,7 +511,9 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
 
     const model = `${rainbird.model}-stop`
     const uuidKey = `${device.ipaddress}-${model}-${rainbird.serialNumber}`
-    const rawName = device.configDeviceName ? `${device.configDeviceName} Stop Irrigation` : 'Stop Irrigation'
+    const rawName = device.configDeviceName
+      ? `${device.configDeviceName} Stop Irrigation`
+      : 'Stop Irrigation'
     const displayName = await this.validateAndCleanDisplayName(rawName, 'configDeviceName Stop Irrigation', rawName)
 
     await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({
@@ -526,7 +552,9 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
 
     const model = `${rainbird.model}-delay`
     const uuidKey = `${device.ipaddress}-${model}-${rainbird.serialNumber}`
-    const rawName = device.configDeviceName ? `${device.configDeviceName} Delay Irrigation` : 'Delay Irrigation'
+    const rawName = device.configDeviceName
+      ? `${device.configDeviceName} Delay Irrigation`
+      : 'Delay Irrigation'
     const displayName = await this.validateAndCleanDisplayName(rawName, 'configDeviceName Delay Irrigation', rawName)
     const irrigationDelay = device.irrigationDelay ?? 1
 
@@ -580,7 +608,9 @@ export class RainbirdMatterPlatform extends RainbirdPlatform {
     const model = `${rainbird.model}-test-${zoneId}`
     const uuidKey = `${device.ipaddress}-${model}-${rainbird.serialNumber}`
     const name = `Zone ${zoneId} Test`
-    const rawName = device.configDeviceName ? `${device.configDeviceName} ${name}` : name
+    const rawName = device.configDeviceName
+      ? `${device.configDeviceName} ${name}`
+      : name
     const displayName = await this.validateAndCleanDisplayName(rawName, `configDeviceName ${name}`, rawName)
 
     await this.registerOrUpdateMatterAccessory(device, uuidKey, () => ({

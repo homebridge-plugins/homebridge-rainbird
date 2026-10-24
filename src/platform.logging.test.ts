@@ -117,7 +117,11 @@ describe('a default install, from the settings it actually works out', () => {
     const log = makeLog()
     const host: any = Object.create(RainbirdPlatform.prototype)
     host.log = log
-    host.config = { options: configLogging ? { logging: configLogging } : {} }
+    host.config = {
+      options: configLogging
+        ? { logging: configLogging }
+        : {},
+    }
     return { host, log }
   }
 

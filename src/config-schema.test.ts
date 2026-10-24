@@ -36,7 +36,9 @@ function asSeenByUi(schema: JsonSchema | undefined, data: unknown): unknown {
   }
   const shaped: Record<string, unknown> = { ...(data as Record<string, unknown>) }
   for (const [key, sub] of Object.entries(schema?.properties ?? {})) {
-    const value = Object.hasOwn(shaped, key) ? shaped[key] : sub.default
+    const value = Object.hasOwn(shaped, key)
+      ? shaped[key]
+      : sub.default
     if (value === undefined || value === '') {
       delete shaped[key]
     } else {
@@ -57,7 +59,10 @@ function requiredWithEmptyDefault(schema: JsonSchema, path: string): string[] {
     .map(key => `${path}.${key}`)
   const nested = Object.entries(schema.properties ?? {})
     .flatMap(([key, sub]) => requiredWithEmptyDefault(sub.items ?? sub, `${path}.${key}`))
-  return [...own, ...nested]
+  return [
+    ...own,
+    ...nested,
+  ]
 }
 
 describe('config.schema.json as the config UI sees it', () => {
@@ -68,7 +73,9 @@ describe('config.schema.json as the config UI sees it', () => {
   it('accepts a config that leaves the plugin logging level at its default', () => {
     expect(uiErrors({
       name: 'RainBird',
-      devices: [{ ipaddress: '192.168.1.20' }],
+      devices: [
+        { ipaddress: '192.168.1.20' },
+      ],
       options: {},
     })).toEqual([])
   })
@@ -76,7 +83,9 @@ describe('config.schema.json as the config UI sees it', () => {
   it('accepts the default logging choice once it has been saved', () => {
     expect(uiErrors({
       name: 'RainBird',
-      devices: [{ ipaddress: '192.168.1.20' }],
+      devices: [
+        { ipaddress: '192.168.1.20' },
+      ],
       options: { logging: 'default' },
     })).toEqual([])
   })
