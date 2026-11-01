@@ -35,6 +35,12 @@ Homebridge plugin to integrate RainBird irrigation controllers into HomeKit
 - [Beta Version](https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Beta-Version)
 - [Node Version](https://github.com/homebridge-plugins/homebridge-rainbird/wiki/Node-Version)
 
+### Features
+
+- **Matter** support is available when running Homebridge v2.0+ with Matter enabled:
+  - The plugin uses Matter by default when Matter is available and enabled in Homebridge, and falls back to HAP otherwise.
+  - Set `options.enableMatter: false` or `options.preferMatter: false` to always use HAP.
+
 ### Supported Controllers
 
 - Any controller that supports the [RainBird LNK WiFi Module](https://www.rainbird.com/products/lnk-wifi-module) should be compatible, including:
@@ -59,7 +65,7 @@ Homebridge plugin to integrate RainBird irrigation controllers into HomeKit
 ### Credits
 
 - To [@donavanbecker](https://github.com/donavanbecker): the original creator and maintainer of this plugin.
-- To [@mantorok1](https://github.com/mantorok1): the main developer of the [RainBird API library](https://github.com/donavanbecker/rainbird) this plugin uses.
+- To [@mantorok1](https://github.com/mantorok1): the main developer of the [RainBird API library](https://github.com/homebridge-plugins/rainbird) this plugin uses.
 - To the creators/contributors of [Homebridge](https://homebridge.io) who make this plugin possible.
 
 ### Disclaimer
