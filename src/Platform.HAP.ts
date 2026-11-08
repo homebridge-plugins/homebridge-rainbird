@@ -133,6 +133,17 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     this.accessories.push(accessory)
   }
 
+  /**
+   * Finds the cached accessory for an id. The id includes the controller's IP
+   * address, so a controller that moves to a new address gets a new id, and the
+   * Home app would get a second copy without its rooms or automations (#613).
+   * So fall back to the cached accessory with the same serial number and model.
+   */
+  findCachedAccessory(uuid: string, serialNumber: string, model: string): PlatformAccessory | undefined {
+    return this.accessories.find(accessory => accessory.UUID === uuid)
+      ?? this.accessories.find(accessory => accessory.context?.deviceID === serialNumber && accessory.context?.model === model)
+  }
+
   private registerHandler<T extends object>(handler: T): T {
     this.handlers.push(handler)
     return handler
@@ -365,7 +376,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${rainbird!.model}-${rainbird!.serialNumber}`)
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
-    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
+    const existingAccessory = this.findCachedAccessory(uuid, rainbird!.serialNumber, rainbird!.model)
 
     if (existingAccessory) {
       // the accessory already exists
@@ -428,7 +439,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
-    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
+    const existingAccessory = this.findCachedAccessory(uuid, rainbird!.serialNumber, model)
 
     if (existingAccessory) {
       // the accessory already exists
@@ -500,10 +511,10 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const valveConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : 'Valve'
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
-    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
+    const existingAccessory = this.findCachedAccessory(uuid, rainbird!.serialNumber, model)
 
     const irrigationUuid = this.api.hap.uuid.generate(`${device.ipaddress}-${rainbird!.model}-${rainbird!.serialNumber}`)
-    const irrigationAccessory = this.accessories.find(accessory => accessory.UUID === irrigationUuid)
+    const irrigationAccessory = this.findCachedAccessory(irrigationUuid, rainbird!.serialNumber, rainbird!.model)
 
     const includeZones = device.includeZones!.split(',').map(Number)
     const registerZoneValve = !device.hide_device
@@ -567,7 +578,10 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   removeZoneValve(device: devicesConfig, rainbird: RainBirdService, zoneId: number): void {
     const model = `${rainbird!.model}-valve-${zoneId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
-    const index = this.accessories.findIndex(accessory => accessory.UUID === uuid)
+    const cached = this.findCachedAccessory(uuid, rainbird!.serialNumber, model)
+    const index = cached
+      ? this.accessories.indexOf(cached)
+      : -1
     if (index >= 0) {
       this.unregisterPlatformAccessories(this.accessories[index])
       this.accessories.splice(index, 1)
@@ -581,7 +595,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const contactSensorConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : 'Contact Sensor'
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
-    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
+    const existingAccessory = this.findCachedAccessory(uuid, rainbird!.serialNumber, model)
 
     if (existingAccessory) {
       // the accessory already exists
@@ -640,7 +654,10 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   removeContactSensor(device: devicesConfig, rainbird: RainBirdService, zoneId: number): void {
     const model = `${rainbird!.model}-${zoneId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
-    const index = this.accessories.findIndex(accessory => accessory.UUID === uuid)
+    const cached = this.findCachedAccessory(uuid, rainbird!.serialNumber, model)
+    const index = cached
+      ? this.accessories.indexOf(cached)
+      : -1
     if (index >= 0) {
       this.unregisterPlatformAccessories(this.accessories[index])
       this.accessories.splice(index, 1)
@@ -651,8 +668,10 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const model = `${rainbird!.model}-test-${zoneId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
     const name = `Zone ${zoneId} Test`
-    const testSwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : 'Test Zone Switch'
-    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
+    const testSwitchConfigName = device.configDeviceName
+      ? `${device.configDeviceName} ${name}`
+      : 'Test Zone Switch'
+    const existingAccessory = this.findCachedAccessory(uuid, rainbird!.serialNumber, model)
 
     if (existingAccessory) {
       if (!device.hide_device && device.showTestZoneSwitch && supportsTestZone) {
@@ -700,7 +719,10 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
   removeTestZoneSwitch(device: devicesConfig, rainbird: RainBirdService, zoneId: number): void {
     const model = `${rainbird!.model}-test-${zoneId}`
     const uuid = this.api.hap.uuid.generate(`${device.ipaddress}-${model}-${rainbird!.serialNumber}`)
-    const index = this.accessories.findIndex(accessory => accessory.UUID === uuid)
+    const cached = this.findCachedAccessory(uuid, rainbird!.serialNumber, model)
+    const index = cached
+      ? this.accessories.indexOf(cached)
+      : -1
     if (index >= 0) {
       this.unregisterPlatformAccessories(this.accessories[index])
       this.accessories.splice(index, 1)
@@ -714,7 +736,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const programSwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : 'Program Switch'
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
-    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
+    const existingAccessory = this.findCachedAccessory(uuid, rainbird!.serialNumber, model)
     const showProgramSwitch = device[`showProgram${programId}Switch`]
 
     if (existingAccessory) {
@@ -779,7 +801,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const stopSwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : 'Stop Switch'
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
-    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
+    const existingAccessory = this.findCachedAccessory(uuid, rainbird!.serialNumber, model)
 
     if (existingAccessory) {
       // the accessory already exists
@@ -841,7 +863,7 @@ export class RainbirdPlatform implements DynamicPlatformPlugin {
     const delaySwitchConfigName = device.configDeviceName ? `${device.configDeviceName} ${name}` : 'Delay Switch'
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
-    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid)
+    const existingAccessory = this.findCachedAccessory(uuid, rainbird!.serialNumber, model)
 
     if (existingAccessory) {
       // the accessory already exists
