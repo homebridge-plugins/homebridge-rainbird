@@ -5,6 +5,7 @@
 - ci: update github actions to their latest versions (#607)
 - fix(schema): give the default logging choice a value, so the ui stops flagging it as missing
 - docs: add a matter note and point the rainbird library link at homebridge-plugins
+- chore: leave CLAUDE.md out of the published package
 
 ## v3.1.9 (2026-10-18)
 
